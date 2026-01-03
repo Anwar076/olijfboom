@@ -91,45 +91,45 @@ const CreateTeamPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark-bg">
+    <div className="min-h-screen bg-slate-50">
       <Header />
       <div className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-2xl">
-          <div className="bg-dark-surface/50 rounded-3xl p-8 md:p-12 border border-gray-800 backdrop-blur-sm">
-            <h1 className="text-4xl font-bold mb-8 text-gold text-center">Start een Team</h1>
+          <div className="bg-white/80 rounded-3xl p-8 md:p-12 border border-slate-200 backdrop-blur-sm">
+            <h1 className="text-4xl font-bold mb-8 title-gradient text-center">Start een Team</h1>
 
             {error && (
-              <div className="bg-red-900/30 border border-red-700 text-red-300 rounded-lg p-4 mb-6">
+              <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-gray-300 mb-2 font-medium">Team naam *</label>
+                <label className="block text-slate-700 mb-2 font-medium">Team naam *</label>
                 <input
                   type="text"
                   required
                   value={formData.teamName}
                   onChange={(e) => setFormData({ ...formData, teamName: e.target.value })}
-                  className="w-full bg-dark-surface border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-gold focus:outline-none"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
                   placeholder="Bijv. Team Vrijwilligers"
                 />
               </div>
 
               <div>
-                <label className="block text-gray-300 mb-2 font-medium">Beschrijving (optioneel)</label>
+                <label className="block text-slate-700 mb-2 font-medium">Beschrijving (optioneel)</label>
                 <textarea
                   value={formData.teamDescription}
                   onChange={(e) => setFormData({ ...formData, teamDescription: e.target.value })}
-                  className="w-full bg-dark-surface border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-gold focus:outline-none"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
                   rows={3}
                   placeholder="Korte beschrijving van je team..."
                 />
               </div>
 
               <div>
-                <label className="block text-gray-300 mb-2 font-medium">Kies teamdoel *</label>
+                <label className="block text-slate-700 mb-2 font-medium">Kies teamdoel *</label>
                 <select
                   required
                   value={`${formData.targetLabel}-${formData.targetAmount}`}
@@ -137,7 +137,7 @@ const CreateTeamPage: React.FC = () => {
                     const [label, amount] = e.target.value.split('-');
                     handleTargetChange(label, parseInt(amount));
                   }}
-                  className="w-full bg-dark-surface border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-gold focus:outline-none"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
                 >
                   {targetOptions.map((option, index) => (
                     <option key={index} value={`${option.label}-${option.amount}`}>
@@ -147,52 +147,52 @@ const CreateTeamPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="border-t border-gray-700 pt-6 mt-6">
-                <h2 className="text-2xl font-bold mb-6 text-gold">Beheerder Account</h2>
+              <div className="border-t border-slate-300 pt-6 mt-6">
+                <h2 className="text-2xl font-bold mb-6 title-gradient">Beheerder Account</h2>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-gray-300 mb-2 font-medium">Naam *</label>
+                    <label className="block text-slate-700 mb-2 font-medium">Naam *</label>
                     <input
                       type="text"
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-dark-surface border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-gold focus:outline-none"
+                      className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-gray-300 mb-2 font-medium">Email *</label>
+                    <label className="block text-slate-700 mb-2 font-medium">Email *</label>
                     <input
                       type="email"
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full bg-dark-surface border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-gold focus:outline-none"
+                      className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-gray-300 mb-2 font-medium">Wachtwoord *</label>
+                    <label className="block text-slate-700 mb-2 font-medium">Wachtwoord *</label>
                     <input
                       type="password"
                       required
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full bg-dark-surface border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-gold focus:outline-none"
+                      className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
                       minLength={6}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-gray-300 mb-2 font-medium">Bevestig wachtwoord *</label>
+                    <label className="block text-slate-700 mb-2 font-medium">Bevestig wachtwoord *</label>
                     <input
                       type="password"
                       required
                       value={formData.confirmPassword}
                       onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      className="w-full bg-dark-surface border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-gold focus:outline-none"
+                      className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
                       minLength={6}
                     />
                   </div>
@@ -202,7 +202,7 @@ const CreateTeamPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gold text-dark-bg py-4 rounded-lg font-bold text-lg hover:bg-gold-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn btn-primary w-full text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Team aanmaken...' : 'Team aanmaken'}
               </button>

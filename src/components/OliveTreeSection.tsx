@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 interface OliveTreeSectionProps {
   lightsActivated: number;
@@ -38,18 +38,25 @@ const generateLightPositions = (count: number): Array<{ x: number; y: number }> 
 
 const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, totalLights }) => {
   const lightPositions = useMemo(() => generateLightPositions(totalLights), [totalLights]);
+  const [treeGrowth, setTreeGrowth] = useState(0);
 
   const percentage = Math.round((lightsActivated / totalLights) * 100);
+  const trunkProgress = Math.min(treeGrowth, 70) / 70;
+  const leavesProgress = treeGrowth <= 70 ? 0 : (treeGrowth - 70) / 30;
+  const trunkRevealHeight = 500 * trunkProgress;
+  const trunkRevealY = 500 - trunkRevealHeight;
+  const leavesRevealHeight = 500 * leavesProgress;
+  const leavesRevealY = 500 - leavesRevealHeight;
 
   return (
     <section id="boom" className="py-20 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gold">De Olijfboom</h2>
-          <p className="text-xl text-gray-300">Elk licht vertegenwoordigt een team dat zijn doel heeft bereikt</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 title-gradient">De Olijfboom</h2>
+          <p className="text-xl text-slate-700">Elk licht vertegenwoordigt een team dat zijn doel heeft bereikt</p>
         </div>
 
-        <div className="bg-dark-surface/30 rounded-3xl p-8 md:p-12 border border-gray-800 backdrop-blur-sm">
+        <div className="bg-slate-100/70 rounded-3xl p-8 md:p-12 border border-slate-200 backdrop-blur-sm">
           <div className="flex justify-center items-center">
             <svg
               viewBox="0 0 500 500"
@@ -65,10 +72,16 @@ const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, to
                     <feMergeNode in="SourceGraphic"/>
                   </feMerge>
                 </filter>
+                <clipPath id="treeClipTrunk">
+                  <rect x="0" y={trunkRevealY} width="500" height={trunkRevealHeight} />
+                </clipPath>
+                <clipPath id="treeClipLeaves">
+                  <rect x="0" y={leavesRevealY} width="500" height={leavesRevealHeight} />
+                </clipPath>
               </defs>
 
               {/* Trunk/Branches Group - Brown color */}
-              <g id="TRUNK" opacity="0.95">
+              <g id="TRUNK" opacity="0.95" clipPath="url(#treeClipTrunk)">
                 <path style={{ fill: '#6b4423' }} d="M307.698,281.987c-0.525-1.182-1.196-2.219-2.146-2.649c-2.04-0.925-4.475,0.524-5.874,2.261c-4.058,5.038-5.908,13.976-5.446,26.034c6.262-6.551,8.351-15.182,12.25-23.35C306.844,283.524,307.258,282.756,307.698,281.987z" />
                 <path style={{ fill: '#6b4423' }} d="M189.902,236.406c3.546,1.348,5.433,3.177,7.024,6.184c-0.459-2.817-1.135-5.538-1.93-7.546c-2.191-5.537-7.97-10.641-17.176-15.171c-10.522-5.178-20.978-0.751-30.211,5.057c7.066-1.026,14.264,1.228,21.42,2.778c3.988,0.864,13.026,1.428,15.736,4.97c-2.07,0.926-4.405,0.223-6.207,1.554C181.193,236.171,186.592,235.147,189.902,236.406z" />
                 <path style={{ fill: '#6b4423' }} d="M265.049,376.783c-1.693-1.227-3.444-2.495-5.185-3.638c-2.79-1.83-6.846-4.181-9.846-3.425c-1.282,0.321-2.291,1.185-3.082,2.639c-1.656,3.04-0.257,8.896,3.939,16.491c4.403,7.971,15.317,17.032,25.848,19.557c-1.1-2.972-2.028-6.045-2.709-9.313c-5.987-2.824-15.337-8.58-14.81-13.161c0.126-1.096,0.824-2.908,4.049-2.908c0.06,0,0.122,0,0.184,0.002c2.305,0.048,5.761,1.099,9.323,2.57c-0.027-1.242-0.048-2.486-0.075-3.731c-0.923-0.489-1.855-1.042-2.803-1.675C268.244,379.098,266.62,377.921,265.049,376.783z" />
@@ -93,7 +106,7 @@ const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, to
               </g>
 
               {/* Leaves Group - Olive green color */}
-              <g id="LEAVES" opacity="0.95">
+              <g id="LEAVES" opacity="0.95" clipPath="url(#treeClipLeaves)">
                 {/* Lights layer - positioned above trunk but below leaves for visual depth */}
                 {lightPositions.map((pos, index) => {
                   const isActive = index < lightsActivated;
@@ -220,13 +233,30 @@ const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, to
           </div>
 
           <div className="mt-10">
+            <div className="mb-6">
+              <label className="block text-slate-700 font-medium mb-2" htmlFor="tree-growth">
+                Boom groei
+              </label>
+              <input
+                id="tree-growth"
+                type="range"
+                min="0"
+                max="100"
+                value={treeGrowth}
+                onChange={(event) => setTreeGrowth(Number(event.target.value))}
+                className="w-full accent-gold"
+              />
+              <div className="mt-2 text-sm text-slate-600">
+                Wortels naar takken: {Math.round(treeGrowth)}%
+              </div>
+            </div>
             <div className="flex justify-between items-center mb-3 text-sm md:text-base">
-              <span className="text-gray-300 font-medium">
+              <span className="text-slate-700 font-medium">
                 {lightsActivated} van {totalLights} teams hebben hun doel bereikt
               </span>
               <span className="text-gold font-bold text-lg">{percentage}%</span>
             </div>
-            <div className="w-full bg-gray-800 rounded-full h-5 overflow-hidden shadow-inner">
+            <div className="w-full bg-slate-200 rounded-full h-5 overflow-hidden shadow-inner">
               <div
                 className="bg-gradient-to-r from-gold via-gold to-gold-dark h-5 rounded-full transition-all duration-700 ease-out shadow-lg"
                 style={{ width: `${percentage}%` }}

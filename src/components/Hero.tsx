@@ -18,13 +18,13 @@ const Hero: React.FC<HeroProps> = ({ totalRaised, lightsActivated, progressPerce
   return (
     <section className="pt-32 pb-20 px-4">
       <div className="container mx-auto max-w-4xl text-center">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-gold to-gold-dark bg-clip-text text-transparent">
+        <h1 className="text-5xl md:text-6xl font-bold mb-6 title-gradient">
           Olijfboom van Licht
         </h1>
-        <p className="text-xl md:text-2xl text-gray-300 mb-4">
+        <p className="text-xl md:text-2xl text-slate-700 mb-4">
           100 lichten voor €1.000.000
         </p>
-        <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto">
+        <p className="text-lg text-slate-600 mb-12 max-w-2xl mx-auto">
           Steun het Islamitisch Centrum Barendrecht door een licht te ontsteken. 
           Elk licht vertegenwoordigt €10.000 en brengt ons dichter bij ons doel. 
           Samen bouwen we aan een sterkere gemeenschap.
@@ -33,36 +33,36 @@ const Hero: React.FC<HeroProps> = ({ totalRaised, lightsActivated, progressPerce
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
           <button
             onClick={() => scrollToSection('doneer')}
-            className="bg-gold text-dark-bg px-8 py-4 rounded-full font-semibold text-lg hover:bg-gold-dark transition-colors"
+            className="btn btn-primary text-lg"
           >
             Doneer nu
           </button>
           <button
             onClick={() => navigate('/teams/new')}
-            className="border-2 border-gold text-gold px-8 py-4 rounded-full font-semibold text-lg hover:bg-gold/10 transition-colors"
+            className="btn btn-secondary text-lg"
           >
             Start een team
           </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-          <div className="bg-dark-surface/50 rounded-2xl p-6 backdrop-blur-sm border border-gray-800">
+          <div className="bg-white/80 rounded-2xl p-6 backdrop-blur-sm border border-slate-200">
             <div className="text-3xl font-bold text-gold mb-2">
               €{totalRaised.toLocaleString('nl-NL')}
             </div>
-            <div className="text-gray-400">Totaal opgehaald</div>
+            <div className="text-slate-600">Totaal opgehaald</div>
           </div>
-          <div className="bg-dark-surface/50 rounded-2xl p-6 backdrop-blur-sm border border-gray-800">
+          <div className="bg-white/80 rounded-2xl p-6 backdrop-blur-sm border border-slate-200">
             <div className="text-3xl font-bold text-gold mb-2">
               {lightsActivated}
             </div>
-            <div className="text-gray-400">Lichten aan</div>
+            <div className="text-slate-600">Lichten aan</div>
           </div>
-          <div className="bg-dark-surface/50 rounded-2xl p-6 backdrop-blur-sm border border-gray-800">
+          <div className="bg-white/80 rounded-2xl p-6 backdrop-blur-sm border border-slate-200">
             <div className="text-3xl font-bold text-gold mb-2">
               {percentage}%
             </div>
-            <div className="text-gray-400">Naar doel</div>
+            <div className="text-slate-600">Naar doel</div>
           </div>
         </div>
       </div>

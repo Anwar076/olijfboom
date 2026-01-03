@@ -89,27 +89,27 @@ const Donate: React.FC = () => {
     <section id="doneer" className="py-20 px-4">
       <div className="container mx-auto max-w-2xl">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gold">Doneer</h2>
-          <p className="text-xl text-gray-300">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 title-gradient">Doneer</h2>
+          <p className="text-xl text-slate-700">
             Kies een groep en help ons het doel te bereiken
           </p>
         </div>
 
-        <div className="bg-dark-surface/50 rounded-3xl p-8 md:p-12 border border-gray-800 backdrop-blur-sm">
+        <div className="bg-white/80 rounded-3xl p-8 md:p-12 border border-slate-200 backdrop-blur-sm">
           {error && (
-            <div className="bg-red-900/30 border border-red-700 text-red-300 rounded-lg p-4 mb-6">
+            <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">
               {error}
             </div>
           )}
 
           {/* Step 1: Select Team */}
           <div className="mb-8">
-            <label className="block text-gray-300 mb-4 font-medium">Stap 1: Kies je groep *</label>
+            <label className="block text-slate-700 mb-4 font-medium">Stap 1: Kies je groep *</label>
             <select
               required
               value={selectedTeam || ''}
               onChange={(e) => setSelectedTeam(parseInt(e.target.value))}
-              className="w-full bg-dark-surface border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-gold focus:outline-none"
+              className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
             >
               <option value="">-- Selecteer een groep --</option>
               {teams.map(team => (
@@ -120,7 +120,7 @@ const Donate: React.FC = () => {
 
           {/* Step 2: Enter Amount */}
           <div className="mb-8">
-            <label className="block text-gray-300 mb-4 font-medium">Stap 2: Voer bedrag in *</label>
+            <label className="block text-slate-700 mb-4 font-medium">Stap 2: Voer bedrag in *</label>
             
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
               {suggestedAmounts.map((amount) => (
@@ -133,8 +133,8 @@ const Donate: React.FC = () => {
                   }}
                   className={`py-3 px-4 rounded-lg font-semibold transition-colors ${
                     selectedAmount === amount
-                      ? 'bg-gold text-dark-bg'
-                      : 'bg-dark-surface border border-gray-700 text-gray-300 hover:border-gold'
+                      ? 'bg-gold text-slate-900'
+                      : 'bg-white border border-slate-300 text-slate-700 hover:border-gold'
                   }`}
                 >
                   €{amount}
@@ -143,7 +143,7 @@ const Donate: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-gray-300 mb-2 font-medium">Of kies een ander bedrag</label>
+              <label className="block text-slate-700 mb-2 font-medium">Of kies een ander bedrag</label>
               <input
                 type="number"
                 value={customAmount}
@@ -154,7 +154,7 @@ const Donate: React.FC = () => {
                 placeholder="€0,00"
                 min="1"
                 step="0.01"
-                className="w-full bg-dark-surface border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-gold focus:outline-none"
+                className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
               />
             </div>
           </div>
@@ -162,10 +162,10 @@ const Donate: React.FC = () => {
           {/* Step 3: Confirm */}
           {(selectedAmount || customAmount) && selectedTeam && (
             <div className="mb-8 p-4 bg-gold/10 border border-gold/30 rounded-lg">
-              <div className="text-gray-300 mb-2">
+              <div className="text-slate-700 mb-2">
                 <strong className="text-gold">Bedrag:</strong> €{(selectedAmount || parseFloat(customAmount) || 0).toFixed(2)}
               </div>
-              <div className="text-gray-300">
+              <div className="text-slate-700">
                 <strong className="text-gold">Groep:</strong> {teams.find(t => t.id === selectedTeam)?.name}
               </div>
             </div>
@@ -174,12 +174,12 @@ const Donate: React.FC = () => {
           <button
             onClick={handleDonate}
             disabled={loading || !selectedTeam || (!selectedAmount && !customAmount)}
-            className="w-full bg-gold text-dark-bg py-4 rounded-lg font-bold text-lg hover:bg-gold-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+            className="btn btn-primary w-full text-lg disabled:opacity-50 disabled:cursor-not-allowed mb-4"
           >
             {loading ? 'Verwerken...' : 'Doneer via iDEAL (Mollie)'}
           </button>
 
-          <p className="text-center text-sm text-gray-400">
+          <p className="text-center text-sm text-slate-600">
             Veilig betalen • Direct bevestigd
           </p>
         </div>

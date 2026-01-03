@@ -12,7 +12,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-dark-bg">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-gold text-xl">Laden...</div>
       </div>
     );

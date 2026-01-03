@@ -32,29 +32,29 @@ const FAQ: React.FC = () => {
   ];
 
   return (
-    <section id="faq" className="py-20 px-4 bg-dark-surface/20">
+    <section id="faq" className="py-20 px-4 bg-slate-100/60">
       <div className="container mx-auto max-w-3xl">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gold">Veelgestelde Vragen</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 title-gradient">Veelgestelde Vragen</h2>
         </div>
 
         <div className="space-y-4">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-dark-surface/50 rounded-xl border border-gray-800 backdrop-blur-sm overflow-hidden"
+              className="bg-white/80 rounded-xl border border-slate-200 backdrop-blur-sm overflow-hidden"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-dark-surface/50 transition-colors"
+                className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-white/80 transition-colors"
               >
-                <span className="font-semibold text-gray-200">{faq.question}</span>
+                <span className="font-semibold text-slate-800">{faq.question}</span>
                 <span className="text-gold text-xl ml-4">
                   {openIndex === index ? '−' : '+'}
                 </span>
               </button>
               {openIndex === index && (
-                <div className="px-6 pb-4 text-gray-400 leading-relaxed">
+                <div className="px-6 pb-4 text-slate-600 leading-relaxed">
                   {faq.answer}
                 </div>
               )}
