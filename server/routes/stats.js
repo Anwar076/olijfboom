@@ -12,7 +12,19 @@ router.get('/', async (req, res) => {
     );
     const totalRaised = parseFloat(totalResult.total) || 0;
 
-    // Count teams that reached their target (lampje ON)
+    // Lights activated: 1 licht = €10.000 totaal bedrag
+    const lightsActivated = Math.min(Math.floor(totalRaised / 10000), 100); // Cap at 100
+    const totalLights = 100;
+    const progressPercentage = (lightsActivated / totalLights) * 100;
+    
+    // Debug logging
+    console.log('Stats calculation:', {
+      totalRaised,
+      lightsActivated,
+      calculation: `${totalRaised} / 10000 = ${totalRaised / 10000}, floor = ${Math.floor(totalRaised / 10000)}`
+    });
+    
+    // Count teams that reached their target (for reference)
     const teamsCompleted = await db.all(`
       SELECT t.id, t.target_amount, COALESCE(SUM(d.amount), 0) as team_total
       FROM teams t
@@ -20,10 +32,6 @@ router.get('/', async (req, res) => {
       GROUP BY t.id, t.target_amount
       HAVING team_total >= t.target_amount
     `);
-    
-    const lightsActivated = Math.min(teamsCompleted.length, 100); // Cap at 100
-    const totalLights = 100;
-    const progressPercentage = (lightsActivated / totalLights) * 100;
 
     // Count teams
     const teamsResult = await db.get('SELECT COUNT(*) as count FROM teams');

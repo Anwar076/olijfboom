@@ -45,6 +45,7 @@ const HomePage: React.FC = () => {
       <OliveTreeSection 
         lightsActivated={stats.lightsActivated}
         totalLights={100}
+        totalRaised={stats.totalRaised}
       />
       <GoalCards />
       <SponsorLevels />

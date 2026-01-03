@@ -7,6 +7,7 @@ import invitesRoutes from './routes/invites.js';
 import meRoutes from './routes/me.js';
 import statsRoutes from './routes/stats.js';
 import donationsRoutes from './routes/donations.js';
+import lightsRoutes from './routes/lights.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -28,6 +29,7 @@ app.use(express.json());
     app.use('/api/me', meRoutes);
     app.use('/api/stats', statsRoutes);
     app.use('/api/donations', donationsRoutes);
+    app.use('/api/lights', lightsRoutes);
 
     // Health check
     app.get('/api/health', (req, res) => {

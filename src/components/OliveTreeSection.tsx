@@ -1,8 +1,17 @@
 import React, { useMemo, useState } from 'react';
+import { API_URL } from '../context/AuthContext';
 
 interface OliveTreeSectionProps {
   lightsActivated: number;
   totalLights: number;
+  totalRaised: number;
+}
+
+interface LightDetail {
+  lightIndex: number;
+  lightNumber: number;
+  amountRange: { start: number; end: number };
+  teams: Array<{ teamName: string; amount: number }>;
 }
 
 // Deterministic light positions using a seeded approach
@@ -36,24 +45,59 @@ const generateLightPositions = (count: number): Array<{ x: number; y: number }> 
   return positions.slice(0, count);
 };
 
-const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, totalLights }) => {
+const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, totalLights, totalRaised }) => {
   const lightPositions = useMemo(() => generateLightPositions(totalLights), [totalLights]);
-  const [treeGrowth, setTreeGrowth] = useState(0);
+  const [selectedLight, setSelectedLight] = useState<LightDetail | null>(null);
+  const [hoveredLight, setHoveredLight] = useState<LightDetail | null>(null);
+  const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
 
   const percentage = Math.round((lightsActivated / totalLights) * 100);
-  const trunkProgress = Math.min(treeGrowth, 70) / 70;
-  const leavesProgress = treeGrowth <= 70 ? 0 : (treeGrowth - 70) / 30;
-  const trunkRevealHeight = 500 * trunkProgress;
-  const trunkRevealY = 500 - trunkRevealHeight;
-  const leavesRevealHeight = 500 * leavesProgress;
-  const leavesRevealY = 500 - leavesRevealHeight;
+
+  const fetchLightDetails = async (lightIndex: number) => {
+    try {
+      const response = await fetch(`${API_URL}/api/lights/${lightIndex}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+    } catch (error) {
+      console.error('Failed to fetch light details:', error);
+    }
+    return null;
+  };
+
+  const handleLightClick = async (lightIndex: number) => {
+    if (lightIndex >= lightsActivated) return; // Only click active lights
+    
+    const data = await fetchLightDetails(lightIndex);
+    if (data) {
+      setSelectedLight(data);
+    }
+  };
+
+  const handleLightHover = async (lightIndex: number, event: React.MouseEvent<SVGGElement>) => {
+    if (lightIndex >= lightsActivated) return;
+    
+    // Position tooltip near the mouse cursor
+    setHoverPosition({ x: event.clientX, y: event.clientY });
+    
+    const data = await fetchLightDetails(lightIndex);
+    if (data) {
+      setHoveredLight(data);
+    }
+  };
+
+  const handleLightHoverLeave = () => {
+    setHoveredLight(null);
+    setHoverPosition(null);
+  };
 
   return (
     <section id="boom" className="py-20 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 title-gradient">De Olijfboom</h2>
-          <p className="text-xl text-slate-700">Elk licht vertegenwoordigt een team dat zijn doel heeft bereikt</p>
+          <p className="text-xl text-slate-700">Elk licht vertegenwoordigt €10.000 opgehaald</p>
         </div>
 
         <div className="bg-slate-100/70 rounded-3xl p-8 md:p-12 border border-slate-200 backdrop-blur-sm">
@@ -72,16 +116,14 @@ const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, to
                     <feMergeNode in="SourceGraphic"/>
                   </feMerge>
                 </filter>
-                <clipPath id="treeClipTrunk">
-                  <rect x="0" y={trunkRevealY} width="500" height={trunkRevealHeight} />
-                </clipPath>
-                <clipPath id="treeClipLeaves">
-                  <rect x="0" y={leavesRevealY} width="500" height={leavesRevealHeight} />
-                </clipPath>
+                
+                {/* Tree growth mask - reveals tree from bottom to top */}
               </defs>
 
+              {/* Tree container - always fully visible */}
+              <g>
               {/* Trunk/Branches Group - Brown color */}
-              <g id="TRUNK" opacity="0.95" clipPath="url(#treeClipTrunk)">
+              <g id="TRUNK" opacity="0.95">
                 <path style={{ fill: '#6b4423' }} d="M307.698,281.987c-0.525-1.182-1.196-2.219-2.146-2.649c-2.04-0.925-4.475,0.524-5.874,2.261c-4.058,5.038-5.908,13.976-5.446,26.034c6.262-6.551,8.351-15.182,12.25-23.35C306.844,283.524,307.258,282.756,307.698,281.987z" />
                 <path style={{ fill: '#6b4423' }} d="M189.902,236.406c3.546,1.348,5.433,3.177,7.024,6.184c-0.459-2.817-1.135-5.538-1.93-7.546c-2.191-5.537-7.97-10.641-17.176-15.171c-10.522-5.178-20.978-0.751-30.211,5.057c7.066-1.026,14.264,1.228,21.42,2.778c3.988,0.864,13.026,1.428,15.736,4.97c-2.07,0.926-4.405,0.223-6.207,1.554C181.193,236.171,186.592,235.147,189.902,236.406z" />
                 <path style={{ fill: '#6b4423' }} d="M265.049,376.783c-1.693-1.227-3.444-2.495-5.185-3.638c-2.79-1.83-6.846-4.181-9.846-3.425c-1.282,0.321-2.291,1.185-3.082,2.639c-1.656,3.04-0.257,8.896,3.939,16.491c4.403,7.971,15.317,17.032,25.848,19.557c-1.1-2.972-2.028-6.045-2.709-9.313c-5.987-2.824-15.337-8.58-14.81-13.161c0.126-1.096,0.824-2.908,4.049-2.908c0.06,0,0.122,0,0.184,0.002c2.305,0.048,5.761,1.099,9.323,2.57c-0.027-1.242-0.048-2.486-0.075-3.731c-0.923-0.489-1.855-1.042-2.803-1.675C268.244,379.098,266.62,377.921,265.049,376.783z" />
@@ -106,70 +148,7 @@ const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, to
               </g>
 
               {/* Leaves Group - Olive green color */}
-              <g id="LEAVES" opacity="0.95" clipPath="url(#treeClipLeaves)">
-                {/* Lights layer - positioned above trunk but below leaves for visual depth */}
-                {lightPositions.map((pos, index) => {
-                  const isActive = index < lightsActivated;
-                  return (
-                    <g key={index} filter={isActive ? "url(#lightGlow)" : undefined}>
-                      {/* Outer glow for active lights */}
-                      {isActive && (
-                        <circle
-                          cx={pos.x}
-                          cy={pos.y}
-                          r="10"
-                          fill="#F5D77A"
-                          opacity="0.3"
-                        >
-                          <animate
-                            attributeName="r"
-                            values="8;12;8"
-                            dur="3s"
-                            repeatCount="indefinite"
-                          />
-                          <animate
-                            attributeName="opacity"
-                            values="0.2;0.4;0.2"
-                            dur="3s"
-                            repeatCount="indefinite"
-                          />
-                        </circle>
-                      )}
-                      
-                      {/* Main light circle */}
-                      <circle
-                        cx={pos.x}
-                        cy={pos.y}
-                        r={isActive ? "5" : "3"}
-                        fill={isActive ? "#F5D77A" : "#444444"}
-                        stroke={isActive ? "#D4B85A" : "#333333"}
-                        strokeWidth={isActive ? "1.5" : "1"}
-                        opacity={isActive ? 1 : 0.3}
-                      >
-                        {isActive && (
-                          <animate
-                            attributeName="opacity"
-                            values="0.9;1;0.9"
-                            dur="2s"
-                            repeatCount="indefinite"
-                          />
-                        )}
-                      </circle>
-                      
-                      {/* Inner highlight for active lights */}
-                      {isActive && (
-                        <circle
-                          cx={pos.x - 1}
-                          cy={pos.y - 1}
-                          r="2"
-                          fill="#FFE8A3"
-                          opacity="0.8"
-                        />
-                      )}
-                    </g>
-                  );
-                })}
-
+              <g id="LEAVES" opacity="0.95" style={{ pointerEvents: 'none' }}>
                 {/* Leaf paths from the provided SVG */}
                 <path style={{ fill: '#7a8d6a' }} d="M204.958,302.353c0,0-11.372,0.438-8.551,14.545C207.693,313.763,204.958,302.353,204.958,302.353z" />
                 <path style={{ fill: '#7a8d6a' }} d="M184.812,307.668c11.665,1.065,13.147-10.574,13.147-10.574S187.169,293.475,184.812,307.668z" />
@@ -216,8 +195,6 @@ const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, to
                 <path style={{ fill: '#7a8d6a' }} d="M392.493,249.215c5.897-13.123-5.092-16.086-5.092-16.086S382.191,243.642,392.493,249.215z" />
                 <path style={{ fill: '#7a8d6a' }} d="M401.104,252.185c12.011-7.919,4.322-16.309,4.322-16.309S395.393,241.958,401.104,252.185z" />
                 <path style={{ fill: '#7a8d6a' }} d="M412.005,233.89c0,0-3.381,11.236,7.708,15.009C423.334,234.976,412.005,233.89,412.005,233.89z" />
-                {/* More leaf paths - truncated for brevity, but you can add all paths from the original SVG file */}
-                {/* Adding a few more key paths for visual completeness */}
                 <path style={{ fill: '#7a8d6a' }} d="M256.879,61.971c-9.174,7.283-2.211,16.727-2.211,16.727S264.972,73.866,256.879,61.971z" />
                 <path style={{ fill: '#7a8d6a' }} d="M258.226,88.819c0,0,11.347-0.87,7.991-14.86C255.059,77.521,258.226,88.819,258.226,88.819z" />
                 <path style={{ fill: '#7a8d6a' }} d="M282.529,78.311c0,0,9.114-6.816-1.217-16.828C273.8,70.47,282.529,78.311,282.529,78.311z" />
@@ -227,36 +204,93 @@ const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, to
                 <path style={{ fill: '#7a8d6a' }} d="M314.024,58.787c-11.701,0.538-11.581,12.271-11.581,12.271S313.627,73.169,314.024,58.787z" />
                 <path style={{ fill: '#7a8d6a' }} d="M327.758,55.643c-9.59,6.725-3.2,16.566-3.2,16.566S335.13,67.997,327.758,55.643z" />
                 <path style={{ fill: '#7a8d6a' }} d="M341.405,64.981c-11.71-0.256-12.385,11.458-12.385,11.458S340.035,79.303,341.405,64.981z" />
-                {/* Continue with more paths as needed - I'm including key representative paths */}
+              </g>
+
+              {/* Lights layer - positioned ABOVE leaves so they are clickable */}
+              <g id="LIGHTS" style={{ pointerEvents: 'all' }}>
+                {lightPositions.map((pos, index) => {
+                  const isActive = index < lightsActivated;
+                  return (
+                    <g 
+                      key={index} 
+                      filter={isActive ? "url(#lightGlow)" : undefined}
+                      style={{ cursor: isActive ? 'pointer' : 'default', pointerEvents: isActive ? 'all' : 'none' }}
+                      onClick={() => isActive && handleLightClick(index)}
+                      onMouseEnter={(e) => isActive && handleLightHover(index, e)}
+                      onMouseLeave={isActive ? handleLightHoverLeave : undefined}
+                    >
+                      {/* Outer glow for active lights */}
+                      {isActive && (
+                        <circle
+                          cx={pos.x}
+                          cy={pos.y}
+                          r="10"
+                          fill="#F5D77A"
+                          opacity="0.3"
+                        >
+                          <animate
+                            attributeName="r"
+                            values="8;12;8"
+                            dur="3s"
+                            repeatCount="indefinite"
+                          />
+                          <animate
+                            attributeName="opacity"
+                            values="0.2;0.4;0.2"
+                            dur="3s"
+                            repeatCount="indefinite"
+                          />
+                        </circle>
+                      )}
+                      
+                      {/* Main light circle - clickable when active */}
+                      <circle
+                        cx={pos.x}
+                        cy={pos.y}
+                        r={isActive ? "8" : "3"}
+                        fill={isActive ? "#F5D77A" : "#444444"}
+                        stroke={isActive ? "#D4B85A" : "#333333"}
+                        strokeWidth={isActive ? "2" : "1"}
+                        opacity={isActive ? 1 : 0.3}
+                        style={{ pointerEvents: isActive ? 'all' : 'none' }}
+                      >
+                        {isActive && (
+                          <animate
+                            attributeName="opacity"
+                            values="0.9;1;0.9"
+                            dur="2s"
+                            repeatCount="indefinite"
+                          />
+                        )}
+                      </circle>
+                      
+                      {/* Inner highlight for active lights */}
+                      {isActive && (
+                        <circle
+                          cx={pos.x - 1}
+                          cy={pos.y - 1}
+                          r="3"
+                          fill="#FFE8A3"
+                          opacity="0.9"
+                          style={{ pointerEvents: 'none' }}
+                        />
+                      )}
+                    </g>
+                  );
+                })}
+              </g>
               </g>
             </svg>
           </div>
 
           <div className="mt-10">
-            <div className="mb-6">
-              <label className="block text-slate-700 font-medium mb-2" htmlFor="tree-growth">
-                Boom groei
-              </label>
-              <input
-                id="tree-growth"
-                type="range"
-                min="0"
-                max="100"
-                value={treeGrowth}
-                onChange={(event) => setTreeGrowth(Number(event.target.value))}
-                className="w-full accent-gold"
-              />
-              <div className="mt-2 text-sm text-slate-600">
-                Wortels naar takken: {Math.round(treeGrowth)}%
-              </div>
-            </div>
             <div className="flex justify-between items-center mb-3 text-sm md:text-base">
-              <span className="text-slate-700 font-medium">
-                {lightsActivated} van {totalLights} teams hebben hun doel bereikt
+              <span className="text-gray-300 font-medium">
+                {lightsActivated} van {totalLights} lichten geactiveerd
               </span>
               <span className="text-gold font-bold text-lg">{percentage}%</span>
             </div>
-            <div className="w-full bg-slate-200 rounded-full h-5 overflow-hidden shadow-inner">
+            <div className="w-full bg-gray-800 rounded-full h-5 overflow-hidden shadow-inner">
               <div
                 className="bg-gradient-to-r from-gold via-gold to-gold-dark h-5 rounded-full transition-all duration-700 ease-out shadow-lg"
                 style={{ width: `${percentage}%` }}
@@ -264,9 +298,110 @@ const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, to
                 <div className="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
               </div>
             </div>
+            <div className="mt-4 text-center">
+              <p className="text-xs text-gray-500">
+                Hover of klik op een actief licht om te zien welke teams hebben bijgedragen
+              </p>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Hover Tooltip */}
+      {hoveredLight && hoverPosition && (
+        <div 
+          className="fixed z-40 bg-white rounded-lg shadow-2xl border-2 border-gold/30 p-4 max-w-xs pointer-events-none"
+          style={{
+            left: `${hoverPosition.x}px`,
+            top: `${hoverPosition.y}px`,
+            transform: 'translate(-50%, calc(-100% - 10px))',
+          }}
+        >
+          <div className="text-sm font-bold text-gold mb-2">
+            Licht #{hoveredLight.lightNumber}
+          </div>
+          <div className="text-xs text-slate-600 mb-2">
+            €{hoveredLight.amountRange.start.toLocaleString('nl-NL')} - €{hoveredLight.amountRange.end.toLocaleString('nl-NL')}
+          </div>
+          {hoveredLight.teams.length > 0 ? (
+            <div className="text-xs">
+              <div className="font-semibold text-slate-700 mb-1">Teams:</div>
+              <div className="space-y-1">
+                {hoveredLight.teams.slice(0, 3).map((team, idx) => (
+                  <div key={idx} className="text-slate-600">
+                    • {team.teamName} (€{team.amount.toFixed(0)})
+                  </div>
+                ))}
+                {hoveredLight.teams.length > 3 && (
+                  <div className="text-slate-500 italic">
+                    +{hoveredLight.teams.length - 3} meer
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="text-xs text-slate-500">Geen teams</div>
+          )}
+          <div className="text-xs text-slate-400 mt-2 italic">Klik voor details</div>
+        </div>
+      )}
+
+      {/* Light Detail Modal */}
+      {selectedLight && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedLight(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-gold mb-1">
+                    Licht #{selectedLight.lightNumber}
+                  </h3>
+                  <p className="text-sm text-slate-600">
+                    €{selectedLight.amountRange.start.toLocaleString('nl-NL')} - €{selectedLight.amountRange.end.toLocaleString('nl-NL')}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSelectedLight(null)}
+                  className="text-slate-400 hover:text-slate-600 text-2xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+
+              {selectedLight.teams.length > 0 ? (
+                <div>
+                  <h4 className="font-semibold text-slate-800 mb-3">
+                    Teams die hebben bijgedragen:
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedLight.teams.map((team, idx) => (
+                      <div 
+                        key={idx}
+                        className="bg-gradient-to-r from-gold/10 to-gold/5 border border-gold/20 rounded-lg p-3 flex justify-between items-center"
+                      >
+                        <span className="font-medium text-slate-800">{team.teamName}</span>
+                        <span className="text-gold font-bold">
+                          €{team.amount.toFixed(2)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-slate-500 text-center py-4">
+                  Geen teams gevonden voor dit licht
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

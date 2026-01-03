@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "init-db": "node init-production-db.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
