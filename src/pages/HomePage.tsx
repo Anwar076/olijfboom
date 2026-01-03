@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
 import OliveTreeSection from '../components/OliveTreeSection';
@@ -12,7 +11,6 @@ import Footer from '../components/Footer';
 import { API_URL } from '../context/AuthContext';
 
 const HomePage: React.FC = () => {
-  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalRaised: 0,
     lightsActivated: 0,
@@ -34,10 +32,6 @@ const HomePage: React.FC = () => {
     } catch (error) {
       console.error('Failed to fetch stats:', error);
     }
-  };
-
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../context/AuthContext';
 import Header from '../components/Header';
@@ -24,7 +23,6 @@ interface Team {
 
 const DashboardPage: React.FC = () => {
   const { user, token, logout } = useAuth();
-  const navigate = useNavigate();
   const [team, setTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
   const [inviteUrl, setInviteUrl] = useState('');

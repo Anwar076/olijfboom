@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { API_URL } from '../context/AuthContext';
 
 interface Team {
@@ -10,7 +10,6 @@ interface Team {
 const suggestedAmounts = [10, 25, 50, 100, 250];
 
 const Donate: React.FC = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
