@@ -4,6 +4,7 @@ import { API_URL } from '../context/AuthContext';
 interface OliveTreeSectionProps {
   lightsActivated: number;
   totalLights: number;
+  totalRaised: number;
 }
 
 interface LightDetail {
@@ -213,7 +214,7 @@ const LIGHT_SHAPES = [
 
 ];
 
-const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, totalLights }) => {
+const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, totalLights, totalRaised }) => {
   const [selectedLight, setSelectedLight] = useState<LightDetail | null>(null);
   const [hoveredLight, setHoveredLight] = useState<LightDetail | null>(null);
   const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
@@ -268,6 +269,7 @@ const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, to
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 title-gradient">De Olijfboom</h2>
           <p className="text-xl text-slate-700">Elk licht vertegenwoordigt €10.000 opgehaald</p>
+          <p className="text-lg text-slate-600">Totaal opgehaald: €{totalRaised.toLocaleString('nl-NL')}</p>
         </div>
 
         <div className="bg-slate-100/70 rounded-3xl p-8 md:p-12 border border-slate-200 backdrop-blur-sm">
