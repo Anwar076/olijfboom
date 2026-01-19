@@ -4,7 +4,6 @@ import { API_URL } from '../context/AuthContext';
 interface OliveTreeSectionProps {
   lightsActivated: number;
   totalLights: number;
-  totalRaised: number;
 }
 
 interface LightDetail {
@@ -214,7 +213,7 @@ const LIGHT_SHAPES = [
 
 ];
 
-const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, totalLights, totalRaised }) => {
+const OliveTreeSection: React.FC<OliveTreeSectionProps> = ({ lightsActivated, totalLights }) => {
   const [selectedLight, setSelectedLight] = useState<LightDetail | null>(null);
   const [hoveredLight, setHoveredLight] = useState<LightDetail | null>(null);
   const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
