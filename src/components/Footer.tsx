@@ -18,9 +18,9 @@ const Footer: React.FC = () => {
           </div>
           <div>
             <h4 className="font-semibold text-slate-700 mb-4">Contact</h4>
-            <p className="text-slate-600 text-sm mb-2">Email: info@icb-barendrecht.nl</p>
-            <p className="text-slate-600 text-sm mb-2">Tel: 0180 - XXX XXX</p>
-            <p className="text-slate-600 text-sm">Adres: [Adres], Barendrecht</p>
+            <p className="text-slate-600 text-sm mb-2">Email: info@icbarendrecht.nl</p>
+            <p className="text-slate-600 text-sm mb-2">Tel: 0644224077</p>
+            <p className="text-slate-600 text-sm">Adres: Bijdorpplein 41, Barendrecht</p>
           </div>
           <div>
             <h4 className="font-semibold text-slate-700 mb-4">Informatie</h4>
