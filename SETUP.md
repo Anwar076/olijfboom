@@ -1,6 +1,6 @@
 # Setup Instructions - Olijfboom van Licht (Laravel)
 
-## Quick Start
+## Quick Start (Local)
 
 ### 1. Install PHP dependencies
 ```bash
@@ -42,6 +42,47 @@ npm run dev
 ```
 
 App runs on: `http://localhost:8000`
+
+## Production Setup
+
+### 1. Install dependencies
+```bash
+composer install --no-dev --optimize-autoloader
+npm install
+npm run build
+```
+
+### 2. Configure environment
+```bash
+copy .env.example .env
+php artisan key:generate
+```
+
+Update `.env`:
+- `APP_ENV=production`
+- `APP_DEBUG=false`
+- `APP_URL=https://your-domain.tld`
+- `DB_CONNECTION=mysql`
+- `DB_DATABASE=olijfboom`
+- `DB_USERNAME=your_db_user`
+- `DB_PASSWORD=your_db_password`
+
+### 3. Run migrations
+```bash
+php artisan migrate --force
+```
+
+### 4. Optimize caches
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+### 5. Web server
+- Point your web server document root to `public/`
+- Ensure PHP-FPM is enabled
+- Set correct permissions for `storage/` and `bootstrap/cache/`
 
 ## First Steps
 

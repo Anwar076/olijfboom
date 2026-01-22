@@ -16,8 +16,27 @@ class HomeController extends Controller
 
         $teams = Team::query()
             ->leftJoin('donations', 'teams.id', '=', 'donations.team_id')
-            ->select('teams.*', DB::raw('COALESCE(SUM(donations.amount), 0) as team_total'))
-            ->groupBy('teams.id')
+            ->select(
+                'teams.id',
+                'teams.name',
+                'teams.description',
+                'teams.target_label',
+                'teams.target_amount',
+                'teams.created_by_user_id',
+                'teams.created_at',
+                'teams.updated_at',
+                DB::raw('COALESCE(SUM(donations.amount), 0) as team_total')
+            )
+            ->groupBy(
+                'teams.id',
+                'teams.name',
+                'teams.description',
+                'teams.target_label',
+                'teams.target_amount',
+                'teams.created_by_user_id',
+                'teams.created_at',
+                'teams.updated_at'
+            )
             ->orderByDesc('team_total')
             ->get()
             ->map(function ($team) {
