@@ -176,6 +176,19 @@ class DashboardController extends Controller
             abort(403, 'Not authorized for this team.');
         }
 
+        $teamTotal = (float) (DB::table('donations')
+            ->where('team_id', $team->id)
+            ->where('status', 'paid')
+            ->sum('amount') ?? 0);
+        $targetAmount = (float) $team->target_amount;
+        $goalReached = $targetAmount > 0 && $teamTotal >= $targetAmount;
+
+        if (!$goalReached) {
+            return redirect()->route('dashboard')->withErrors([
+                'goal' => 'Je kunt pas een nieuw teamdoel kiezen zodra het huidige doel is bereikt.',
+            ]);
+        }
+
         if (!$request->filled('target_label') && $request->filled('target_option')) {
             $parts = explode('::', (string) $request->input('target_option'));
             if (count($parts) === 2) {

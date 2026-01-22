@@ -406,8 +406,102 @@ const initOliveTree = () => {
     const activeLights = parseInt(container.getAttribute('data-active-lights') || '0', 10);
     const trunkPaths = Array.from(container.querySelectorAll('#TRUNK path'));
     const leafPaths = Array.from(container.querySelectorAll('#LEAVES path'));
-    const treeParts = [...trunkPaths, ...leafPaths.slice(0, 4)].map((node, index) => ({
-        node,
+    const trunkCategories = [
+        {
+            key: 'stam',
+            title: 'Stam',
+            lights: 20,
+            amount: 200000,
+            reward: 'Auto',
+            description: 'Het fundament van onze boom',
+        },
+        {
+            key: 'takken',
+            title: 'Takken',
+            lights: 10,
+            amount: 100000,
+            reward: 'Mini-auto (Fiat Topolino-achtig)',
+            description: 'Sterke ondersteuning voor groei',
+        },
+        {
+            key: 'wortels',
+            title: 'Wortels',
+            lights: 5,
+            amount: 50000,
+            reward: 'Family Corendon all-inclusive vakantie',
+            description: 'Diepe verbinding met de gemeenschap',
+        },
+    ];
+    const leafCategories = [
+        {
+            key: 'olijven',
+            title: 'Olijven',
+            lights: 2.5,
+            amount: 25000,
+            reward: 'ICB Umrah-ticket',
+            description: 'Vruchtbare bijdrage aan het centrum',
+        },
+        {
+            key: 'bladeren-groot',
+            title: 'Bladeren (groot)',
+            lights: 1,
+            amount: 10000,
+            reward: 'Islamitische VIP-ervaring',
+            description: 'Elk blad draagt bij aan de boom',
+        },
+        {
+            key: 'bladeren-klein',
+            title: 'Bladeren (klein)',
+            lights: 0.5,
+            amount: 5000,
+            reward: 'Islamitische belevingen & kenniservaringen',
+            description: 'Elk blad draagt bij aan de boom',
+        },
+    ];
+    const allocateCategories = (paths, categories) => {
+        const totalWeight = categories.reduce((sum, item) => sum + item.lights, 0);
+        let remaining = paths.length;
+        const counts = categories.map((item) => {
+            const raw = (item.lights / totalWeight) * paths.length;
+            const count = Math.floor(raw);
+            remaining -= count;
+            return count;
+        });
+
+        let index = 0;
+        while (remaining > 0) {
+            counts[index % counts.length] += 1;
+            remaining -= 1;
+            index += 1;
+        }
+
+        const parts = [];
+        let cursor = 0;
+        categories.forEach((category, catIndex) => {
+            const count = counts[catIndex];
+            for (let i = 0; i < count && cursor < paths.length; i += 1) {
+                parts.push({
+                    node: paths[cursor],
+                    category,
+                });
+                cursor += 1;
+            }
+        });
+
+        for (; cursor < paths.length; cursor += 1) {
+            parts.push({
+                node: paths[cursor],
+                category: categories[categories.length - 1],
+            });
+        }
+
+        return parts;
+    };
+    const treeParts = [
+        ...allocateCategories(trunkPaths, trunkCategories),
+        ...allocateCategories(leafPaths, leafCategories),
+    ].map((part, index) => ({
+        ...part,
         order: index,
     }));
     const lightsLayer = container.querySelector('[data-lights-layer]');
@@ -422,25 +516,6 @@ const initOliveTree = () => {
     const modalTeams = document.querySelector('[data-light-modal-teams]');
     const modalEmpty = document.querySelector('[data-light-modal-empty]');
     const modalClose = document.querySelector('[data-light-modal-close]');
-
-    if (treeParts.length > 0) {
-        const totalParts = treeParts.length;
-        const progress = totalLights > 0 ? (activeLights / totalLights) * totalParts : 0;
-        const fullParts = Math.floor(progress);
-        const partial = Math.max(0, Math.min(1, progress - fullParts));
-        const baseOpacity = 0.35;
-
-        treeParts.forEach((part, index) => {
-            let opacity = baseOpacity;
-            if (index < fullParts) {
-                opacity = 1;
-            } else if (index === fullParts) {
-                opacity = baseOpacity + (1 - baseOpacity) * partial;
-            }
-            part.node.style.opacity = opacity.toFixed(3);
-            part.node.style.transition = 'opacity 500ms ease';
-        });
-    }
 
     if (!lightsLayer) return;
 
@@ -487,6 +562,31 @@ const initOliveTree = () => {
         tooltip.classList.remove('hidden');
     };
 
+    const updateCategoryTooltip = (category, event) => {
+        if (!tooltip || !category) return;
+        tooltipTitle.textContent = category.title;
+        tooltipRange.textContent = `${formatCurrency(category.amount, 0)} \u2022 ${category.lights} lichten`;
+        tooltipTeams.innerHTML = '';
+
+        const rewardRow = document.createElement('div');
+        rewardRow.className = 'text-slate-600';
+        rewardRow.textContent = `Beloning: ${category.reward}`;
+        tooltipTeams.appendChild(rewardRow);
+
+        const descriptionRow = document.createElement('div');
+        descriptionRow.className = 'text-slate-500 text-xs mt-1';
+        descriptionRow.textContent = category.description;
+        tooltipTeams.appendChild(descriptionRow);
+
+        if (tooltipMore) {
+            tooltipMore.textContent = '';
+        }
+
+        tooltip.style.left = `${event.clientX}px`;
+        tooltip.style.top = `${event.clientY}px`;
+        tooltip.classList.remove('hidden');
+    };
+
     const hideTooltip = () => {
         if (tooltip) tooltip.classList.add('hidden');
     };
@@ -512,6 +612,63 @@ const initOliveTree = () => {
 
         modal.classList.remove('hidden');
     };
+
+    const openCategoryModal = (category) => {
+        if (!modal || !category) return;
+        modalTitle.textContent = category.title;
+        modalRange.textContent = `${formatCurrency(category.amount, 0)} \u2022 ${category.lights} lichten`;
+        modalTeams.innerHTML = '';
+        modalEmpty.classList.add('hidden');
+
+        const rewardRow = document.createElement('div');
+        rewardRow.className = 'bg-gradient-to-r from-gold/10 to-gold/5 border border-gold/20 rounded-lg p-3';
+        rewardRow.innerHTML = `<div class=\"text-sm text-slate-500\">Beloning</div><div class=\"font-semibold text-slate-800\">${category.reward}</div>`;
+        modalTeams.appendChild(rewardRow);
+
+        const descriptionRow = document.createElement('div');
+        descriptionRow.className = 'text-slate-600 text-sm mt-2';
+        descriptionRow.textContent = category.description;
+        modalTeams.appendChild(descriptionRow);
+
+        modal.classList.remove('hidden');
+    };
+
+    if (treeParts.length > 0) {
+        const totalParts = treeParts.length;
+        const progress = totalLights > 0 ? (activeLights / totalLights) * totalParts : 0;
+        const fullParts = Math.floor(progress);
+        const partial = Math.max(0, Math.min(1, progress - fullParts));
+        const baseOpacity = 0.35;
+        const getLightIndexForPart = (index) => {
+            if (totalLights <= 0) return 0;
+            return Math.min(totalLights - 1, Math.floor((index / totalParts) * totalLights));
+        };
+
+        treeParts.forEach((part, index) => {
+            let opacity = baseOpacity;
+            if (index < fullParts) {
+                opacity = 1;
+            } else if (index === fullParts) {
+                opacity = baseOpacity + (1 - baseOpacity) * partial;
+            }
+            part.node.style.opacity = opacity.toFixed(3);
+            part.node.style.transition = 'opacity 500ms ease';
+
+            const lightIndex = getLightIndexForPart(index);
+            const isActive = lightIndex < activeLights;
+            part.node.style.pointerEvents = isActive ? 'all' : 'none';
+            if (isActive) {
+                part.node.style.cursor = 'pointer';
+                part.node.addEventListener('mouseenter', (event) => {
+                    updateCategoryTooltip(part.category, event);
+                });
+                part.node.addEventListener('mouseleave', hideTooltip);
+                part.node.addEventListener('click', () => {
+                    openCategoryModal(part.category);
+                });
+            }
+        });
+    }
 
     const closeModal = () => {
         if (modal) modal.classList.add('hidden');

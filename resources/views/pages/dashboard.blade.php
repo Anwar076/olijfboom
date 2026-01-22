@@ -27,6 +27,7 @@
             @else
                 @php
                     $percentage = round($progressRatio);
+                    $goalReached = $lampStatus;
                 @endphp
                 <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
                     <div class="flex items-start justify-between mb-4">
@@ -66,7 +67,12 @@
 
                 @if (auth()->user()->role === 'admin')
                     <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
-                        <h3 class="text-xl font-bold mb-4 title-gradient">Teamdoel aanpassen</h3>
+                        <h3 class="text-xl font-bold mb-4 title-gradient">Volgend teamdoel kiezen</h3>
+                        @unless ($goalReached)
+                            <p class="text-sm text-slate-600 mb-4">
+                                Bereik eerst je huidige teamdoel om een nieuw doel te kunnen kiezen.
+                            </p>
+                        @endunless
                         @php
                             $selectedTargetLabel = old('target_label', $team->target_label);
                             $selectedTargetAmount = (int) old('target_amount', (float) $team->target_amount);
@@ -80,8 +86,9 @@
                                 <select
                                     required
                                     name="target_option"
-                                    class="w-full bg-white border border-slate-300 rounded-lg px-4 py-2 text-slate-900 focus:border-gold focus:outline-none"
+                                    class="w-full bg-white border border-slate-300 rounded-lg px-4 py-2 text-slate-900 focus:border-gold focus:outline-none {{ $goalReached ? '' : 'opacity-60 cursor-not-allowed' }}"
                                     onchange="const [label, amount] = this.value.split('::'); this.form.target_label.value = label; this.form.target_amount.value = amount;"
+                                    {{ $goalReached ? '' : 'disabled' }}
                                 >
                                     @foreach ($targetOptions as $option)
                                         @php
@@ -95,7 +102,9 @@
                                 <input type="hidden" name="target_label" value="{{ $selectedTargetLabel }}">
                                 <input type="hidden" name="target_amount" value="{{ $selectedTargetAmount }}">
                             </div>
-                            <button type="submit" class="btn btn-primary w-full">Bijwerken</button>
+                            <button type="submit" class="btn btn-primary w-full {{ $goalReached ? '' : 'opacity-60 cursor-not-allowed' }}" {{ $goalReached ? '' : 'disabled' }}>
+                                Bijwerken
+                            </button>
                         </form>
                     </div>
 
