@@ -18,7 +18,8 @@ class LightsController extends Controller
 
         $allDonations = DB::table('donations')
             ->join('teams', 'donations.team_id', '=', 'teams.id')
-            ->orderBy('donations.created_at')
+            ->where('donations.status', 'paid')
+            ->orderBy('donations.paid_at')
             ->orderBy('donations.id')
             ->select(
                 'donations.id',

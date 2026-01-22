@@ -14,6 +14,8 @@ Route::get('/teams/new', [TeamController::class, 'create'])->name('teams.create'
 Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
 Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
 Route::post('/donations', [DonationsController::class, 'store'])->name('donations.store');
+Route::get('/donations/return/{donation}', [DonationsController::class, 'handleReturn'])->name('donations.return');
+Route::post('/donations/webhook', [DonationsController::class, 'webhook'])->name('donations.webhook');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');

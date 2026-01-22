@@ -12,6 +12,14 @@ class Donation extends Model
     protected $fillable = [
         'team_id',
         'amount',
+        'status',
+        'mollie_payment_id',
+        'paid_at',
+    ];
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'paid_at' => 'datetime',
     ];
 
     public function team()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Donation;
 use App\Models\Team;
+use App\Services\DonationPaymentService;
 use Illuminate\Http\Request;
 
 class DonationsController extends Controller
@@ -19,16 +20,32 @@ class DonationsController extends Controller
         $team = Team::findOrFail($data['team_id']);
         $amount = (float) $data['amount'];
 
-        Donation::create([
+        $donation = Donation::create([
             'team_id' => $team->id,
             'amount' => $amount,
+            'status' => 'pending',
         ]);
 
-        if ($request->expectsJson()) {
-            return response()->json(['success' => true]);
+        try {
+            $payment = app(DonationPaymentService::class)->createPayment(
+                $donation,
+                $team,
+                route('donations.return', ['donation' => $donation->id]),
+                route('donations.webhook')
+            );
+        } catch (\Throwable $error) {
+            $donation->update(['status' => 'failed']);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Betaling kon niet worden gestart.',
+            ], 500);
         }
 
-        return redirect()->route('home')
-            ->with('donation_success', 'Donatie ontvangen! Bedankt voor uw bijdrage.');
+        return response()->json([
+            'success' => true,
+            'donationId' => $donation->id,
+            'checkoutUrl' => $payment->getCheckoutUrl(),
+        ]);
     }
 }

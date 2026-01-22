@@ -15,7 +15,10 @@ class ApiTeamController extends Controller
         $offset = (int) ($request->query('offset', 0));
 
         $teams = Team::query()
-            ->leftJoin('donations', 'teams.id', '=', 'donations.team_id')
+            ->leftJoin('donations', function ($join) {
+                $join->on('teams.id', '=', 'donations.team_id')
+                    ->where('donations.status', '=', 'paid');
+            })
             ->select(
                 'teams.id',
                 'teams.name',
@@ -58,7 +61,10 @@ class ApiTeamController extends Controller
             ->pluck('users.name')
             ->toArray();
 
-        $teamTotal = (float) (DB::table('donations')->where('team_id', $team->id)->sum('amount') ?? 0);
+        $teamTotal = (float) (DB::table('donations')
+            ->where('team_id', $team->id)
+            ->where('status', 'paid')
+            ->sum('amount') ?? 0);
         $targetAmount = (float) $team->target_amount;
         $lampStatus = $targetAmount > 0 && $teamTotal >= $targetAmount;
         $progressRatio = $targetAmount > 0 ? min(($teamTotal / $targetAmount) * 100, 100) : 0;

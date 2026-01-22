@@ -38,7 +38,10 @@ class DashboardController extends Controller
             ->select('team_members.id', 'users.id as user_id', 'users.name', 'users.email', 'users.role')
             ->get();
 
-        $teamTotal = (float) (DB::table('donations')->where('team_id', $team->id)->sum('amount') ?? 0);
+        $teamTotal = (float) (DB::table('donations')
+            ->where('team_id', $team->id)
+            ->where('status', 'paid')
+            ->sum('amount') ?? 0);
         $targetAmount = (float) $team->target_amount;
         $lampStatus = $targetAmount > 0 && $teamTotal >= $targetAmount;
         $progressRatio = $targetAmount > 0 ? min(($teamTotal / $targetAmount) * 100, 100) : 0;

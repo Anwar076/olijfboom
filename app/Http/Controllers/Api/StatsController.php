@@ -9,13 +9,16 @@ class StatsController extends Controller
 {
     public function index()
     {
-        $totalRaised = (float) (DB::table('donations')->sum('amount') ?? 0);
+        $totalRaised = (float) (DB::table('donations')->where('status', 'paid')->sum('amount') ?? 0);
         $lightsActivated = min((int) floor($totalRaised / 10000), 100);
         $totalLights = 100;
         $progressPercentage = $totalLights > 0 ? ($lightsActivated / $totalLights) * 100 : 0;
 
         $teamsCompleted = DB::table('teams')
-            ->leftJoin('donations', 'teams.id', '=', 'donations.team_id')
+            ->leftJoin('donations', function ($join) {
+                $join->on('teams.id', '=', 'donations.team_id')
+                    ->where('donations.status', '=', 'paid');
+            })
             ->select('teams.id', 'teams.target_amount', DB::raw('COALESCE(SUM(donations.amount), 0) as team_total'))
             ->groupBy('teams.id', 'teams.target_amount')
             ->havingRaw('team_total >= teams.target_amount')

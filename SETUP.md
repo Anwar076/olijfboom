@@ -23,6 +23,7 @@ Update the database settings in `.env`:
 - `DB_DATABASE=olijfboom`
 - `DB_USERNAME=root`
 - `DB_PASSWORD=`
+- `MOLLIE_KEY=your_mollie_test_or_live_key`
 
 ### 4. Run migrations
 ```bash
@@ -66,6 +67,7 @@ Update `.env`:
 - `DB_DATABASE=olijfboom`
 - `DB_USERNAME=your_db_user`
 - `DB_PASSWORD=your_db_password`
+- `MOLLIE_KEY=your_mollie_live_key`
 
 ### 3. Run migrations
 ```bash
@@ -118,6 +120,6 @@ php artisan view:cache
 
 ## Notes
 
-- The donation flow is a placeholder; it stores a donation record and shows a confirmation.
+- Mollie handles the payment flow; donations are counted after payment succeeds.
 - Light details are fetched via `/api/lights/{index}`.
 

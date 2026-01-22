@@ -9,13 +9,16 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $totalRaised = (float) (DB::table('donations')->sum('amount') ?? 0);
+        $totalRaised = (float) (DB::table('donations')->where('status', 'paid')->sum('amount') ?? 0);
         $lightsActivated = min((int) floor($totalRaised / 10000), 100);
         $totalLights = 100;
         $progressPercentage = $totalLights > 0 ? ($lightsActivated / $totalLights) * 100 : 0;
 
         $teams = Team::query()
-            ->leftJoin('donations', 'teams.id', '=', 'donations.team_id')
+            ->leftJoin('donations', function ($join) {
+                $join->on('teams.id', '=', 'donations.team_id')
+                    ->where('donations.status', '=', 'paid');
+            })
             ->select(
                 'teams.id',
                 'teams.name',
