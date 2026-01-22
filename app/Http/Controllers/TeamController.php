@@ -9,19 +9,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class TeamController extends Controller
 {
     public function create()
     {
-        $targetOptions = [
-            ['label' => 'Blad', 'amount' => 5000],
-            ['label' => 'Blad', 'amount' => 10000],
-            ['label' => 'Olijf', 'amount' => 25000],
-            ['label' => 'Wortel', 'amount' => 50000],
-            ['label' => 'Tak', 'amount' => 100000],
-            ['label' => 'Stam', 'amount' => 200000],
-        ];
+        $targetOptions = config('teams.targets', []);
 
         return view('pages.create-team', [
             'targetOptions' => $targetOptions,
@@ -40,10 +34,16 @@ class TeamController extends Controller
             }
         }
 
+        $targetOptions = config('teams.targets', []);
+        $validTargetOptions = collect($targetOptions)
+            ->map(fn (array $option) => $option['label'] . '::' . $option['amount'])
+            ->values()
+            ->all();
+
         $data = $request->validate([
             'team_name' => ['required', 'string', 'max:255'],
             'team_description' => ['nullable', 'string'],
-            'target_option' => ['required', 'string'],
+            'target_option' => ['required', 'string', Rule::in($validTargetOptions)],
             'target_label' => ['required', 'string', 'max:100'],
             'target_amount' => ['required', 'numeric', 'min:1'],
             'name' => ['required', 'string', 'max:255'],

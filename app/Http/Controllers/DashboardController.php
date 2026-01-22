@@ -10,11 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        $targetOptions = config('teams.targets', []);
         $user = $request->user();
 
         $membership = TeamMember::where('user_id', $user->id)->first();
@@ -26,6 +28,7 @@ class DashboardController extends Controller
                 'lampStatus' => false,
                 'progressRatio' => 0,
                 'inviteUrl' => session('invite_url'),
+                'targetOptions' => $targetOptions,
             ]);
         }
 
@@ -53,6 +56,7 @@ class DashboardController extends Controller
             'lampStatus' => $lampStatus,
             'progressRatio' => $progressRatio,
             'inviteUrl' => session('invite_url'),
+            'targetOptions' => $targetOptions,
         ]);
     }
 
@@ -154,6 +158,50 @@ class DashboardController extends Controller
         }
 
         $member->delete();
+
+        return redirect()->route('dashboard');
+    }
+
+    public function updateGoal(Request $request)
+    {
+        $user = $request->user();
+        $teamId = TeamMember::where('user_id', $user->id)->value('team_id');
+
+        if (!$teamId) {
+            return redirect()->route('dashboard')->withErrors(['team' => 'Team niet gevonden.']);
+        }
+
+        $team = Team::findOrFail($teamId);
+        if ($team->created_by_user_id !== $user->id) {
+            abort(403, 'Not authorized for this team.');
+        }
+
+        if (!$request->filled('target_label') && $request->filled('target_option')) {
+            $parts = explode('::', (string) $request->input('target_option'));
+            if (count($parts) === 2) {
+                $request->merge([
+                    'target_label' => $parts[0],
+                    'target_amount' => $parts[1],
+                ]);
+            }
+        }
+
+        $targetOptions = config('teams.targets', []);
+        $validTargetOptions = collect($targetOptions)
+            ->map(fn (array $option) => $option['label'] . '::' . $option['amount'])
+            ->values()
+            ->all();
+
+        $data = $request->validate([
+            'target_option' => ['required', 'string', Rule::in($validTargetOptions)],
+            'target_label' => ['required', 'string', 'max:100'],
+            'target_amount' => ['required', 'numeric', 'min:1'],
+        ]);
+
+        $team->update([
+            'target_label' => $data['target_label'],
+            'target_amount' => $data['target_amount'],
+        ]);
 
         return redirect()->route('dashboard');
     }

@@ -404,6 +404,12 @@ const initOliveTree = () => {
 
     const totalLights = parseInt(container.getAttribute('data-total-lights') || '100', 10);
     const activeLights = parseInt(container.getAttribute('data-active-lights') || '0', 10);
+    const trunkPaths = Array.from(container.querySelectorAll('#TRUNK path'));
+    const leafPaths = Array.from(container.querySelectorAll('#LEAVES path'));
+    const treeParts = [...trunkPaths, ...leafPaths.slice(0, 4)].map((node, index) => ({
+        node,
+        order: index,
+    }));
     const lightsLayer = container.querySelector('[data-lights-layer]');
     const tooltip = document.querySelector('[data-light-tooltip]');
     const tooltipTitle = document.querySelector('[data-light-tooltip-title]');
@@ -416,6 +422,25 @@ const initOliveTree = () => {
     const modalTeams = document.querySelector('[data-light-modal-teams]');
     const modalEmpty = document.querySelector('[data-light-modal-empty]');
     const modalClose = document.querySelector('[data-light-modal-close]');
+
+    if (treeParts.length > 0) {
+        const totalParts = treeParts.length;
+        const progress = totalLights > 0 ? (activeLights / totalLights) * totalParts : 0;
+        const fullParts = Math.floor(progress);
+        const partial = Math.max(0, Math.min(1, progress - fullParts));
+        const baseOpacity = 0.35;
+
+        treeParts.forEach((part, index) => {
+            let opacity = baseOpacity;
+            if (index < fullParts) {
+                opacity = 1;
+            } else if (index === fullParts) {
+                opacity = baseOpacity + (1 - baseOpacity) * partial;
+            }
+            part.node.style.opacity = opacity.toFixed(3);
+            part.node.style.transition = 'opacity 500ms ease';
+        });
+    }
 
     if (!lightsLayer) return;
 

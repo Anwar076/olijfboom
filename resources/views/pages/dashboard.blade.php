@@ -66,6 +66,40 @@
 
                 @if (auth()->user()->role === 'admin')
                     <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                        <h3 class="text-xl font-bold mb-4 title-gradient">Teamdoel aanpassen</h3>
+                        @php
+                            $selectedTargetLabel = old('target_label', $team->target_label);
+                            $selectedTargetAmount = (int) old('target_amount', (float) $team->target_amount);
+                            $selectedValue = $selectedTargetLabel . '::' . $selectedTargetAmount;
+                        @endphp
+                        <form method="POST" action="{{ route('dashboard.team.goal') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            @csrf
+                            @method('PUT')
+                            <div class="md:col-span-2">
+                                <label class="block text-slate-700 mb-2 font-medium">Nieuw teamdoel *</label>
+                                <select
+                                    required
+                                    name="target_option"
+                                    class="w-full bg-white border border-slate-300 rounded-lg px-4 py-2 text-slate-900 focus:border-gold focus:outline-none"
+                                    onchange="const [label, amount] = this.value.split('::'); this.form.target_label.value = label; this.form.target_amount.value = amount;"
+                                >
+                                    @foreach ($targetOptions as $option)
+                                        @php
+                                            $value = $option['label'] . '::' . $option['amount'];
+                                        @endphp
+                                        <option value="{{ $value }}" {{ $selectedValue === $value ? 'selected' : '' }}>
+                                            {{ $option['label'] }}: &euro;{{ number_format($option['amount'], 0, ',', '.') }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <input type="hidden" name="target_label" value="{{ $selectedTargetLabel }}">
+                                <input type="hidden" name="target_amount" value="{{ $selectedTargetAmount }}">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full">Bijwerken</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
                         <h3 class="text-xl font-bold mb-4 title-gradient">Uitnodigingen</h3>
                         @if ($inviteUrl)
                             <div class="flex gap-4 items-center">

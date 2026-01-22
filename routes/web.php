@@ -33,6 +33,9 @@ Route::post('/dashboard/members', [DashboardController::class, 'addMember'])
 Route::delete('/dashboard/members/{member}', [DashboardController::class, 'removeMember'])
     ->middleware(['auth', 'admin'])
     ->name('dashboard.members.remove');
+Route::put('/dashboard/team/goal', [DashboardController::class, 'updateGoal'])
+    ->middleware(['auth', 'admin'])
+    ->name('dashboard.team.goal');
 
 Route::get('/invite/{token}', [InviteController::class, 'show'])->name('invite.show');
 Route::post('/invite/{token}', [InviteController::class, 'accept'])->name('invite.accept');

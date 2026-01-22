@@ -10,11 +10,11 @@
             <div class="flex justify-center items-center">
 <svg
               viewBox="0 0 500 500"
-              class="w-full max-w-3xl h-auto"
+              className="w-full max-w-3xl h-auto"
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
-                
+                {/* Glow filter for active lights */}
                 <filter id="lightGlow">
                   <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                   <feMerge>
@@ -43,12 +43,12 @@
 		<stop offset="1" stopOpacity="1" stopColor="rgb(93,73,56)"/>
 	</linearGradient>
 
-                
+                {/* Tree growth mask - reveals tree from bottom to top */}
               </defs>
 
-              
+              {/* Tree container - always fully visible */}
               <g>
-              
+              {/* Trunk/Branches Group - Brown color */}
               
               
               
@@ -346,10 +346,8 @@
                 </g>
               </g>
 
-              
-              <g id="LIGHTS" style="pointer-events: all;">
-                <g transform="scale(0.244140625)" data-lights-layer></g>
-              </g>
+              {/* Lights layer - positioned ABOVE leaves so they are clickable */}
+              <g id="LIGHTS" style="pointer-events: all;"><g transform="scale(0.244140625)" data-lights-layer></g></g>
               </g>
             </svg>
             </div>
@@ -407,3 +405,7 @@
         </div>
     </div>
 </section>
+
+
+
+
