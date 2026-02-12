@@ -198,6 +198,33 @@ const initInviteCopy = () => {
     });
 };
 
+const initShowcaseRailAutoplay = () => {
+    const videos = Array.from(document.querySelectorAll('[data-autoplay-on-view]'));
+    if (!videos.length) return;
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                const video = entry.target;
+                if (!(video instanceof HTMLVideoElement)) return;
+
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+                    video.play().catch(() => {});
+                } else {
+                    video.pause();
+                }
+            });
+        },
+        { threshold: [0, 0.6, 1] }
+    );
+
+    videos.forEach((video) => {
+        video.muted = true;
+        video.playsInline = true;
+        observer.observe(video);
+    });
+};
+
 const LIGHT_SHAPES = [
 
   { d: "M 1230.44 902.279 C 1208.37 889.87 1217.2 864.211 1243.63 871.28 C 1243.96 876.312 1251.91 885.001 1249.01 893.217 C 1246.35 900.769 1236.92 902.281 1230.44 902.279 z", transform: "translate(0,0)" },
@@ -729,5 +756,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initTeamsLoadMore();
     initDonateForm();
     initInviteCopy();
+    initShowcaseRailAutoplay();
     initOliveTree();
 });

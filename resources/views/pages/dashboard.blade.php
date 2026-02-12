@@ -14,9 +14,105 @@
                 </form>
             </div>
 
+            <div class="mb-8 -mx-4 px-4">
+                <div class="showcase-rail" data-showcase-rail>
+                    <div class="showcase-rail__track">
+                        @for ($loopIndex = 0; $loopIndex < 2; $loopIndex++)
+                            @foreach ($dashboardShowcaseMedia as $index => $mediaItem)
+                                <div class="showcase-rail__item" {{ $loopIndex === 1 ? 'aria-hidden=true' : '' }}>
+                                    @if (($mediaItem['type'] ?? 'image') === 'video')
+                                        <video
+                                            src="{{ $mediaItem['url'] }}"
+                                            class="showcase-rail__media"
+                                            muted
+                                            loop
+                                            playsinline
+                                            preload="metadata"
+                                            data-autoplay-on-view
+                                        ></video>
+                                    @else
+                                        <img
+                                            src="{{ $mediaItem['url'] }}"
+                                            alt="{{ $loopIndex === 0 ? 'Sfeerfoto ' . ($index + 1) : '' }}"
+                                            class="showcase-rail__media"
+                                        >
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endfor
+                    </div>
+                </div>
+            </div>
+
             @if ($errors->any())
                 <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">
                     {{ $errors->first() }}
+                </div>
+            @endif
+            @if (session('status'))
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg p-4 mb-6">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            @if (auth()->user()->role === 'admin')
+                <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                    <h3 class="text-xl font-bold mb-4 title-gradient">Nieuwsticker op home</h3>
+                    <form method="POST" action="{{ route('dashboard.home-news-ticker') }}" class="space-y-4">
+                        @csrf
+                        @method('PUT')
+                        <div>
+                            <label class="block text-slate-700 mb-2 font-medium">Ticker tekst *</label>
+                            <textarea
+                                name="news_ticker_text"
+                                rows="3"
+                                maxlength="2000"
+                                required
+                                class="w-full bg-white border border-slate-300 rounded-lg px-4 py-2 text-slate-900 focus:border-gold focus:outline-none"
+                            >{{ old('news_ticker_text', $homeNewsTickerText) }}</textarea>
+                            <p class="text-xs text-slate-500 mt-2">Deze tekst loopt onder de navigatie op de homepagina.</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ticker opslaan</button>
+                    </form>
+                </div>
+
+                <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                    <h3 class="text-xl font-bold mb-4 title-gradient">Media rij beheren (afbeeldingen + video's)</h3>
+                    @php
+                        $editableUrls = old('media_urls');
+                        if (!is_array($editableUrls)) {
+                            $editableUrls = collect($dashboardShowcaseMedia)->pluck('url')->all();
+                        }
+                        $editableUrls = array_values(array_pad($editableUrls, 5, ''));
+                    @endphp
+                    <form method="POST" action="{{ route('dashboard.showcase-media') }}" enctype="multipart/form-data" class="space-y-4">
+                        @csrf
+                        @method('PUT')
+                        @foreach ($editableUrls as $mediaUrl)
+                            <div>
+                                <label class="block text-slate-700 mb-2 font-medium">Media URL (image of video)</label>
+                                <input
+                                    type="url"
+                                    name="media_urls[]"
+                                    value="{{ $mediaUrl }}"
+                                    placeholder="https://..."
+                                    class="w-full bg-white border border-slate-300 rounded-lg px-4 py-2 text-slate-900 focus:border-gold focus:outline-none"
+                                >
+                            </div>
+                        @endforeach
+                        <div>
+                            <label class="block text-slate-700 mb-2 font-medium">Upload bestanden</label>
+                            <input
+                                type="file"
+                                name="media_files[]"
+                                accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
+                                multiple
+                                class="w-full bg-white border border-slate-300 rounded-lg px-4 py-2 text-slate-900 focus:border-gold focus:outline-none"
+                            >
+                        </div>
+                        <p class="text-xs text-slate-500">Ondersteunt: jpg, png, webp, gif, mp4, webm, mov. Max 12 items, 50MB per upload.</p>
+                        <button type="submit" class="btn btn-primary">Media opslaan</button>
+                    </form>
                 </div>
             @endif
 

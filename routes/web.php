@@ -36,6 +36,12 @@ Route::delete('/dashboard/members/{member}', [DashboardController::class, 'remov
 Route::put('/dashboard/team/goal', [DashboardController::class, 'updateGoal'])
     ->middleware(['auth', 'admin'])
     ->name('dashboard.team.goal');
+Route::put('/dashboard/home-news-ticker', [DashboardController::class, 'updateHomeNewsTicker'])
+    ->middleware(['auth', 'admin'])
+    ->name('dashboard.home-news-ticker');
+Route::put('/dashboard/showcase-media', [DashboardController::class, 'updateDashboardShowcaseMedia'])
+    ->middleware(['auth', 'admin'])
+    ->name('dashboard.showcase-media');
 
 Route::get('/invite/{token}', [InviteController::class, 'show'])->name('invite.show');
 Route::post('/invite/{token}', [InviteController::class, 'accept'])->name('invite.accept');

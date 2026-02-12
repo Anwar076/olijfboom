@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invite;
+use App\Models\SiteSetting;
 use App\Models\Team;
 use App\Models\TeamMember;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -16,6 +18,21 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        $defaultShowcaseMedia = [
+            ['type' => 'image', 'url' => 'https://picsum.photos/seed/icb-1/560/320'],
+            ['type' => 'image', 'url' => 'https://picsum.photos/seed/icb-2/560/320'],
+            ['type' => 'image', 'url' => 'https://picsum.photos/seed/icb-3/560/320'],
+            ['type' => 'image', 'url' => 'https://picsum.photos/seed/icb-4/560/320'],
+            ['type' => 'image', 'url' => 'https://picsum.photos/seed/icb-5/560/320'],
+        ];
+        $homeNewsTickerText = SiteSetting::getValue(
+            'home_news_ticker',
+            'Dit is dummy nieuwscontent: sponsorloop start om 10:00 uur, inschrijvingen zijn nog open en deel deze actie met je netwerk.'
+        );
+        $dashboardShowcaseMedia = $this->normalizeShowcaseMedia(
+            SiteSetting::getValue('dashboard_showcase_media') ?? SiteSetting::getValue('dashboard_showcase_images'),
+            $defaultShowcaseMedia
+        );
         $targetOptions = config('teams.targets', []);
         $user = $request->user();
 
@@ -29,6 +46,8 @@ class DashboardController extends Controller
                 'progressRatio' => 0,
                 'inviteUrl' => session('invite_url'),
                 'targetOptions' => $targetOptions,
+                'homeNewsTickerText' => $homeNewsTickerText,
+                'dashboardShowcaseMedia' => $dashboardShowcaseMedia,
             ]);
         }
 
@@ -57,7 +76,128 @@ class DashboardController extends Controller
             'progressRatio' => $progressRatio,
             'inviteUrl' => session('invite_url'),
             'targetOptions' => $targetOptions,
+            'homeNewsTickerText' => $homeNewsTickerText,
+            'dashboardShowcaseMedia' => $dashboardShowcaseMedia,
         ]);
+    }
+
+    public function updateHomeNewsTicker(Request $request)
+    {
+        $data = $request->validate([
+            'news_ticker_text' => ['required', 'string', 'max:2000'],
+        ]);
+
+        SiteSetting::setValue('home_news_ticker', trim($data['news_ticker_text']));
+
+        return redirect()
+            ->route('dashboard')
+            ->with('status', 'Nieuwsticker bijgewerkt.');
+    }
+
+    public function updateDashboardShowcaseMedia(Request $request)
+    {
+        $data = $request->validate([
+            'media_urls' => ['nullable', 'array', 'max:12'],
+            'media_urls.*' => ['nullable', 'url', 'max:2048'],
+            'media_files' => ['nullable', 'array', 'max:12'],
+            'media_files.*' => ['file', 'mimetypes:image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime', 'max:51200'],
+        ]);
+
+        $media = collect($data['media_urls'] ?? [])
+            ->map(fn ($url) => trim((string) $url))
+            ->filter()
+            ->map(function (string $url): array {
+                return [
+                    'type' => $this->detectMediaTypeFromUrl($url),
+                    'url' => $url,
+                ];
+            });
+
+        foreach ($request->file('media_files', []) as $file) {
+            if (!$file) {
+                continue;
+            }
+
+            $path = $file->store('showcase-media', 'public');
+            $media->push([
+                'type' => str_starts_with((string) $file->getMimeType(), 'video/') ? 'video' : 'image',
+                'url' => Storage::disk('public')->url($path),
+            ]);
+        }
+
+        $media = $media->take(12)->values()->all();
+
+        if (count($media) === 0) {
+            return redirect()
+                ->route('dashboard')
+                ->withErrors(['media_urls' => 'Vul minimaal 1 geldige media-URL in of upload een bestand.']);
+        }
+
+        SiteSetting::setValue(
+            'dashboard_showcase_media',
+            json_encode($media, JSON_UNESCAPED_SLASHES)
+        );
+
+        return redirect()
+            ->route('dashboard')
+            ->with('status', 'Media bijgewerkt.');
+    }
+
+    private function normalizeShowcaseMedia(?string $raw, array $fallback): array
+    {
+        if (!$raw) {
+            return $fallback;
+        }
+
+        $decoded = json_decode($raw, true);
+        if (!is_array($decoded)) {
+            return $fallback;
+        }
+
+        $media = collect($decoded)
+            ->map(function ($item): ?array {
+                if (is_string($item) && $item !== '') {
+                    return [
+                        'type' => $this->detectMediaTypeFromUrl($item),
+                        'url' => $item,
+                    ];
+                }
+
+                if (!is_array($item) || !isset($item['url'])) {
+                    return null;
+                }
+
+                $url = trim((string) $item['url']);
+                if ($url === '') {
+                    return null;
+                }
+
+                $type = isset($item['type']) && $item['type'] === 'video'
+                    ? 'video'
+                    : $this->detectMediaTypeFromUrl($url);
+
+                return [
+                    'type' => $type,
+                    'url' => $url,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->take(12)
+            ->all();
+
+        return count($media) > 0 ? $media : $fallback;
+    }
+
+    private function detectMediaTypeFromUrl(string $url): string
+    {
+        $cleanPath = strtolower((string) parse_url($url, PHP_URL_PATH));
+
+        if (preg_match('/\.(mp4|webm|mov)$/', $cleanPath) === 1) {
+            return 'video';
+        }
+
+        return 'image';
     }
 
     public function createInvite(Request $request)

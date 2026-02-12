@@ -22,6 +22,9 @@
 </header>
 
 @if (request()->routeIs('home'))
+    @php
+        $tickerText = $homeNewsTickerText ?? 'Dit is dummy nieuwscontent: sponsorloop start om 10:00 uur, inschrijvingen zijn nog open en deel deze actie met je netwerk.';
+    @endphp
     <div class="nav-gradient sticky top-0 z-50" data-home-nav>
         <div class="container mx-auto px-4">
             <nav class="flex flex-wrap items-center gap-6 py-4 text-white">
@@ -31,6 +34,17 @@
                 <button type="button" data-section-id="doneer" class="font-semibold transition-opacity text-white opacity-90 hover:opacity-100">Doneer</button>
                 <button type="button" data-section-id="faq" class="font-semibold transition-opacity text-white opacity-90 hover:opacity-100">FAQ</button>
             </nav>
+        </div>
+
+        <div class="home-news-ticker border-t border-white/25">
+            <div class="container mx-auto px-4">
+                <div class="home-news-ticker__viewport" aria-label="Laatste nieuws">
+                    <div class="home-news-ticker__track">
+                        <span>{{ $tickerText }}</span>
+                        <span aria-hidden="true">{{ $tickerText }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endif

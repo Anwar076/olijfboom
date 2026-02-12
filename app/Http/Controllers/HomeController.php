@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SiteSetting;
 use App\Models\Team;
 use Illuminate\Support\Facades\DB;
 
@@ -9,6 +10,11 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $homeNewsTickerText = SiteSetting::getValue(
+            'home_news_ticker',
+            'Dit is dummy nieuwscontent: sponsorloop start om 10:00 uur, inschrijvingen zijn nog open en deel deze actie met je netwerk.'
+        );
+
         $totalRaised = (float) (DB::table('donations')->where('status', 'paid')->sum('amount') ?? 0);
         $lightsActivated = min((int) floor($totalRaised / 10000), 100);
         $totalLights = 100;
@@ -60,6 +66,7 @@ class HomeController extends Controller
             });
 
         return view('pages.home', [
+            'homeNewsTickerText' => $homeNewsTickerText,
             'totalRaised' => $totalRaised,
             'lightsActivated' => $lightsActivated,
             'totalLights' => $totalLights,
