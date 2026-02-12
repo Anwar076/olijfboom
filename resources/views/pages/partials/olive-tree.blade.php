@@ -12,7 +12,7 @@
         >
             <div class="flex justify-center items-center">
 <svg
-              viewBox="0 0 500 500"
+              viewBox="0 0 500 450"
               className="w-full max-w-3xl h-auto"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -351,23 +351,24 @@
             </svg>
             </div>
 
-            <div class="mt-10">
-                <div class="flex justify-between items-center mb-3 text-sm md:text-base">
-                    <span class="text-gray-300 font-medium">
-                        {{ $lightsActivated }} van {{ $totalLights }} lichten geactiveerd
-                    </span>
-                    <span class="text-gold font-bold text-lg">{{ $progressPercentageRounded }}%</span>
+        </div>
+
+        <div class="mt-10">
+            <div class="flex justify-between items-center mb-3 text-sm md:text-base">
+                <span class="text-slate-600 font-medium">
+                    {{ $lightsActivated }} van {{ $totalLights }} lichten geactiveerd
+                </span>
+                <span class="text-gold font-bold text-lg">{{ $progressPercentageRounded }}%</span>
+            </div>
+            <div class="w-full bg-gray-800 rounded-full h-5 overflow-hidden shadow-inner">
+                <div class="bg-gradient-to-r from-gold via-gold to-gold-dark h-5 rounded-full transition-all duration-700 ease-out shadow-lg" style="width: {{ min($progressPercentageRounded, 100) }}%">
+                    <div class="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
                 </div>
-                <div class="w-full bg-gray-800 rounded-full h-5 overflow-hidden shadow-inner">
-                    <div class="bg-gradient-to-r from-gold via-gold to-gold-dark h-5 rounded-full transition-all duration-700 ease-out shadow-lg" style="width: {{ min($progressPercentageRounded, 100) }}%">
-                        <div class="h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
-                    </div>
-                </div>
-                <div class="mt-4 text-center">
-                    <p class="text-xs text-gray-500">
-                        Hover of klik op een actief licht om te zien welke teams hebben bijgedragen
-                    </p>
-                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <p class="text-xs text-slate-500">
+                    Hover of klik op een actief licht om te zien welke teams hebben bijgedragen
+                </p>
             </div>
         </div>
     </div>
