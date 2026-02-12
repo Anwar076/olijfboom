@@ -35,14 +35,14 @@
                 <button type="button" data-section-id="faq" class="font-semibold transition-opacity text-white opacity-90 hover:opacity-100">FAQ</button>
             </nav>
         </div>
+    </div>
 
-        <div class="home-news-ticker border-t border-white/25">
-            <div class="container mx-auto px-4">
-                <div class="home-news-ticker__viewport" aria-label="Laatste nieuws">
-                    <div class="home-news-ticker__track">
-                        <span>{{ $tickerText }}</span>
-                        <span aria-hidden="true">{{ $tickerText }}</span>
-                    </div>
+    <div class="home-news-ticker border-b border-slate-200">
+        <div class="container mx-auto px-4">
+            <div class="home-news-ticker__viewport" aria-label="Laatste nieuws">
+                <div class="home-news-ticker__track">
+                    <span>{{ $tickerText }}</span>
+                    <span aria-hidden="true">{{ $tickerText }}</span>
                 </div>
             </div>
         </div>
