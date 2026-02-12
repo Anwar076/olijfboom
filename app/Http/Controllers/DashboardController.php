@@ -255,7 +255,7 @@ class DashboardController extends Controller
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make(Str::random(32)),
-                'role' => 'member',
+                'role' => User::ROLE_USER,
             ]);
         } else {
             $member->update(['name' => $data['name']]);

@@ -63,12 +63,15 @@
     font-size: 0.95rem;
     font-weight: 600;
     letter-spacing: 0.01em;
-    line-height: 1;
+    line-height: 1.2;
     will-change: transform;
     animation: home-news-scroll 18s linear infinite;
 }
 
 .home-news-ticker__track span {
+    display: inline-flex;
+    align-items: center;
+    block-size: 100%;
     flex: 0 0 auto;
 }
 
@@ -82,7 +85,7 @@
 }
 
 .showcase-rail {
-    --showcase-height: 9rem;
+    --showcase-height: 15rem;
     overflow: hidden;
 }
 
@@ -118,7 +121,7 @@
 
 @media (width >= 48rem) {
     .showcase-rail {
-        --showcase-height: 11rem;
+        --showcase-height: 15rem;
     }
 }
 

@@ -25,7 +25,7 @@
                 </div>
             @endif
 
-            @if (auth()->user()->role === 'admin')
+            @if (auth()->user()->isAdmin())
                 <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
                     <h3 class="text-xl font-bold mb-4 title-gradient">Nieuwsticker op home</h3>
                     <form method="POST" action="{{ route('dashboard.home-news-ticker') }}" class="space-y-4">
@@ -131,7 +131,7 @@
                     <div class="text-xs text-slate-500 mt-2">{{ $percentage }}% naar doel</div>
                 </div>
 
-                @if (auth()->user()->role === 'admin')
+                @if (auth()->user()->isAdmin())
                     <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
                         <h3 class="text-xl font-bold mb-4 title-gradient">Volgend teamdoel kiezen</h3>
                         @unless ($goalReached)
@@ -215,10 +215,10 @@
                                     <div class="font-semibold text-slate-900">{{ $member->name }}</div>
                                     <div class="text-sm text-slate-600">{{ $member->email }}</div>
                                     <div class="text-xs text-slate-500 mt-1">
-                                        {{ $member->role === 'admin' ? 'Beheerder' : 'Lid' }}
+                                        {{ $member->role === 'admin' ? 'Beheerder' : 'Gebruiker' }}
                                     </div>
                                 </div>
-                                @if (auth()->user()->role === 'admin' && $member->user_id !== auth()->id())
+                                @if (auth()->user()->isAdmin() && $member->user_id !== auth()->id())
                                     <form method="POST" action="{{ route('dashboard.members.remove', ['member' => $member->id]) }}" onsubmit="return confirm('Weet je zeker dat je dit lid wilt verwijderen?');">
                                         @csrf
                                         @method('DELETE')

@@ -26,8 +26,8 @@
         $tickerText = $homeNewsTickerText ?? 'Dit is dummy nieuwscontent: sponsorloop start om 10:00 uur, inschrijvingen zijn nog open en deel deze actie met je netwerk.';
     @endphp
     <div class="nav-gradient sticky top-0 z-50" data-home-nav>
-        <div class="w-full px-4">
-            <nav class="flex w-full flex-wrap items-center justify-center gap-6 py-4 text-white">
+        <div class="container mx-auto px-4">
+            <nav class="flex flex-wrap items-center gap-6 py-4 text-white">
                 <button type="button" data-section-id="boom" class="font-semibold transition-opacity text-white opacity-90 hover:opacity-100">Boom</button>
                 <button type="button" data-section-id="doel" class="font-semibold transition-opacity text-white opacity-90 hover:opacity-100">Doel</button>
                 <button type="button" data-section-id="teams" class="font-semibold transition-opacity text-white opacity-90 hover:opacity-100">Teams</button>
@@ -38,7 +38,7 @@
     </div>
 
     <div class="home-news-ticker border-b border-slate-200">
-        <div class="w-full px-4">
+        <div class="container mx-auto px-4">
             <div class="home-news-ticker__viewport" aria-label="Laatste nieuws">
                 <div class="home-news-ticker__track">
                     <span>{{ $tickerText }}</span>
