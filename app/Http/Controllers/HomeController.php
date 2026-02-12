@@ -10,9 +10,20 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $defaultShowcaseMedia = [
+            ['type' => 'image', 'url' => 'https://picsum.photos/seed/icb-1/560/320'],
+            ['type' => 'image', 'url' => 'https://picsum.photos/seed/icb-2/560/320'],
+            ['type' => 'image', 'url' => 'https://picsum.photos/seed/icb-3/560/320'],
+            ['type' => 'image', 'url' => 'https://picsum.photos/seed/icb-4/560/320'],
+            ['type' => 'image', 'url' => 'https://picsum.photos/seed/icb-5/560/320'],
+        ];
         $homeNewsTickerText = SiteSetting::getValue(
             'home_news_ticker',
             'Dit is dummy nieuwscontent: sponsorloop start om 10:00 uur, inschrijvingen zijn nog open en deel deze actie met je netwerk.'
+        );
+        $homeShowcaseMedia = $this->normalizeShowcaseMedia(
+            SiteSetting::getValue('dashboard_showcase_media') ?? SiteSetting::getValue('dashboard_showcase_images'),
+            $defaultShowcaseMedia
         );
 
         $totalRaised = (float) (DB::table('donations')->where('status', 'paid')->sum('amount') ?? 0);
@@ -67,11 +78,69 @@ class HomeController extends Controller
 
         return view('pages.home', [
             'homeNewsTickerText' => $homeNewsTickerText,
+            'homeShowcaseMedia' => $homeShowcaseMedia,
             'totalRaised' => $totalRaised,
             'lightsActivated' => $lightsActivated,
             'totalLights' => $totalLights,
             'progressPercentage' => $progressPercentage,
             'teams' => $teams,
         ]);
+    }
+
+    private function normalizeShowcaseMedia(?string $raw, array $fallback): array
+    {
+        if (!$raw) {
+            return $fallback;
+        }
+
+        $decoded = json_decode($raw, true);
+        if (!is_array($decoded)) {
+            return $fallback;
+        }
+
+        $media = collect($decoded)
+            ->map(function ($item): ?array {
+                if (is_string($item) && $item !== '') {
+                    return [
+                        'type' => $this->detectMediaTypeFromUrl($item),
+                        'url' => $item,
+                    ];
+                }
+
+                if (!is_array($item) || !isset($item['url'])) {
+                    return null;
+                }
+
+                $url = trim((string) $item['url']);
+                if ($url === '') {
+                    return null;
+                }
+
+                $type = isset($item['type']) && $item['type'] === 'video'
+                    ? 'video'
+                    : $this->detectMediaTypeFromUrl($url);
+
+                return [
+                    'type' => $type,
+                    'url' => $url,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->take(12)
+            ->all();
+
+        return count($media) > 0 ? $media : $fallback;
+    }
+
+    private function detectMediaTypeFromUrl(string $url): string
+    {
+        $cleanPath = strtolower((string) parse_url($url, PHP_URL_PATH));
+
+        if (preg_match('/\.(mp4|webm|mov)$/', $cleanPath) === 1) {
+            return 'video';
+        }
+
+        return 'image';
     }
 }

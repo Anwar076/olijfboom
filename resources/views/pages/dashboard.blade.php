@@ -14,36 +14,6 @@
                 </form>
             </div>
 
-            <div class="mb-8 -mx-4 px-4">
-                <div class="showcase-rail" data-showcase-rail>
-                    <div class="showcase-rail__track">
-                        @for ($loopIndex = 0; $loopIndex < 2; $loopIndex++)
-                            @foreach ($dashboardShowcaseMedia as $index => $mediaItem)
-                                <div class="showcase-rail__item" {{ $loopIndex === 1 ? 'aria-hidden=true' : '' }}>
-                                    @if (($mediaItem['type'] ?? 'image') === 'video')
-                                        <video
-                                            src="{{ $mediaItem['url'] }}"
-                                            class="showcase-rail__media"
-                                            muted
-                                            loop
-                                            playsinline
-                                            preload="metadata"
-                                            data-autoplay-on-view
-                                        ></video>
-                                    @else
-                                        <img
-                                            src="{{ $mediaItem['url'] }}"
-                                            alt="{{ $loopIndex === 0 ? 'Sfeerfoto ' . ($index + 1) : '' }}"
-                                            class="showcase-rail__media"
-                                        >
-                                    @endif
-                                </div>
-                            @endforeach
-                        @endfor
-                    </div>
-                </div>
-            </div>
-
             @if ($errors->any())
                 <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">
                     {{ $errors->first() }}
