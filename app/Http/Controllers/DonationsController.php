@@ -6,6 +6,7 @@ use App\Models\Donation;
 use App\Models\Team;
 use App\Services\DonationPaymentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Mollie\Laravel\Facades\Mollie;
 
 class DonationsController extends Controller
@@ -34,6 +35,16 @@ class DonationsController extends Controller
                 route('donations.webhook')
             );
         } catch (\Throwable $error) {
+            Log::error('Donatiebetaling starten mislukt', [
+                'donation_id' => $donation->id,
+                'team_id' => $team->id,
+                'amount' => $amount,
+                'redirect_url' => route('donations.return', ['donation' => $donation->id]),
+                'webhook_url' => route('donations.webhook'),
+                'exception_class' => get_class($error),
+                'exception_message' => $error->getMessage(),
+            ]);
+
             $donation->update(['status' => 'failed']);
 
             return back()->withErrors(['donation' => 'Betaling kon niet worden gestart. Probeer het opnieuw.']);

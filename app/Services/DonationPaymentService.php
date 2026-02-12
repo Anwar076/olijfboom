@@ -4,12 +4,32 @@ namespace App\Services;
 
 use App\Models\Donation;
 use App\Models\Team;
+use RuntimeException;
 use Mollie\Laravel\Facades\Mollie;
 
 class DonationPaymentService
 {
     public function createPayment(Donation $donation, Team $team, string $redirectUrl, string $webhookUrl)
     {
+        $mollieKey = trim((string) config('mollie.key'));
+        if ($mollieKey === '') {
+            throw new RuntimeException('MOLLIE_KEY is niet ingesteld.');
+        }
+
+        if (!filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+            throw new RuntimeException('Redirect URL is ongeldig.');
+        }
+
+        if (!filter_var($webhookUrl, FILTER_VALIDATE_URL)) {
+            throw new RuntimeException('Webhook URL is ongeldig.');
+        }
+
+        if (app()->environment('production')) {
+            if (!str_starts_with($redirectUrl, 'https://') || !str_starts_with($webhookUrl, 'https://')) {
+                throw new RuntimeException('In productie moeten redirect/webhook URLs HTTPS gebruiken.');
+            }
+        }
+
         $payment = Mollie::api()->payments()->create([
             'amount' => [
                 'currency' => 'EUR',
