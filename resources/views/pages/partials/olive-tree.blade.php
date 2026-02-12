@@ -18,10 +18,14 @@
             >
               <defs>
                 {/* Glow filter for active lights */}
-                <filter id="lightGlow">
-                  <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <filter id="lightGlow" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="5.5" result="blur1"/>
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur2"/>
+                  <feFlood floodColor="#f6d56f" floodOpacity="0.95" result="glowColor"/>
+                  <feComposite in="glowColor" in2="blur1" operator="in" result="goldGlow"/>
                   <feMerge>
-                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="goldGlow"/>
+                    <feMergeNode in="blur2"/>
                     <feMergeNode in="SourceGraphic"/>
                   </feMerge>
                 </filter>
@@ -404,7 +408,6 @@
         </div>
     </div>
 </section>
-
 
 
 

@@ -666,11 +666,6 @@ const initOliveTree = () => {
         const fullParts = Math.floor(progress);
         const partial = Math.max(0, Math.min(1, progress - fullParts));
         const baseOpacity = 1;
-        const getLightIndexForPart = (index) => {
-            if (totalLights <= 0) return 0;
-            return Math.min(totalLights - 1, Math.floor((index / totalParts) * totalLights));
-        };
-
         treeParts.forEach((part, index) => {
             let opacity = baseOpacity;
             if (index < fullParts) {
@@ -681,19 +676,9 @@ const initOliveTree = () => {
             part.node.style.opacity = opacity.toFixed(3);
             part.node.style.transition = 'opacity 500ms ease';
 
-            const lightIndex = getLightIndexForPart(index);
-            const isActive = lightIndex < activeLights;
-            part.node.style.pointerEvents = isActive ? 'all' : 'none';
-            if (isActive) {
-                part.node.style.cursor = 'pointer';
-                part.node.addEventListener('mouseenter', (event) => {
-                    updateCategoryTooltip(part.category, event);
-                });
-                part.node.addEventListener('mouseleave', hideTooltip);
-                part.node.addEventListener('click', () => {
-                    openCategoryModal(part.category);
-                });
-            }
+            // Keep the tree visual only; only the lamp layer should glow/click for now.
+            part.node.style.pointerEvents = 'none';
+            part.node.style.cursor = 'default';
         });
     }
 
