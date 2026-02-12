@@ -45,6 +45,8 @@
 }
 
 .home-news-ticker__viewport {
+    display: flex;
+    align-items: center;
     block-size: 100%;
     overflow: hidden;
     white-space: nowrap;

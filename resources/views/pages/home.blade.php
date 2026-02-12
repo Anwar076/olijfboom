@@ -4,36 +4,6 @@
 <div class="min-h-screen bg-slate-50">
     @include('partials.header')
 
-    <section class="px-4 pt-5">
-        <div class="showcase-rail" data-showcase-rail>
-            <div class="showcase-rail__track">
-                @for ($loopIndex = 0; $loopIndex < 2; $loopIndex++)
-                    @foreach ($homeShowcaseMedia as $index => $mediaItem)
-                        <div class="showcase-rail__item" {{ $loopIndex === 1 ? 'aria-hidden=true' : '' }}>
-                            @if (($mediaItem['type'] ?? 'image') === 'video')
-                                <video
-                                    src="{{ $mediaItem['url'] }}"
-                                    class="showcase-rail__media"
-                                    muted
-                                    loop
-                                    playsinline
-                                    preload="metadata"
-                                    data-autoplay-on-view
-                                ></video>
-                            @else
-                                <img
-                                    src="{{ $mediaItem['url'] }}"
-                                    alt="{{ $loopIndex === 0 ? 'Sfeerfoto ' . ($index + 1) : '' }}"
-                                    class="showcase-rail__media"
-                                >
-                            @endif
-                        </div>
-                    @endforeach
-                @endfor
-            </div>
-        </div>
-    </section>
-
     <section class="pt-32 pb-20 px-4">
         <div class="container mx-auto max-w-4xl text-center">
             <h1 class="text-5xl md:text-6xl font-bold mb-6 title-gradient">
@@ -76,6 +46,36 @@
                     </div>
                     <div class="text-slate-600">Naar doel</div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-4 pb-8">
+        <div class="showcase-rail" data-showcase-rail>
+            <div class="showcase-rail__track">
+                @for ($loopIndex = 0; $loopIndex < 2; $loopIndex++)
+                    @foreach ($homeShowcaseMedia as $index => $mediaItem)
+                        <div class="showcase-rail__item" {{ $loopIndex === 1 ? 'aria-hidden=true' : '' }}>
+                            @if (($mediaItem['type'] ?? 'image') === 'video')
+                                <video
+                                    src="{{ $mediaItem['url'] }}"
+                                    class="showcase-rail__media"
+                                    muted
+                                    loop
+                                    playsinline
+                                    preload="metadata"
+                                    data-autoplay-on-view
+                                ></video>
+                            @else
+                                <img
+                                    src="{{ $mediaItem['url'] }}"
+                                    alt="{{ $loopIndex === 0 ? 'Sfeerfoto ' . ($index + 1) : '' }}"
+                                    class="showcase-rail__media"
+                                >
+                            @endif
+                        </div>
+                    @endforeach
+                @endfor
             </div>
         </div>
     </section>

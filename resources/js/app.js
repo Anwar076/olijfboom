@@ -665,7 +665,7 @@ const initOliveTree = () => {
         const progress = totalLights > 0 ? (activeLights / totalLights) * totalParts : 0;
         const fullParts = Math.floor(progress);
         const partial = Math.max(0, Math.min(1, progress - fullParts));
-        const baseOpacity = 0.35;
+        const baseOpacity = 1;
         const getLightIndexForPart = (index) => {
             if (totalLights <= 0) return 0;
             return Math.min(totalLights - 1, Math.floor((index / totalParts) * totalLights));

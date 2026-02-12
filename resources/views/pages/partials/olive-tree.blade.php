@@ -6,7 +6,10 @@
             <p class="text-lg text-slate-600">Totaal opgehaald: &euro;{{ number_format($totalRaised, 0, ',', '.') }}</p>
         </div>
 
-        <div class="bg-slate-100/70 rounded-3xl p-8 md:p-12 border border-slate-200 backdrop-blur-sm">
+        <div
+            class="bg-slate-100/70 bg-cover bg-center rounded-3xl p-8 md:p-12 border border-slate-200 backdrop-blur-sm"
+            style="background-image: url('{{ asset('images/olijfboom-background.png') }}');"
+        >
             <div class="flex justify-center items-center">
 <svg
               viewBox="0 0 500 500"
@@ -401,7 +404,6 @@
         </div>
     </div>
 </section>
-
 
 
 
