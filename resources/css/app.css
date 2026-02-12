@@ -49,6 +49,8 @@
     align-items: center;
     block-size: 100%;
     overflow: hidden;
+    
+    height: 2.5rem;
     white-space: nowrap;
 }
 
