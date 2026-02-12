@@ -30,7 +30,7 @@ class DonationPaymentService
             }
         }
 
-        $payment = Mollie::api()->payments()->create([
+        $payment = Mollie::api()->payments->create([
             'amount' => [
                 'currency' => 'EUR',
                 'value' => number_format((float) $donation->amount, 2, '.', ''),

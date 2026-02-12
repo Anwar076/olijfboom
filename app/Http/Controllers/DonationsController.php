@@ -61,7 +61,7 @@ class DonationsController extends Controller
         }
 
         try {
-            $payment = Mollie::api()->payments()->get($donation->mollie_payment_id);
+            $payment = Mollie::api()->payments->get($donation->mollie_payment_id);
         } catch (\Throwable $error) {
             return redirect()->route('home')
                 ->withErrors(['donation' => 'Betaling kon niet worden gecontroleerd.']);
@@ -92,7 +92,7 @@ class DonationsController extends Controller
         }
 
         try {
-            $payment = Mollie::api()->payments()->get($paymentId);
+            $payment = Mollie::api()->payments->get($paymentId);
         } catch (\Throwable $error) {
             return response('Payment lookup failed', 500);
         }
