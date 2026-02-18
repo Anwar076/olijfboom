@@ -6,13 +6,37 @@
 
     <div class="pt-32 pb-20 px-4">
         <div class="container mx-auto max-w-6xl">
-            <div class="flex justify-between items-center mb-8">
+            <div class="flex justify-between items-center mb-6">
                 <h1 class="text-4xl font-bold title-gradient">Team Dashboard</h1>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="text-slate-600 hover:text-gold transition-colors">Uitloggen</button>
                 </form>
             </div>
+
+            @if (auth()->user()->isSiteManager())
+                <div class="mb-8 bg-white/80 border border-slate-200 rounded-2xl overflow-hidden">
+                    <div class="px-6 py-3 border-b border-slate-200 flex items-center justify-between">
+                        <h2 class="text-sm font-semibold text-slate-700">Voorbeeld nieuws-ticker (homepagina)</h2>
+                        <span class="text-xs text-slate-500">Alleen zichtbaar voor site-beheerder</span>
+                    </div>
+                    <div class="px-6 py-3 bg-slate-900 text-white text-sm overflow-x-auto">
+                        <div class="flex gap-4 whitespace-nowrap items-center">
+                            <span class="font-semibold text-gold">Basis tekst:</span>
+                            <span>{{ $homeNewsTickerText }}</span>
+                            @foreach ($pendingDuaRequests as $duaDonation)
+                                <span class="text-slate-300">&bull;</span>
+                                <span class="text-amber-200">
+                                    Dua-verzoek: "{{ $duaDonation->dua_request_text }}"
+                                </span>
+                            @endforeach
+                            @if ($pendingDuaRequests->isEmpty())
+                                <span class="text-slate-400">(nog geen actieve dua-verzoeken)</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             @if ($errors->any())
                 <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">
@@ -25,7 +49,7 @@
                 </div>
             @endif
 
-            @if (auth()->user()->isAdmin())
+            @if (auth()->user()->isSiteManager())
                 <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
                     <h3 class="text-xl font-bold mb-4 title-gradient">Nieuwsticker op home</h3>
                     <form method="POST" action="{{ route('dashboard.home-news-ticker') }}" class="space-y-4">
@@ -44,6 +68,36 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Ticker opslaan</button>
                     </form>
+                </div>
+
+                <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                    <h3 class="text-xl font-bold mb-4 title-gradient">Dua-verzoeken in nieuwsstrook</h3>
+                    @if ($pendingDuaRequests->isEmpty())
+                        <p class="text-slate-600 text-sm">Er zijn momenteel geen openstaande dua-verzoeken uit donaties.</p>
+                    @else
+                        <div class="space-y-3">
+                            @foreach ($pendingDuaRequests as $duaDonation)
+                                <div class="border border-slate-200 rounded-lg p-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                    <div>
+                                        <div class="text-sm text-slate-500">
+                                            Donatie voor team: <span class="font-semibold text-slate-800">{{ $duaDonation->team_name ?? 'Onbekend team' }}</span>
+                                            &middot; Bedrag: <span class="font-semibold text-slate-800">&euro;{{ number_format($duaDonation->amount, 2, ',', '.') }}</span>
+                                        </div>
+                                        <div class="text-slate-800 mt-1">
+                                            "{{ $duaDonation->dua_request_text }}"
+                                        </div>
+                                    </div>
+                                    <form method="POST" action="{{ route('dashboard.dua.fulfill', ['donation' => $duaDonation->id]) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="btn btn-secondary text-sm">
+                                            Markeer dua als gedaan
+                                        </button>
+                                    </form>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
 
                 <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
@@ -81,6 +135,9 @@
                             >
                         </div>
                         <p class="text-xs text-slate-500">Ondersteunt: jpg, png, webp, gif, mp4, webm, mov. Max 12 items, 50MB per upload.</p>
+                        <p class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2 mt-2">
+                            <strong>Video’s tonen niet?</strong> Voer éénmalig uit: <code class="bg-white px-1 rounded">php artisan storage:link</code>. Zonder deze koppeling zijn geüploade bestanden niet bereikbaar op de site.
+                        </p>
                         <button type="submit" class="btn btn-primary">Media opslaan</button>
                     </form>
                 </div>

@@ -21,6 +21,19 @@ class HomeController extends Controller
             'home_news_ticker',
             'Dit is dummy nieuwscontent: sponsorloop start om 10:00 uur, inschrijvingen zijn nog open en deel deze actie met je netwerk.'
         );
+
+        $duaTickerItems = DB::table('donations')
+            ->where('status', 'paid')
+            ->where('dua_request_enabled', true)
+            ->whereNotNull('dua_request_text')
+            ->whereNull('dua_fulfilled_at')
+            ->orderByDesc('paid_at')
+            ->limit(10)
+            ->pluck('dua_request_text')
+            ->map(fn ($text) => trim((string) $text))
+            ->filter()
+            ->values()
+            ->all();
         $homeShowcaseMedia = $this->normalizeShowcaseMedia(
             SiteSetting::getValue('dashboard_showcase_media') ?? SiteSetting::getValue('dashboard_showcase_images'),
             $defaultShowcaseMedia
@@ -78,6 +91,7 @@ class HomeController extends Controller
 
         return view('pages.home', [
             'homeNewsTickerText' => $homeNewsTickerText,
+            'duaTickerItems' => $duaTickerItems,
             'homeShowcaseMedia' => $homeShowcaseMedia,
             'totalRaised' => $totalRaised,
             'lightsActivated' => $lightsActivated,

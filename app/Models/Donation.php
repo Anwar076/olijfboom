@@ -15,11 +15,16 @@ class Donation extends Model
         'status',
         'mollie_payment_id',
         'paid_at',
+        'dua_request_enabled',
+        'dua_request_text',
+        'dua_fulfilled_at',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'paid_at' => 'datetime',
+        'dua_request_enabled' => 'bool',
+        'dua_fulfilled_at' => 'datetime',
     ];
 
     public function team()

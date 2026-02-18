@@ -17,6 +17,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Site content manager
+    |--------------------------------------------------------------------------
+    |
+    | Only this emailadres mag de site-brede content (nieuwsticker, media-rail)
+    | beheren vanuit het dashboard.
+    |
+    */
+
+    'site_manager_email' => env('SITE_MANAGER_EMAIL'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

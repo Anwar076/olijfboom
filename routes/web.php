@@ -36,6 +36,9 @@ Route::delete('/dashboard/members/{member}', [DashboardController::class, 'remov
 Route::put('/dashboard/team/goal', [DashboardController::class, 'updateGoal'])
     ->middleware(['auth', 'admin'])
     ->name('dashboard.team.goal');
+Route::put('/dashboard/dua/{donation}', [DashboardController::class, 'fulfillDua'])
+    ->middleware(['auth', 'admin'])
+    ->name('dashboard.dua.fulfill');
 Route::put('/dashboard/home-news-ticker', [DashboardController::class, 'updateHomeNewsTicker'])
     ->middleware(['auth', 'admin'])
     ->name('dashboard.home-news-ticker');

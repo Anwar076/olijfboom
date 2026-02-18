@@ -16,6 +16,8 @@ class DonationsController extends Controller
         $data = $request->validate([
             'team_id' => ['required', 'integer', 'exists:teams,id'],
             'amount' => ['required', 'numeric', 'min:1'],
+            'dua_request_enabled' => ['nullable', 'boolean'],
+            'dua_request_text' => ['nullable', 'string', 'max:255'],
         ]);
 
         $team = Team::findOrFail($data['team_id']);
@@ -25,7 +27,23 @@ class DonationsController extends Controller
             'team_id' => $team->id,
             'amount' => $amount,
             'status' => 'pending',
+            'dua_request_enabled' => (bool) ($data['dua_request_enabled'] ?? false),
+            'dua_request_text' => $data['dua_request_text'] ?? null,
         ]);
+
+        // In de lokale ontwikkelomgeving slaan we Mollie over
+        // en markeren we de donatie direct als "betaald",
+        // zodat o.a. dua-verzoeken getest kunnen worden.
+        if (config('app.env') === 'local') {
+            $donation->update([
+                'status' => 'paid',
+                'paid_at' => now(),
+            ]);
+
+            return redirect()
+                ->route('home')
+                ->with('donation_success', 'Testdonatie geregistreerd (lokale omgeving).');
+        }
 
         try {
             $payment = app(DonationPaymentService::class)->createPayment(

@@ -37,6 +37,22 @@ class DashboardController extends Controller
         $user = $request->user();
 
         $membership = TeamMember::where('user_id', $user->id)->first();
+        $pendingDuaRequests = DB::table('donations')
+            ->join('teams', 'donations.team_id', '=', 'teams.id')
+            ->where('donations.status', 'paid')
+            ->where('donations.dua_request_enabled', true)
+            ->whereNotNull('donations.dua_request_text')
+            ->whereNull('donations.dua_fulfilled_at')
+            ->orderByDesc('donations.paid_at')
+            ->select([
+                'donations.id',
+                'donations.amount',
+                'donations.dua_request_text',
+                'teams.name as team_name',
+            ])
+            ->limit(25)
+            ->get();
+
         if (!$membership) {
             return view('pages.dashboard', [
                 'team' => null,
@@ -48,6 +64,7 @@ class DashboardController extends Controller
                 'targetOptions' => $targetOptions,
                 'homeNewsTickerText' => $homeNewsTickerText,
                 'dashboardShowcaseMedia' => $dashboardShowcaseMedia,
+                'pendingDuaRequests' => $pendingDuaRequests,
             ]);
         }
 
@@ -78,11 +95,16 @@ class DashboardController extends Controller
             'targetOptions' => $targetOptions,
             'homeNewsTickerText' => $homeNewsTickerText,
             'dashboardShowcaseMedia' => $dashboardShowcaseMedia,
+            'pendingDuaRequests' => $pendingDuaRequests,
         ]);
     }
 
     public function updateHomeNewsTicker(Request $request)
     {
+        if (! $request->user()?->isSiteManager()) {
+            abort(403);
+        }
+
         $data = $request->validate([
             'news_ticker_text' => ['required', 'string', 'max:2000'],
         ]);
@@ -96,11 +118,15 @@ class DashboardController extends Controller
 
     public function updateDashboardShowcaseMedia(Request $request)
     {
+        if (! $request->user()?->isSiteManager()) {
+            abort(403);
+        }
+
         $data = $request->validate([
             'media_urls' => ['nullable', 'array', 'max:12'],
             'media_urls.*' => ['nullable', 'url', 'max:2048'],
             'media_files' => ['nullable', 'array', 'max:12'],
-            'media_files.*' => ['file', 'mimetypes:image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime', 'max:51200'],
+            'media_files.*' => ['file', 'mimetypes:image/jpeg,image/png,image/webp,image/gif,video/mp4,video/x-mp4,video/webm,video/quicktime', 'max:51200'],
         ]);
 
         $media = collect($data['media_urls'] ?? [])
@@ -141,6 +167,23 @@ class DashboardController extends Controller
         return redirect()
             ->route('dashboard')
             ->with('status', 'Media bijgewerkt.');
+    }
+
+    public function fulfillDua(Request $request, int $donationId)
+    {
+        if (! $request->user()?->isSiteManager()) {
+            abort(403);
+        }
+
+        DB::table('donations')
+            ->where('id', $donationId)
+            ->update([
+                'dua_fulfilled_at' => now(),
+            ]);
+
+        return redirect()
+            ->route('dashboard')
+            ->with('status', 'Dua-verzoek gemarkeerd als gedaan.');
     }
 
     private function normalizeShowcaseMedia(?string $raw, array $fallback): array

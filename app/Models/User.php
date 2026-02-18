@@ -67,6 +67,13 @@ class User extends Authenticatable
         return $this->role === self::ROLE_ADMIN;
     }
 
+    public function isSiteManager(): bool
+    {
+        $email = config('app.site_manager_email');
+
+        return $this->isAdmin() && $email && strcasecmp($this->email, $email) === 0;
+    }
+
     public function isUser(): bool
     {
         return in_array($this->role, [self::ROLE_USER, self::ROLE_MEMBER_LEGACY], true);

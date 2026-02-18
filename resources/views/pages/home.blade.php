@@ -19,10 +19,10 @@
             </p>
 
             <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-                <button type="button" data-scroll-doneer class="btn btn-primary text-lg">
+                <button type="button" data-scroll-doneer class="btn btn-secondary text-lg">
                     Doneer nu
                 </button>
-                <a href="{{ route('teams.create') }}" class="btn btn-secondary text-lg">
+                <a href="{{ route('teams.create') }}" class="btn btn-primary text-lg">
                     Start een team
                 </a>
             </div>
@@ -123,38 +123,15 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group">
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-900 to-amber-700"></div>
-                    <div class="relative z-10">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="text-2xl font-bold text-gold">Stam</div>
-                            <div class="text-sm font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">20 lichten</div>
-                        </div>
-                        <div class="text-3xl font-bold text-slate-900 mb-4">&euro;200.000</div>
-                        <div class="mb-3 p-3 bg-gradient-to-r from-gold/10 to-gold/5 rounded-lg border border-gold/20">
-                            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Beloning</div>
-                            <div class="text-lg font-bold text-slate-900">Auto</div>
-                        </div>
-                        <p class="text-slate-600 text-sm leading-relaxed">Het fundament van onze boom</p>
-                    </div>
-                </div>
-                <div class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group">
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-800 to-amber-600"></div>
-                    <div class="relative z-10">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="text-2xl font-bold text-gold">Takken</div>
-                            <div class="text-sm font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">10 lichten</div>
-                        </div>
-                        <div class="text-3xl font-bold text-slate-900 mb-4">&euro;100.000</div>
-                        <div class="mb-3 p-3 bg-gradient-to-r from-gold/10 to-gold/5 rounded-lg border border-gold/20">
-                            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Beloning</div>
-                            <div class="text-lg font-bold text-slate-900">Mini-auto (Fiat Topolino-achtig)</div>
-                        </div>
-                        <p class="text-slate-600 text-sm leading-relaxed">Sterke ondersteuning voor groei</p>
-                    </div>
-                </div>
-                <div class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div
+                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
+                    data-incentive-card
+                    data-incentive-title="Wortels"
+                    data-incentive-amount="&euro;50.000 &bull; 5 lichten"
+                    data-incentive-description="Diepe verbinding met de gemeenschap. Deze incentive vertegenwoordigt de stevige wortels van onze boom en ondersteunt langdurige projecten voor het centrum."
+                    data-incentive-image="https://picsum.photos/seed/wortels-icb/960/540"
+                >
                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-700 to-amber-500"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-3">
@@ -169,7 +146,14 @@
                         <p class="text-slate-600 text-sm leading-relaxed">Diepe verbinding met de gemeenschap</p>
                     </div>
                 </div>
-                <div class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group">
+                <div
+                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
+                    data-incentive-card
+                    data-incentive-title="Olijven"
+                    data-incentive-amount="&euro;25.000 &bull; 2,5 lichten"
+                    data-incentive-description="Vruchtbare bijdrage aan het centrum. Met deze incentive help je om belangrijke programma’s en activiteiten structureel mogelijk te maken."
+                    data-incentive-image="https://picsum.photos/seed/olijven-icb/960/540"
+                >
                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-600 to-amber-400"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-3">
@@ -184,7 +168,14 @@
                         <p class="text-slate-600 text-sm leading-relaxed">Vruchtbare bijdrage aan het centrum</p>
                     </div>
                 </div>
-                <div class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group">
+                <div
+                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
+                    data-incentive-card
+                    data-incentive-title="Bladeren (groot)"
+                    data-incentive-amount="&euro;10.000 &bull; 1 licht"
+                    data-incentive-description="Elk groot blad staat voor een krachtige bijdrage. Deze incentive zorgt voor zichtbare impact op de Olijfboom van Licht."
+                    data-incentive-image="https://picsum.photos/seed/bladeren-groot-icb/960/540"
+                >
                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-700 to-green-500"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-3">
@@ -199,7 +190,14 @@
                         <p class="text-slate-600 text-sm leading-relaxed">Elk blad draagt bij aan de boom</p>
                     </div>
                 </div>
-                <div class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group">
+                <div
+                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
+                    data-incentive-card
+                    data-incentive-title="Bladeren (klein)"
+                    data-incentive-amount="&euro;5.000 &bull; 0,5 licht"
+                    data-incentive-description="Ook kleinere bijdragen zijn onmisbaar. Deze incentive laat zien dat elke donatie telt en zichtbaar wordt in de boom."
+                    data-incentive-image="https://picsum.photos/seed/bladeren-klein-icb/960/540"
+                >
                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-600 to-green-400"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-3">
@@ -221,6 +219,38 @@
                     <p class="text-slate-700 text-lg">
                         <strong class="text-gold">Let op:</strong> De metafoor van de boom werkt met lichten. Elk niveau wordt bereikt zodra het team het bijbehorende bedrag heeft ingezameld.
                     </p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Incentive modal --}}
+        <div
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 hidden"
+            data-incentive-modal
+            role="dialog"
+            aria-modal="true"
+        >
+            <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-2xl font-bold text-slate-900" data-incentive-modal-title></h3>
+                    <button
+                        type="button"
+                        class="text-slate-500 hover:text-slate-800 text-2xl leading-none"
+                        data-incentive-modal-close
+                        aria-label="Sluiten"
+                    >&times;</button>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="overflow-hidden rounded-xl border border-slate-200">
+                        <img
+                            src=""
+                            alt=""
+                            class="w-full h-56 md:h-64 object-cover"
+                            data-incentive-modal-image
+                        >
+                    </div>
+                    <p class="text-gold text-lg font-semibold" data-incentive-modal-amount></p>
+                    <p class="text-slate-700 leading-relaxed" data-incentive-modal-description></p>
                 </div>
             </div>
         </div>
@@ -342,7 +372,35 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-full text-lg mb-4">
+                    <div class="mb-6 border-t border-slate-200 pt-6">
+                        <h3 class="text-lg font-semibold mb-3 text-slate-800">Optioneel: verzoek om du&#257;</h3>
+                        <div class="space-y-3">
+                            <label class="inline-flex items-center gap-2 text-slate-700">
+                                <input
+                                    type="checkbox"
+                                    name="dua_request_enabled"
+                                    value="1"
+                                    class="rounded border-slate-300 text-gold focus:ring-gold"
+                                >
+                                <span>Ik wil een du&#257;-verzoek toevoegen aan de nieuwsstrook</span>
+                            </label>
+                            <textarea
+                                name="dua_request_text"
+                                rows="2"
+                                maxlength="255"
+                                class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
+                                placeholder="Bijvoorbeeld: Maak du&#257; voor mijn familie, gezondheid, studie..."
+                            >{{ old('dua_request_text') }}</textarea>
+                            <p class="text-xs text-slate-500">
+                                De du&#257; kan (na controle) kort zichtbaar worden in de nieuws-slider bovenaan de pagina.
+                            </p>
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-secondary w-full text-lg mb-4 bg-gold text-slate-900 border border-gold hover:bg-gold-dark"
+                    >
                         Doneer via iDEAL (Mollie)
                     </button>
 

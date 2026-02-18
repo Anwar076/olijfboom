@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Schema;
 
 class SiteSetting extends Model
 {
@@ -13,9 +15,17 @@ class SiteSetting extends Model
 
     public static function getValue(string $key, ?string $default = null): ?string
     {
-        return static::query()
-            ->where('key', $key)
-            ->value('value') ?? $default;
+        try {
+            if (! Schema::hasTable('site_settings')) {
+                return $default;
+            }
+
+            return static::query()
+                ->where('key', $key)
+                ->value('value') ?? $default;
+        } catch (QueryException) {
+            return $default;
+        }
     }
 
     public static function setValue(string $key, string $value): void

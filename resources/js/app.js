@@ -198,6 +198,58 @@ const initInviteCopy = () => {
     });
 };
 
+const initIncentivesModal = () => {
+    const cards = Array.from(document.querySelectorAll('[data-incentive-card]'));
+    if (!cards.length) return;
+
+    const modal = document.querySelector('[data-incentive-modal]');
+    const modalTitle = document.querySelector('[data-incentive-modal-title]');
+    const modalAmount = document.querySelector('[data-incentive-modal-amount]');
+    const modalDescription = document.querySelector('[data-incentive-modal-description]');
+    const modalImage = document.querySelector('[data-incentive-modal-image]');
+    const modalClose = document.querySelector('[data-incentive-modal-close]');
+
+    if (!modal) return;
+
+    const openModal = (card) => {
+        const title = card.getAttribute('data-incentive-title') || '';
+        const amount = card.getAttribute('data-incentive-amount') || '';
+        const description = card.getAttribute('data-incentive-description') || '';
+        const image = card.getAttribute('data-incentive-image') || '';
+
+        if (modalTitle) modalTitle.textContent = title;
+        if (modalAmount) modalAmount.innerHTML = amount;
+        if (modalDescription) modalDescription.textContent = description;
+        if (modalImage) {
+            modalImage.src = image;
+            modalImage.alt = title;
+        }
+
+        modal.classList.remove('hidden');
+    };
+
+    const closeModal = () => {
+        modal.classList.add('hidden');
+    };
+
+    cards.forEach((card) => {
+        card.addEventListener('click', () => openModal(card));
+    });
+
+    modalClose?.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+};
+
 const initShowcaseRailAutoplay = () => {
     const videos = Array.from(document.querySelectorAll('[data-autoplay-on-view]'));
     if (!videos.length) return;
@@ -741,6 +793,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTeamsLoadMore();
     initDonateForm();
     initInviteCopy();
+    initIncentivesModal();
     initShowcaseRailAutoplay();
     initOliveTree();
 });
