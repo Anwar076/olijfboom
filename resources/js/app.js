@@ -743,30 +743,62 @@ const initOliveTree = () => {
         if (event.target === modal) closeModal();
     });
 
+    const getPathAnchor = (d) => {
+        const match = String(d).match(/M\s*([\d.-]+)\s*([\d.-]+)/);
+        if (match) return { x: parseFloat(match[1]), y: parseFloat(match[2]) };
+        return { x: 0, y: 0 };
+    };
+
+    const LANTERN_PATH =
+        'M 0,-14 C 10,-2 12,8 8,14 C 4,18 0,18 -4,14 C -8,8 -6,-2 0,-14 Z';
+
     for (let index = 0; index < maxLights; index += 1) {
         const shape = LIGHT_SHAPES[index];
         const isActive = index < activeLights;
+        const anchor = getPathAnchor(shape.d);
 
         const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         group.setAttribute('data-light-index', index.toString());
+        group.setAttribute(
+            'transform',
+            `translate(${anchor.x},${anchor.y}) scale(2.1)`
+        );
         if (isActive) {
             group.setAttribute('filter', 'url(#lightGlow)');
         }
 
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', shape.d);
-        if (shape.transform) {
-            path.setAttribute('transform', shape.transform);
-        }
-        path.setAttribute('fill', 'rgb(235,183,103)');
+        path.setAttribute('d', LANTERN_PATH);
+        path.setAttribute('fill', 'url(#lanternGradient)');
+        path.setAttribute('stroke', 'rgba(180,140,50,0.6)');
+        path.setAttribute('stroke-width', '0.8');
         path.setAttribute('opacity', isActive ? '1' : '0');
         if (isActive) {
             const animate = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
             animate.setAttribute('attributeName', 'opacity');
-            animate.setAttribute('values', '0.85;1;0.85');
-            animate.setAttribute('dur', '2s');
+            animate.setAttribute('values', '0.88;1;0.88');
+            animate.setAttribute('dur', '2.2s');
             animate.setAttribute('repeatCount', 'indefinite');
             path.appendChild(animate);
+        }
+
+        group.appendChild(path);
+
+        if (isActive) {
+            const holes = [
+                { cx: 0, cy: -4 },
+                { cx: 3, cy: 2 },
+                { cx: -2.5, cy: 4 },
+                { cx: 2, cy: 6 },
+            ];
+            holes.forEach(({ cx, cy }) => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', cx);
+                circle.setAttribute('cy', cy);
+                circle.setAttribute('r', '1.2');
+                circle.setAttribute('fill', 'rgba(255,230,180,0.5)');
+                group.appendChild(circle);
+            });
         }
 
         if (isActive) {
@@ -782,7 +814,6 @@ const initOliveTree = () => {
             });
         }
 
-        group.appendChild(path);
         lightsLayer.appendChild(group);
     }
 };

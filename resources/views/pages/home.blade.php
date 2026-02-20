@@ -50,35 +50,36 @@
         </div>
     </section>
 
-    <section class="px-4 pb-8">
-        <div class="showcase-rail" data-showcase-rail>
-            <div class="showcase-rail__track">
-                @for ($loopIndex = 0; $loopIndex < 2; $loopIndex++)
-                    @foreach ($homeShowcaseMedia as $index => $mediaItem)
-                        <div class="showcase-rail__item" {{ $loopIndex === 1 ? 'aria-hidden=true' : '' }}>
-                            @if (($mediaItem['type'] ?? 'image') === 'video')
-                                <video
-                                    src="{{ $mediaItem['url'] }}"
-                                    class="showcase-rail__media"
-                                    muted
-                                    loop
-                                    playsinline
-                                    preload="metadata"
-                                    data-autoplay-on-view
-                                ></video>
-                            @else
-                                <img
-                                    src="{{ $mediaItem['url'] }}"
-                                    alt="{{ $loopIndex === 0 ? 'Sfeerfoto ' . ($index + 1) : '' }}"
-                                    class="showcase-rail__media"
-                                >
-                            @endif
-                        </div>
-                    @endforeach
-                @endfor
+    @php
+        $tickerText = $homeNewsTickerText ?? 'Dit is dummy nieuwscontent: sponsorloop start om 10:00 uur, inschrijvingen zijn nog open en deel deze actie met je netwerk.';
+    @endphp
+    <div class="home-news-ticker">
+        <div class="container mx-auto px-4">
+            <div class="home-news-ticker__viewport" aria-label="Laatste nieuws">
+                <div class="home-news-ticker__track">
+                    <span class="home-news-ticker__base">{{ $tickerText }}</span>
+                    @isset($duaTickerItems)
+                        @foreach ($duaTickerItems as $dua)
+                            <span class="home-news-ticker__dua">
+                                <span class="home-news-ticker__dua-label">Du&#257;-verzoek</span>
+                                {{ $dua }}
+                            </span>
+                        @endforeach
+                    @endisset
+                    {{-- Duplicate for seamless loop --}}
+                    <span class="home-news-ticker__base" aria-hidden="true">{{ $tickerText }}</span>
+                    @isset($duaTickerItems)
+                        @foreach ($duaTickerItems as $dua)
+                            <span class="home-news-ticker__dua" aria-hidden="true">
+                                <span class="home-news-ticker__dua-label">Du&#257;-verzoek</span>
+                                {{ $dua }}
+                            </span>
+                        @endforeach
+                    @endisset
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 
     @php
         $progressPercentageRounded = round($progressPercentage);
