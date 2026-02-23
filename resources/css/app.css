@@ -200,3 +200,39 @@
     color: #045461;
     border: 1px solid #e2e8f0;
 }
+
+/* Hero CTA: knoppen altijd gecentreerd */
+.hero-cta {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.hero-cta__inner {
+    display: inline-flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    align-items: stretch;
+}
+@media (min-width: 640px) {
+    .hero-cta__inner {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+.hero-cta__inner .btn {
+    min-width: 0;
+}
+@media (min-width: 640px) {
+    .hero-cta__inner .btn {
+        width: auto;
+    }
+}
+@media (max-width: 639px) {
+    .hero-cta__inner .btn {
+        width: 100%;
+    }
+}
