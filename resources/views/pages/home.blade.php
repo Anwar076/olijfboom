@@ -102,67 +102,58 @@
                 <div class="w-16 h-1 bg-gradient-to-r from-transparent via-gold to-transparent rounded-full mx-auto mt-4"></div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10 items-stretch">
-                <div class="lg:col-span-3 order-2 lg:order-1">
-                    <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-lg ring-1 ring-slate-200/50 space-y-8 p-6 md:p-10 relative border-t-4 border-t-gold">
-                        <div>
-                            <blockquote class="border-l-4 border-gold pl-4 md:pl-6 py-2 bg-slate-50/80 rounded-r-lg">
-                                <p class="text-slate-700 leading-relaxed italic text-sm md:text-base">
-                                    &ldquo;Allah is het licht van de hemelen en de aarde. De gelijkenis van Zijn licht (in het hart van de gelovige) is zoals een nis waarin licht is. Het licht bevindt zich in glas, het (licht in dit) glas is zoals dat van een parelachtige ster die werd aangestoken (met olie) van een gezegende olijfboom, noch uit het oosten, noch uit het westen. Zijn olie lijkt uit zichzelf te willen ontvlammen, hoewel geen vuur het heeft aangeraakt. Licht boven licht! Allah leidt naar Zijn licht wie Hij wil.&rdquo;
-                                </p>
-                                <cite class="text-sm text-slate-500 not-italic mt-2 block">Surah An-Nur, aya 35.</cite>
-                            </blockquote>
-                            <p class="text-slate-700 leading-relaxed mt-4 text-sm md:text-base">
-                                In deze ayah schildert Allah een beeld van iets zuivers en gezegend: een olijfboom die zo goede olie geeft, dat het licht vanzelf lijkt te branden. De olijfboom is niet het licht zelf — zij draagt bij aan het licht. Druppel voor druppel. Zo willen wij als gemeenschap zijn.
-                            </p>
-                        </div>
+            {{-- Rij 1: Tekst | Afbeelding --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch min-h-0 mb-6 md:mb-8">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-6 md:p-8 flex flex-col justify-center order-2 md:order-1 min-w-0">
+                    <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-3">De ayah</h3>
+                    <blockquote class="border-l-4 border-gold pl-4 md:pl-5 py-1 bg-slate-50 rounded-r-lg">
+                        <p class="text-slate-700 leading-relaxed italic text-sm md:text-base">
+                            &ldquo;Allah is het licht van de hemelen en de aarde. De gelijkenis van Zijn licht (in het hart van de gelovige) is zoals een nis waarin licht is. Het licht bevindt zich in glas, het (licht in dit) glas is zoals dat van een parelachtige ster die werd aangestoken (met olie) van een gezegende olijfboom, noch uit het oosten, noch uit het westen. Zijn olie lijkt uit zichzelf te willen ontvlammen, hoewel geen vuur het heeft aangeraakt. Licht boven licht! Allah leidt naar Zijn licht wie Hij wil.&rdquo;
+                        </p>
+                        <cite class="text-sm text-slate-500 not-italic mt-2 block">Surah An-Nur, aya 35.</cite>
+                    </blockquote>
+                    <p class="text-slate-700 leading-relaxed mt-4 text-sm md:text-base mb-4">
+                        Wij halen onze inspiratie uit deze aya en noemen deze campagne Nour ala Nour, niet omdat wij het licht zijn, maar omdat wij als gemeenschap, samen de dragers zijn van iets wat groter is dan onszelf. Elke bijdrage voegt een licht toe. Elke donatie brengt het volledig verlichten van de boom dichterbij.
+                    </p>
+                    <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-2 mt-4">Ons verhaal</h3>
+                    <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-0">
+                        Wat begon als een droom, werd werkelijkheid door de kracht van onze gemeenschap. In Ramadan 2025 nam de Barendrechtse moslimgemeenschap het initiatief voor een eigen islamitisch centrum. Wat volgde was buitengewoon: in slechts vier dagen doneerde de gemeenschap &euro;1.500.000 tijdens een historische benefiet. Dankzij de moed en het vertrouwen van enkele gemeenschapsleden die renteloze leningen verstrekten, kon het pand aan het Bijdorpplein in december 2025 volledig worden overgenomen. Vanwege deze vrijgevigheid en moed werd een extra kostenpost van &euro;250.000 aan overdrachtsbelasting voorkomen, omdat ICB binnen 6 maanden volledig eigenaar van het pand werd.
+                    </p>
+                </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-md aspect-[4/3] min-h-[220px] md:min-h-[280px] order-1 md:order-2 min-w-0 w-full">
+                    <img src="{{ asset('images/olijf-tak.png') }}" alt="Olijfboom van Licht" class="w-full h-full object-cover max-w-full">
+                </div>
+            </div>
 
-                        <div class="border-t border-slate-200 pt-6">
-                            <h3 class="text-sm font-bold text-gold uppercase tracking-wide mb-3">Ons verhaal</h3>
-                            <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-3">
-                                Wat begon als een droom, werd werkelijkheid door de kracht van onze gemeenschap. In Ramadan 2025 nam de Barendrechtse moslimgemeenschap het initiatief voor een eigen islamitisch centrum. Wat volgde was buitengewoon: in slechts vier dagen doneerde onze gemeenschap &euro;1.500.000 tijdens een historische benefiet.
-                            </p>
-                            <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-3">
-                                Met dit opgehaalde bedrag konden 2 van de 3 verdiepingen van het pand in juni 2025 worden aanbetaald. Dankzij de moed en het vertrouwen van enkele gemeenschapsleden die renteloze leningen verstrekten, kon het pand aan het Bijdorpplein in december 2025 volledig worden overgenomen. Vanwege deze vrijgevigheid werd &euro;250.000 aan overdrachtsbelasting voorkomen, omdat ICB binnen 6 maanden volledig eigenaar van het pand werd.
-                            </p>
-                        </div>
-
-                        <div class="border-t border-slate-200 pt-6">
-                            <h3 class="text-sm font-bold text-gold uppercase tracking-wide mb-3">De campagne</h3>
-                            <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-3">
-                                Nu is het moment om deze amanah aan deze helden in te lossen. Tijdens Ramadan 2026 lanceren wij de campagne Olijfboom van Licht: samen halen we &euro;1.000.000 op om de renteloze leningen volledig terug te betalen aan de mensen die ICB medemogelijk hebben gemaakt.
-                            </p>
-                            <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-3">
-                                Onze olijfboom heeft 100 lichtjes. Elk lichtje = &euro;10.000. Wanneer alle lichtjes branden, is Moskee Barendrecht volledig schuldenvrij en in handen van de gemeenschap — voor nu en voor de generaties na ons.
-                            </p>
-                            <p class="text-slate-700 leading-relaxed text-sm md:text-base">
-                                Wij noemen deze campagne <em>Nour ala Nour</em>: wij zijn als gemeenschap samen de dragers van iets wat groter is dan onszelf. Elke bijdrage voegt een licht toe.
-                            </p>
-                        </div>
-
-                        <div class="border-t border-slate-200 pt-6 bg-amber-50/50 rounded-xl p-4 -mx-1">
-                            <h3 class="text-sm font-bold text-gold uppercase tracking-wide mb-2">Sadaqah jariyah</h3>
-                            <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-0">
-                                Dit is meer dan een donatie. Bij elk gebed in deze moskee, elke les, elk kind dat hier in zijn geloof opgroeit, ontvang jij als donateur ajar van Allah swt — tot de Dag des Oordeels. Dat is de waarde van jouw bijdrage.
-                            </p>
-                        </div>
+            {{-- Rij 2: Afbeelding | Tekst --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch min-h-0">
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-md aspect-[4/3] min-h-[220px] md:min-h-[280px] order-1 min-w-0 w-full">
+                    <img src="{{ asset('images/gemeenschap-vrouwen.png') }}" alt="Gemeenschap Barendrecht" class="w-full h-full object-cover max-w-full">
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-6 md:p-8 flex flex-col justify-center order-2 min-w-0">
+                    <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-3">De campagne</h3>
+                    <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-6">
+                        Nu is het moment om deze amanah aan deze helden in te lossen. Tijdens Ramadan 2026 lanceren wij de campagne Olijfboom van Licht: samen halen we &euro;1.000.000 op om de renteloze leningen volledig terug te betalen aan de mensen die ICB medemogelijk hebben gemaakt.
+                    </p>
+                    <div class="bg-amber-50/70 rounded-xl p-5">
+                        <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-2">Sadaqah jariyah</h3>
+                        <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-0">
+                            Onze olijfboom heeft 100 lichtjes. Elk lichtje vertegenwoordigt &euro;10.000. Wanneer alle lichtjes branden, is Moskee Barendrecht volledig schuldenvrij en in handen van de gemeenschap — voor nu en voor de generaties na ons. Dit is meer dan een donatie. Dit is sadaqah jariyah: een doorlopende liefdadigheid. Bij elk gebed dat in deze moskee wordt verricht, bij elke les die wordt gegeven, bij elk kind dat hier opgroeit in zijn geloof, ontvang jij als donateur ajar (beloning) van Allah swt. Tot de Dag des Oordeels. Dat is de werkelijke waarde van jouw bijdrage.
+                        </p>
                     </div>
                 </div>
-                <div class="lg:col-span-2 order-1 lg:order-2 flex">
-                    <div class="rounded-2xl overflow-hidden border border-slate-200/80 shadow-lg bg-white flex flex-col w-full ring-1 ring-slate-200/50">
-                        <div class="relative aspect-[4/3] min-h-[200px] overflow-hidden">
-                            <img src="{{ asset('images/gemeenschap-vrouwen.png') }}" alt="Gemeenschap Barendrecht" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
-                        </div>
-                        <div class="p-6 flex-1 flex flex-col justify-center border-t border-slate-100">
-                            <div class="text-3xl font-bold text-gold mb-1">&euro;1.000.000</div>
-                            <div class="text-slate-600 text-sm">Campagnedoel</div>
-                            <div class="mt-4 pt-4 border-t border-slate-200">
-                                <div class="text-2xl font-bold text-gold">100 lichtjes</div>
-                                <div class="text-slate-600 text-sm">Elk licht = &euro;10.000</div>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+
+            {{-- Campagnedoel --}}
+            <div class="mt-8 bg-white rounded-2xl border border-slate-200 shadow-md p-6 md:p-8 flex flex-wrap items-center justify-center gap-8 md:gap-12">
+                <div class="text-center">
+                    <p class="text-2xl md:text-3xl font-bold text-gold">&euro;1.000.000</p>
+                    <p class="text-slate-600 text-sm mt-0.5">Campagnedoel</p>
+                </div>
+                <div class="text-slate-300 hidden md:block">|</div>
+                <div class="text-center">
+                    <p class="text-xl md:text-2xl font-bold text-gold">100 lichtjes</p>
+                    <p class="text-slate-600 text-sm mt-0.5">Elk licht = &euro;10.000</p>
                 </div>
             </div>
         </div>
@@ -235,9 +226,10 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {{-- Eerste rij: €50.000 en €25.000 — Tweede rij: €10.000 en €5.000 --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
                 <div
-                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
+                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer h-full flex flex-col min-h-0"
                     data-incentive-card
                     data-incentive-title="De Wortel"
                     data-incentive-amount="&euro;50.000 per team &bull; 5 beschikbaar"
@@ -264,7 +256,7 @@ Topolino&#39;s beschikbaar. Eerste team, eerste keus."
                     </div>
                 </div>
                 <div
-                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
+                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer h-full flex flex-col min-h-0"
                     data-incentive-card
                     data-incentive-title="De Olijven"
                     data-incentive-amount="&euro;25.000 per team &bull; 5 beschikbaar"
@@ -286,7 +278,7 @@ Topolino&#39;s beschikbaar. Eerste team, eerste keus."
                     </div>
                 </div>
                 <div
-                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
+                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer h-full flex flex-col min-h-0"
                     data-incentive-card
                     data-incentive-title="Het Grote Blad"
                     data-incentive-amount="&euro;10.000 per team &bull; 30 beschikbaar"
@@ -312,7 +304,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                     </div>
                 </div>
                 <div
-                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
+                    class="bg-white/90 rounded-2xl p-6 border-2 border-slate-200 hover:border-gold transition-all hover:shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer h-full flex flex-col min-h-0"
                     data-incentive-card
                     data-incentive-title="Het Kleine Blad"
                     data-incentive-amount="&euro;5.000 per team &bull; 40 beschikbaar"
