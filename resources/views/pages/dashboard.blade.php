@@ -164,6 +164,7 @@
                     @endif
                 </div>
 
+                {{-- Media rij beheren (afbeeldingen + video's) tijdelijk uitgeschakeld
                 <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
                     <h3 class="text-xl font-bold mb-4 title-gradient">Media rij beheren (afbeeldingen + video's)</h3>
                     @php
@@ -205,6 +206,7 @@
                         <button type="submit" class="btn btn-primary">Media opslaan</button>
                     </form>
                 </div>
+                --}}
             @endif
 
             @if (!$team)

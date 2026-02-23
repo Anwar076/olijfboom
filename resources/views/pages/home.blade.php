@@ -564,7 +564,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                         class="inline-flex items-center px-4 py-2 rounded-lg bg-gold text-slate-900 font-semibold text-sm md:text-base border border-gold hover:bg-gold-dark transition-colors"
                         data-open-modal="sponsoring"
                     >
-                        Neem contact op over sponsoring
+                        Word sponsor
                     </button>
                     </div>
                 </div>
