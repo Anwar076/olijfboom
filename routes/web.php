@@ -39,6 +39,12 @@ Route::put('/dashboard/team/goal', [DashboardController::class, 'updateGoal'])
 Route::put('/dashboard/dua/{donation}', [DashboardController::class, 'fulfillDua'])
     ->middleware(['auth', 'admin'])
     ->name('dashboard.dua.fulfill');
+Route::put('/dashboard/dua/{donation}/show-on-ticker', [DashboardController::class, 'putDuaOnTicker'])
+    ->middleware(['auth', 'admin'])
+    ->name('dashboard.dua.show-on-ticker');
+Route::put('/dashboard/dua/{donation}/remove-from-ticker', [DashboardController::class, 'removeDuaFromTicker'])
+    ->middleware(['auth', 'admin'])
+    ->name('dashboard.dua.remove-from-ticker');
 Route::put('/dashboard/home-news-ticker', [DashboardController::class, 'updateHomeNewsTicker'])
     ->middleware(['auth', 'admin'])
     ->name('dashboard.home-news-ticker');

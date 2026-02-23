@@ -38,7 +38,7 @@ class DashboardController extends Controller
 
         $membership = TeamMember::where('user_id', $user->id)->first();
         $pendingDuaRequests = DB::table('donations')
-            ->join('teams', 'donations.team_id', '=', 'teams.id')
+            ->leftJoin('teams', 'donations.team_id', '=', 'teams.id')
             ->where('donations.status', 'paid')
             ->where('donations.dua_request_enabled', true)
             ->whereNotNull('donations.dua_request_text')
@@ -47,11 +47,41 @@ class DashboardController extends Controller
             ->select([
                 'donations.id',
                 'donations.amount',
+                'donations.donor_name',
                 'donations.dua_request_text',
+                'donations.dua_request_anonymous',
+                'donations.dua_ticker_text',
+                'donations.dua_show_on_ticker',
                 'teams.name as team_name',
             ])
             ->limit(25)
             ->get();
+
+        $duaTickerPreviewTexts = DB::table('donations')
+            ->where('status', 'paid')
+            ->where('dua_request_enabled', true)
+            ->whereNotNull('dua_request_text')
+            ->where('dua_show_on_ticker', true)
+            ->orderByDesc('paid_at')
+            ->limit(10)
+            ->get(['dua_request_text', 'dua_ticker_text', 'dua_request_anonymous'])
+            ->map(function ($row) {
+                $text = trim((string) ($row->dua_ticker_text ?? ''));
+                if ($text === '') {
+                    $text = trim((string) ($row->dua_request_text ?? ''));
+                }
+                if ($text === '') {
+                    return null;
+                }
+
+                return [
+                    'text' => $text,
+                    'anonymous' => !empty($row->dua_request_anonymous),
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
 
         if (!$membership) {
             return view('pages.dashboard', [
@@ -65,6 +95,7 @@ class DashboardController extends Controller
                 'homeNewsTickerText' => $homeNewsTickerText,
                 'dashboardShowcaseMedia' => $dashboardShowcaseMedia,
                 'pendingDuaRequests' => $pendingDuaRequests,
+                'duaTickerPreviewTexts' => $duaTickerPreviewTexts,
             ]);
         }
 
@@ -96,6 +127,7 @@ class DashboardController extends Controller
             'homeNewsTickerText' => $homeNewsTickerText,
             'dashboardShowcaseMedia' => $dashboardShowcaseMedia,
             'pendingDuaRequests' => $pendingDuaRequests,
+            'duaTickerPreviewTexts' => $duaTickerPreviewTexts,
         ]);
     }
 
@@ -179,11 +211,56 @@ class DashboardController extends Controller
             ->where('id', $donationId)
             ->update([
                 'dua_fulfilled_at' => now(),
+                'dua_show_on_ticker' => false,
             ]);
 
         return redirect()
             ->route('dashboard')
             ->with('status', 'Dua-verzoek gemarkeerd als gedaan.');
+    }
+
+    public function putDuaOnTicker(Request $request, int $donationId)
+    {
+        if (! $request->user()?->isSiteManager()) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'dua_ticker_text' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $update = [
+            'dua_show_on_ticker' => true,
+        ];
+
+        if (isset($data['dua_ticker_text'])) {
+            $update['dua_ticker_text'] = trim((string) $data['dua_ticker_text']);
+        }
+
+        DB::table('donations')
+            ->where('id', $donationId)
+            ->where('dua_request_enabled', true)
+            ->whereNotNull('dua_request_text')
+            ->update($update);
+
+        return redirect()
+            ->route('dashboard')
+            ->with('status', 'Dua-verzoek staat nu (bijgewerkt) op de nieuwsticker.');
+    }
+
+    public function removeDuaFromTicker(Request $request, int $donationId)
+    {
+        if (! $request->user()?->isSiteManager()) {
+            abort(403);
+        }
+
+        DB::table('donations')
+            ->where('id', $donationId)
+            ->update(['dua_show_on_ticker' => false]);
+
+        return redirect()
+            ->route('dashboard')
+            ->with('status', 'Dua-verzoek verwijderd van de nieuwsticker.');
     }
 
     private function normalizeShowcaseMedia(?string $raw, array $fallback): array

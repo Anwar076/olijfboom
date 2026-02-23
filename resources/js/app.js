@@ -127,6 +127,9 @@ const initDonateForm = () => {
 
     const amountInput = form.querySelector('[data-donation-amount]');
     const teamSelect = form.querySelector('[data-donation-team]');
+    const noTeamBlock = form.querySelector('[data-donation-no-team]');
+    const anonymousCheckbox = form.querySelector('[data-donation-anonymous]');
+    const donorNameInput = form.querySelector('[data-donation-name]');
     const buttons = Array.from(form.querySelectorAll('[data-donation-suggested]'));
     const summary = document.querySelector('[data-donation-summary]');
     const summaryAmount = document.querySelector('[data-donation-summary-amount]');
@@ -143,15 +146,36 @@ const initDonateForm = () => {
         button.classList.remove('bg-white', 'border', 'border-slate-300', 'text-slate-700');
     };
 
+    const updateNoTeamVisibility = () => {
+        if (!noTeamBlock || !teamSelect) return;
+        const isNoTeam = !teamSelect.value || teamSelect.value === '';
+        noTeamBlock.classList.toggle('hidden', !isNoTeam);
+        if (donorNameInput) {
+            const anon = anonymousCheckbox && anonymousCheckbox.checked;
+            donorNameInput.required = isNoTeam && !anon;
+        }
+    };
+
+    const getSummaryTeamText = () => {
+        if (!teamSelect) return '';
+        if (teamSelect.value && teamSelect.value !== '') {
+            return teamSelect.options[teamSelect.selectedIndex]?.text || '';
+        }
+        if (anonymousCheckbox && anonymousCheckbox.checked) return 'Zonder team (anoniem)';
+        if (donorNameInput && donorNameInput.value.trim()) return 'Zonder team — ' + donorNameInput.value.trim();
+        return 'Zonder team';
+    };
+
     const updateSummary = () => {
         if (!summary || !amountInput || !teamSelect) return;
         const amount = parseFloat(amountInput.value || '0');
-        const teamName = teamSelect.options[teamSelect.selectedIndex]?.text || '';
-        const hasData = amount >= 1 && teamSelect.value;
+        const hasTeam = teamSelect.value && teamSelect.value !== '';
+        const hasNoTeamData = !hasTeam && (anonymousCheckbox?.checked || (donorNameInput?.value?.trim() || '').length > 0);
+        const hasData = amount >= 1 && (hasTeam || hasNoTeamData);
         summary.classList.toggle('hidden', !hasData);
         if (hasData) {
             if (summaryAmount) summaryAmount.textContent = formatCurrency(amount, 2);
-            if (summaryTeam) summaryTeam.textContent = teamName;
+            if (summaryTeam) summaryTeam.textContent = getSummaryTeamText();
         }
     };
 
@@ -170,13 +194,29 @@ const initDonateForm = () => {
         updateSummary();
     });
 
-    teamSelect?.addEventListener('change', updateSummary);
+    teamSelect?.addEventListener('change', () => {
+        updateNoTeamVisibility();
+        updateSummary();
+    });
+
+    if (anonymousCheckbox) {
+        anonymousCheckbox.addEventListener('change', () => {
+            if (donorNameInput) {
+                donorNameInput.required = noTeamBlock && !noTeamBlock.classList.contains('hidden') && !anonymousCheckbox.checked;
+            }
+            updateSummary();
+        });
+    }
+    if (donorNameInput) {
+        donorNameInput.addEventListener('input', updateSummary);
+    }
 
     const params = new URLSearchParams(window.location.search);
     const teamId = params.get('team');
     if (teamId && teamSelect) {
         teamSelect.value = teamId;
     }
+    updateNoTeamVisibility();
     updateSummary();
 };
 
@@ -749,8 +789,9 @@ const initOliveTree = () => {
         return { x: 0, y: 0 };
     };
 
-    const LANTERN_PATH =
-        'M 0,-14 C 10,-2 12,8 8,14 C 4,18 0,18 -4,14 C -8,8 -6,-2 0,-14 Z';
+    // Lamp-symbol uit olive-tree.blade.php: viewBox 0 0 512 512, top-center ≈ (256, 0)
+    const LAMP_VIEWBOX_CX = 256;
+    const LAMP_SCALE = 0.24;
 
     for (let index = 0; index < maxLights; index += 1) {
         const shape = LIGHT_SHAPES[index];
@@ -761,45 +802,30 @@ const initOliveTree = () => {
         group.setAttribute('data-light-index', index.toString());
         group.setAttribute(
             'transform',
-            `translate(${anchor.x},${anchor.y}) scale(2.1)`
+            `translate(${anchor.x},${anchor.y}) translate(-${LAMP_VIEWBOX_CX}, 0) scale(${LAMP_SCALE})`
         );
         if (isActive) {
             group.setAttribute('filter', 'url(#lightGlow)');
         }
 
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', LANTERN_PATH);
-        path.setAttribute('fill', 'url(#lanternGradient)');
-        path.setAttribute('stroke', 'rgba(180,140,50,0.6)');
-        path.setAttribute('stroke-width', '0.8');
-        path.setAttribute('opacity', isActive ? '1' : '0');
+        const useEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+        useEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#tree-lamp');
+        useEl.setAttribute('x', '0');
+        useEl.setAttribute('y', '0');
+        useEl.setAttribute('width', '512');
+        useEl.setAttribute('height', '512');
+        useEl.setAttribute('opacity', isActive ? '1' : '0');
         if (isActive) {
             const animate = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
             animate.setAttribute('attributeName', 'opacity');
-            animate.setAttribute('values', '0.88;1;0.88');
-            animate.setAttribute('dur', '2.2s');
+            animate.setAttribute('values', '0.55;1;0.55');
+            animate.setAttribute('keyTimes', '0;0.4;1');
+            animate.setAttribute('dur', '2.8s');
             animate.setAttribute('repeatCount', 'indefinite');
-            path.appendChild(animate);
+            useEl.appendChild(animate);
         }
 
-        group.appendChild(path);
-
-        if (isActive) {
-            const holes = [
-                { cx: 0, cy: -4 },
-                { cx: 3, cy: 2 },
-                { cx: -2.5, cy: 4 },
-                { cx: 2, cy: 6 },
-            ];
-            holes.forEach(({ cx, cy }) => {
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', cx);
-                circle.setAttribute('cy', cy);
-                circle.setAttribute('r', '1.2');
-                circle.setAttribute('fill', 'rgba(255,230,180,0.5)');
-                group.appendChild(circle);
-            });
-        }
+        group.appendChild(useEl);
 
         if (isActive) {
             group.style.cursor = 'pointer';
@@ -818,6 +844,205 @@ const initOliveTree = () => {
     }
 };
 
+/**
+ * Interactieve walkthrough: stappen met overlay, spotlight en kaart.
+ * Gebruik: data-tour="create-team" of data-tour="dashboard" op een knop met data-tour-start.
+ */
+const TOUR_STEPS = {
+    'create-team': [
+        { target: null, title: 'Welkom bij de rondleiding', body: 'We lopen samen het formulier door om een team aan te maken. Klik op Volgende om te starten.' },
+        { target: '[data-tour-step="team-name"]', title: 'Teamnaam', body: 'Geef je team een duidelijke naam. Alleen deze naam is zichtbaar op het leaderboard; donaties blijven anoniem.' },
+        { target: '[data-tour-step="team-description"]', title: 'Beschrijving (optioneel)', body: 'Een korte beschrijving van je team is optioneel. Handig om uit te leggen wie er meedoet of wat jullie doel is.' },
+        { target: '[data-tour-step="team-goal"]', title: 'Teamdoel', body: 'Kies één van de vier doelniveaus (€5.000 t/m €50.000). Hoe hoger het doel, hoe groter de beloning als jullie het halen. De incentives staan op de homepagina.' },
+        { target: '[data-tour-step="team-admin"]', title: 'Beheerder account', body: 'Vul hier je eigen gegevens in. Hiermee log je straks in op het dashboard om je uitnodigingslink te maken en leden toe te voegen. Je e-mail wordt niet publiek getoond.' },
+        { target: '[data-tour-step="team-submit"]', title: 'Team aanmaken', body: 'Na het aanmaken word je direct ingelogd en kom je in je team-dashboard. Daar kun je een uitnodigingslink genereren en die link delen met iedereen die je wilt uitnodigen.' },
+    ],
+    dashboard: [
+        { target: null, title: 'Je team-dashboard', body: 'Dit is je dashboard als teambeheerder. Hier zie je de voortgang van je team en kun je uitnodigingen en leden beheren. Klik op Volgende om de onderdelen te bekijken.' },
+        { target: '[data-tour-step="dashboard-team-card"]', title: 'Teamkaart en voortgang', body: 'Hier zie je je teamnaam, het gekozen doel en het totaal opgehaalde bedrag. De balk toont hoeveel procent jullie al van het doel hebben bereikt. Bij 100% ontvangt het team de bijbehorende beloning.' },
+        { target: '[data-tour-step="dashboard-invites"]', title: 'Uitnodigingen', body: 'Genereer een persoonlijke uitnodigingslink en deel die via WhatsApp, social media of in persoon. Iedereen die via jouw link doneert, telt mee voor jullie teamdoel.' },
+        { target: '[data-tour-step="dashboard-add-member"]', title: 'Lid toevoegen', body: 'Voeg hier direct leden toe met naam en e-mail. Zij krijgen toegang tot het team-dashboard en kunnen ook de uitnodigingslink zien en delen.' },
+        { target: '[data-tour-step="dashboard-members"]', title: 'Teamleden', body: 'Overzicht van alle leden van je team. Als beheerder kun je leden verwijderen indien nodig.' },
+    ],
+};
+
+const initWalkthrough = () => {
+    const startBtn = document.querySelector('[data-tour-start]');
+    if (!startBtn) return;
+
+    const tourName = startBtn.getAttribute('data-tour');
+    const steps = tourName ? TOUR_STEPS[tourName] : null;
+    if (!steps || steps.length === 0) return;
+
+    let overlayEl = null;
+    let spotlightEl = null;
+    let cardEl = null;
+    let currentStep = 0;
+    let resizeHandler = null;
+
+    const createElements = () => {
+        overlayEl = document.createElement('div');
+        overlayEl.className = 'tour-overlay';
+        overlayEl.setAttribute('aria-hidden', 'true');
+
+        spotlightEl = document.createElement('div');
+        spotlightEl.className = 'tour-spotlight';
+        spotlightEl.setAttribute('aria-hidden', 'true');
+
+        cardEl = document.createElement('div');
+        cardEl.className = 'tour-card';
+        cardEl.setAttribute('role', 'dialog');
+        cardEl.setAttribute('aria-label', 'Rondleiding');
+
+        document.body.appendChild(overlayEl);
+        document.body.appendChild(spotlightEl);
+        document.body.appendChild(cardEl);
+    };
+
+    const getTargetRect = (selector) => {
+        if (!selector) return null;
+        const el = document.querySelector(selector);
+        if (!el) return null;
+        return el.getBoundingClientRect();
+    };
+
+    const updateSpotlight = (rect) => {
+        if (!spotlightEl) return;
+        if (!rect) {
+            spotlightEl.style.display = 'none';
+            return;
+        }
+        const padding = 8;
+        spotlightEl.style.display = 'block';
+        spotlightEl.style.top = `${rect.top - padding}px`;
+        spotlightEl.style.left = `${rect.left - padding}px`;
+        spotlightEl.style.width = `${rect.width + padding * 2}px`;
+        spotlightEl.style.height = `${rect.height + padding * 2}px`;
+    };
+
+    const positionCard = (rect) => {
+        if (!cardEl) return;
+        const vh = window.innerHeight;
+        const vw = window.innerWidth;
+        if (!rect) {
+            cardEl.style.top = '50%';
+            cardEl.style.left = '50%';
+            cardEl.style.transform = 'translate(-50%, -50%)';
+            cardEl.style.bottom = 'auto';
+            return;
+        }
+        const cardHeight = 220;
+        const spaceBelow = vh - rect.bottom;
+        const spaceAbove = rect.top;
+        if (spaceBelow >= cardHeight + 24 || spaceBelow >= spaceAbove) {
+            cardEl.style.top = 'auto';
+            cardEl.style.left = '50%';
+            cardEl.style.transform = 'translateX(-50%)';
+            cardEl.style.bottom = `${Math.max(24, vh - rect.bottom - cardHeight - 16)}px`;
+        } else {
+            cardEl.style.bottom = 'auto';
+            cardEl.style.top = `${Math.max(24, rect.top - cardHeight - 16)}px`;
+            cardEl.style.left = '50%';
+            cardEl.style.transform = 'translateX(-50%)';
+        }
+    };
+
+    const scrollToTarget = (selector) => {
+        if (!selector) return;
+        const el = document.querySelector(selector);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    const renderStep = () => {
+        const step = steps[currentStep];
+        if (!step) return;
+
+        const targetSelector = step.target;
+        scrollToTarget(targetSelector);
+
+        const updatePosition = () => {
+            const rect = getTargetRect(targetSelector);
+            updateSpotlight(rect);
+            positionCard(rect);
+        };
+
+        if (resizeHandler) {
+            window.removeEventListener('resize', resizeHandler);
+            window.removeEventListener('scroll', resizeHandler, true);
+        }
+        resizeHandler = () => updatePosition();
+        window.addEventListener('resize', resizeHandler);
+        window.addEventListener('scroll', resizeHandler, true);
+
+        setTimeout(() => {
+            updatePosition();
+
+            const prevDisabled = currentStep === 0;
+            const nextLabel = currentStep === steps.length - 1 ? 'Sluiten' : 'Volgende';
+            const stepIndicator = `Stap ${currentStep + 1} van ${steps.length}`;
+
+            cardEl.innerHTML = `
+                <div class="tour-card__steps">${stepIndicator}</div>
+                <div class="tour-card__title">${step.title}</div>
+                <div class="tour-card__body">${step.body}</div>
+                <div class="tour-card__actions">
+                    <button type="button" data-tour-prev class="btn btn-secondary text-sm" ${prevDisabled ? 'disabled' : ''}>Vorige</button>
+                    <button type="button" data-tour-next class="btn btn-primary text-sm">${nextLabel}</button>
+                </div>
+            `;
+
+            const prevBtn = cardEl.querySelector('[data-tour-prev]');
+            const nextBtn = cardEl.querySelector('[data-tour-next]');
+            if (prevBtn && !prevDisabled) prevBtn.addEventListener('click', goPrev);
+            if (nextBtn) nextBtn.addEventListener('click', nextBtn.textContent === 'Sluiten' ? closeTour : goNext);
+        }, 400);
+    };
+
+    const goNext = () => {
+        if (currentStep < steps.length - 1) {
+            currentStep += 1;
+            renderStep();
+        } else {
+            closeTour();
+        }
+    };
+
+    const goPrev = () => {
+        if (currentStep > 0) {
+            currentStep -= 1;
+            renderStep();
+        }
+    };
+
+    const closeTour = () => {
+        if (resizeHandler) {
+            window.removeEventListener('resize', resizeHandler);
+            window.removeEventListener('scroll', resizeHandler, true);
+            resizeHandler = null;
+        }
+        if (overlayEl && overlayEl.parentNode) overlayEl.parentNode.removeChild(overlayEl);
+        if (spotlightEl && spotlightEl.parentNode) spotlightEl.parentNode.removeChild(spotlightEl);
+        if (cardEl && cardEl.parentNode) cardEl.parentNode.removeChild(cardEl);
+        overlayEl = spotlightEl = cardEl = null;
+    };
+
+    overlayEl?.addEventListener('click', (e) => {
+        if (e.target === overlayEl) closeTour();
+    });
+
+    startBtn.addEventListener('click', () => {
+        createElements();
+        currentStep = 0;
+        renderStep();
+        overlayEl.addEventListener('click', function handler(e) {
+            if (e.target === overlayEl) {
+                closeTour();
+                overlayEl.removeEventListener('click', handler);
+            }
+        });
+    });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     initHomeNav();
     initFAQ();
@@ -827,4 +1052,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initIncentivesModal();
     initShowcaseRailAutoplay();
     initOliveTree();
+    initWalkthrough();
 });

@@ -6,12 +6,18 @@
 
     <div class="pt-32 pb-20 px-4">
         <div class="container mx-auto max-w-6xl">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
                 <h1 class="text-4xl font-bold title-gradient">Team Dashboard</h1>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="text-slate-600 hover:text-gold transition-colors">Uitloggen</button>
-                </form>
+                <div class="flex items-center gap-3">
+                    <button type="button" data-tour-start data-tour="dashboard" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 hover:border-gold transition-colors">
+                        <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Rondleiding dashboard
+                    </button>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="text-slate-600 hover:text-gold transition-colors">Uitloggen</button>
+                    </form>
+                </div>
             </div>
 
             @if (auth()->user()->isSiteManager())
@@ -24,14 +30,16 @@
                         <div class="flex gap-4 whitespace-nowrap items-center">
                             <span class="font-semibold text-gold">Basis tekst:</span>
                             <span>{{ $homeNewsTickerText }}</span>
-                            @foreach ($pendingDuaRequests as $duaDonation)
+                            @foreach ($duaTickerPreviewTexts ?? [] as $duaItem)
                                 <span class="text-slate-300">&bull;</span>
-                                <span class="text-amber-200">
-                                    Dua-verzoek: "{{ $duaDonation->dua_request_text }}"
-                                </span>
+                                @php
+                                    $previewText = is_array($duaItem) ? $duaItem['text'] : $duaItem;
+                                    $previewAnon = is_array($duaItem) && !empty($duaItem['anonymous']);
+                                @endphp
+                                <span class="text-amber-200">Du&#257;-verzoek{{ $previewAnon ? ' (anoniem)' : '' }}: "{{ $previewText }}"</span>
                             @endforeach
-                            @if ($pendingDuaRequests->isEmpty())
-                                <span class="text-slate-400">(nog geen actieve dua-verzoeken)</span>
+                            @if (empty($duaTickerPreviewTexts))
+                                <span class="text-slate-400">(geen dua op nieuwsticker — zet handmatig in het blok hieronder)</span>
                             @endif
                         </div>
                     </div>
@@ -71,29 +79,85 @@
                 </div>
 
                 <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
-                    <h3 class="text-xl font-bold mb-4 title-gradient">Dua-verzoeken in nieuwsstrook</h3>
+                    <h3 class="text-xl font-bold mb-4 title-gradient">Dua-verzoeken</h3>
+                    <p class="text-slate-600 text-sm mb-4">
+                        Nieuwe dua-verzoeken komen hier binnen. Je kunt zelf de tekst voor de nieuwsticker intypen of herschrijven;
+                        de originele dua van de donateur blijft hieronder zichtbaar.
+                    </p>
                     @if ($pendingDuaRequests->isEmpty())
                         <p class="text-slate-600 text-sm">Er zijn momenteel geen openstaande dua-verzoeken uit donaties.</p>
                     @else
                         <div class="space-y-3">
                             @foreach ($pendingDuaRequests as $duaDonation)
-                                <div class="border border-slate-200 rounded-lg p-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <div class="border rounded-lg p-3 flex flex-col gap-3 {{ !empty($duaDonation->dua_request_anonymous) ? 'border-slate-300 border-l-4 border-l-slate-500 bg-slate-50/60' : 'border-slate-200' }}">
+                                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                                        @if (!empty($duaDonation->dua_request_anonymous))
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-200 text-slate-700 border border-slate-300" title="Dit dua-verzoek wordt anoniem getoond op de nieuwsticker">
+                                                <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                                <span>Anoniem verzoek</span>
+                                            </span>
+                                        @endif
+                                        @if (!empty($duaDonation->dua_show_on_ticker))
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">Op nieuwsticker</span>
+                                        @endif
+                                    </div>
                                     <div>
                                         <div class="text-sm text-slate-500">
-                                            Donatie voor team: <span class="font-semibold text-slate-800">{{ $duaDonation->team_name ?? 'Onbekend team' }}</span>
+                                            @if (!empty($duaDonation->team_name))
+                                                Donatie voor team: <span class="font-semibold text-slate-800">{{ $duaDonation->team_name }}</span>
+                                            @elseif (!empty($duaDonation->donor_name))
+                                                Donatie zonder team — <span class="font-semibold text-slate-800">{{ $duaDonation->donor_name }}</span>
+                                            @else
+                                                Donatie zonder team <span class="text-slate-400">(anoniem)</span>
+                                            @endif
                                             &middot; Bedrag: <span class="font-semibold text-slate-800">&euro;{{ number_format($duaDonation->amount, 2, ',', '.') }}</span>
                                         </div>
                                         <div class="text-slate-800 mt-1">
                                             "{{ $duaDonation->dua_request_text }}"
                                         </div>
+                                        @if (!empty($duaDonation->dua_ticker_text))
+                                            <div class="text-xs text-slate-500 mt-1">
+                                                Tekst op nieuwsticker: "<span class="italic">{{ $duaDonation->dua_ticker_text }}</span>"
+                                            </div>
+                                        @endif
                                     </div>
-                                    <form method="POST" action="{{ route('dashboard.dua.fulfill', ['donation' => $duaDonation->id]) }}">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-secondary text-sm">
-                                            Markeer dua als gedaan
-                                        </button>
-                                    </form>
+                                    <div class="flex flex-col gap-2">
+                                        <form method="POST" action="{{ route('dashboard.dua.show-on-ticker', ['donation' => $duaDonation->id]) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <label class="block text-xs font-medium text-slate-600 mb-1">
+                                                Tekst voor nieuwsticker (optioneel, door jou geformuleerd)
+                                            </label>
+                                            <textarea
+                                                name="dua_ticker_text"
+                                                rows="2"
+                                                maxlength="255"
+                                                class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-gold focus:outline-none text-sm mb-2"
+                                                placeholder="Bijvoorbeeld: Maak du&#257; voor de overleden opa van Anwar."
+                                            >{{ old('dua_ticker_text', $duaDonation->dua_ticker_text ?? $duaDonation->dua_request_text) }}</textarea>
+                                            <button type="submit" class="btn btn-primary text-sm">
+                                                @if (empty($duaDonation->dua_show_on_ticker))
+                                                    Zet op nieuwsticker met deze tekst
+                                                @else
+                                                    Update tekst & laat op nieuwsticker
+                                                @endif
+                                            </button>
+                                        </form>
+                                        <div class="flex flex-wrap gap-2">
+                                            @if (!empty($duaDonation->dua_show_on_ticker))
+                                                <form method="POST" action="{{ route('dashboard.dua.remove-from-ticker', ['donation' => $duaDonation->id]) }}" class="inline">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit" class="btn btn-secondary text-sm">Verwijder van nieuwsticker</button>
+                                                </form>
+                                            @endif
+                                            <form method="POST" action="{{ route('dashboard.dua.fulfill', ['donation' => $duaDonation->id]) }}" class="inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-secondary text-sm">Markeer dua als gedaan</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
@@ -152,7 +216,7 @@
                     $percentage = round($progressRatio);
                     $goalReached = $lampStatus;
                 @endphp
-                <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm" data-tour-step="dashboard-team-card">
                     <div class="flex items-start justify-between mb-4">
                         <div>
                             <h2 class="text-2xl font-bold mb-2 title-gradient">{{ $team->name }}</h2>
@@ -231,7 +295,7 @@
                         </form>
                     </div>
 
-                    <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                    <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm" data-tour-step="dashboard-invites">
                         <h3 class="text-xl font-bold mb-4 title-gradient">Uitnodigingen</h3>
                         @if ($inviteUrl)
                             <div class="flex gap-4 items-center">
@@ -250,7 +314,7 @@
                         @endif
                     </div>
 
-                    <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                    <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm" data-tour-step="dashboard-add-member">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-xl font-bold title-gradient">Lid toevoegen</h3>
                         </div>
@@ -263,7 +327,7 @@
                     </div>
                 @endif
 
-                <div class="bg-white/80 rounded-2xl p-6 border border-slate-200 backdrop-blur-sm">
+                <div class="bg-white/80 rounded-2xl p-6 border border-slate-200 backdrop-blur-sm" data-tour-step="dashboard-members">
                     <h3 class="text-xl font-bold mb-4 title-gradient">Teamleden</h3>
                     <div class="space-y-4">
                         @foreach ($members as $member)

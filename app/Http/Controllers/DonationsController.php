@@ -13,27 +13,44 @@ class DonationsController extends Controller
 {
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'team_id' => ['required', 'integer', 'exists:teams,id'],
+        $rules = [
+            'team_id' => ['nullable', 'integer', 'exists:teams,id'],
             'amount' => ['required', 'numeric', 'min:1'],
             'dua_request_enabled' => ['nullable', 'boolean'],
             'dua_request_text' => ['nullable', 'string', 'max:255'],
-        ]);
+            'dua_request_anonymous' => ['nullable', 'boolean'],
+            'donation_anonymous' => ['nullable', 'boolean'],
+            'donor_name' => ['nullable', 'string', 'max:255'],
+        ];
 
-        $team = Team::findOrFail($data['team_id']);
+        $data = $request->validate($rules);
+
+        $teamId = isset($data['team_id']) && $data['team_id'] !== '' ? (int) $data['team_id'] : null;
         $amount = (float) $data['amount'];
 
+        if ($teamId === null) {
+            $donationAnonymous = (bool) ($data['donation_anonymous'] ?? false);
+            if (! $donationAnonymous && empty(trim((string) ($data['donor_name'] ?? '')))) {
+                return back()->withErrors(['donor_name' => 'Vul je naam in of kies voor anoniem doneren.'])->withInput();
+            }
+        }
+
+        $team = $teamId ? Team::findOrFail($teamId) : null;
+        $donorName = $teamId === null ? trim((string) ($data['donor_name'] ?? '')) : null;
+        if ($donorName === '') {
+            $donorName = null;
+        }
+
         $donation = Donation::create([
-            'team_id' => $team->id,
+            'team_id' => $teamId,
             'amount' => $amount,
+            'donor_name' => $donorName,
             'status' => 'pending',
             'dua_request_enabled' => (bool) ($data['dua_request_enabled'] ?? false),
             'dua_request_text' => $data['dua_request_text'] ?? null,
+            'dua_request_anonymous' => (bool) ($data['dua_request_anonymous'] ?? false),
         ]);
 
-        // In de lokale ontwikkelomgeving slaan we Mollie over
-        // en markeren we de donatie direct als "betaald",
-        // zodat o.a. dua-verzoeken getest kunnen worden.
         if (config('app.env') === 'local') {
             $donation->update([
                 'status' => 'paid',
@@ -55,7 +72,7 @@ class DonationsController extends Controller
         } catch (\Throwable $error) {
             Log::error('Donatiebetaling starten mislukt', [
                 'donation_id' => $donation->id,
-                'team_id' => $team->id,
+                'team_id' => $teamId,
                 'amount' => $amount,
                 'redirect_url' => route('donations.return', ['donation' => $donation->id]),
                 'webhook_url' => route('donations.webhook'),

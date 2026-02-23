@@ -9,7 +9,7 @@ use Mollie\Laravel\Facades\Mollie;
 
 class DonationPaymentService
 {
-    public function createPayment(Donation $donation, Team $team, string $redirectUrl, string $webhookUrl)
+    public function createPayment(Donation $donation, ?Team $team, string $redirectUrl, string $webhookUrl)
     {
         $mollieKey = trim((string) config('mollie.key'));
         if ($mollieKey === '') {
@@ -30,18 +30,26 @@ class DonationPaymentService
             }
         }
 
+        $description = $team
+            ? "Donatie voor {$team->name}"
+            : 'Donatie Olijfboom van Licht';
+
+        $metadata = [
+            'donation_id' => $donation->id,
+        ];
+        if ($team) {
+            $metadata['team_id'] = $team->id;
+        }
+
         $payment = Mollie::api()->payments->create([
             'amount' => [
                 'currency' => 'EUR',
                 'value' => number_format((float) $donation->amount, 2, '.', ''),
             ],
-            'description' => "Donatie voor {$team->name}",
+            'description' => $description,
             'redirectUrl' => $redirectUrl,
             'webhookUrl' => $webhookUrl,
-            'metadata' => [
-                'donation_id' => $donation->id,
-                'team_id' => $team->id,
-            ],
+            'metadata' => $metadata,
         ]);
 
         $donation->update([

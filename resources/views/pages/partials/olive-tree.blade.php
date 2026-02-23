@@ -17,15 +17,17 @@
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
-                {{-- Marokkaanse lampion glow (Ramadan vibes) --}}
-                <filter id="lightGlow" x="-80%" y="-80%" width="260%" height="260%">
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1"/>
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur2"/>
-                  <feFlood floodColor="#e8a735" floodOpacity="0.92" result="glowColor"/>
+                {{-- Lampion glow: felle warme gloed --}}
+                <filter id="lightGlow" x="-150%" y="-150%" width="400%" height="400%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="22" result="blur1"/>
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur2"/>
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur3"/>
+                  <feFlood floodColor="#fff4b8" floodOpacity="1" result="glowColor"/>
                   <feComposite in="glowColor" in2="blur1" operator="in" result="lanternGlow"/>
                   <feMerge>
                     <feMergeNode in="lanternGlow"/>
                     <feMergeNode in="blur2"/>
+                    <feMergeNode in="blur3"/>
                     <feMergeNode in="SourceGraphic"/>
                   </feMerge>
                 </filter>
@@ -35,6 +37,10 @@
                   <stop offset="40%" style="stop-color:#e8b83d;stop-opacity:1" />
                   <stop offset="100%" style="stop-color:#f5d76e;stop-opacity:1" />
                 </linearGradient>
+                {{-- Lampion-icoon voor de lichten op de boom (lantern_9988064) --}}
+                <symbol id="tree-lamp" viewBox="0 0 512 512">
+                    @include('pages.partials.tree-lamp-inner')
+                </symbol>
 <linearGradient id="Gradient1" gradientUnits="userSpaceOnUse" x1="313.432" y1="921.436" x2="305.964" y2="924.147">
 		<stop offset="0" stopOpacity="0" stopColor="rgb(87,68,46)"/>
 		<stop offset="1" stopOpacity="0.0352941" stopColor="rgb(121,140,102)"/>

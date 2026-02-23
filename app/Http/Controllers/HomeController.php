@@ -22,15 +22,30 @@ class HomeController extends Controller
             'Dit is dummy nieuwscontent: sponsorloop start om 10:00 uur, inschrijvingen zijn nog open en deel deze actie met je netwerk.'
         );
 
+        // Alleen dua-verzoeken die de admin handmatig op de nieuwsticker heeft gezet.
+        // Indien er een aparte ticker-tekst is ingevuld, krijgt die voorrang op het oorspronkelijke verzoek.
         $duaTickerItems = DB::table('donations')
             ->where('status', 'paid')
             ->where('dua_request_enabled', true)
             ->whereNotNull('dua_request_text')
-            ->whereNull('dua_fulfilled_at')
+            ->where('dua_show_on_ticker', true)
             ->orderByDesc('paid_at')
             ->limit(10)
-            ->pluck('dua_request_text')
-            ->map(fn ($text) => trim((string) $text))
+            ->get(['dua_request_text', 'dua_ticker_text', 'dua_request_anonymous'])
+            ->map(function ($row) {
+                $text = trim((string) ($row->dua_ticker_text ?? ''));
+                if ($text === '') {
+                    $text = trim((string) ($row->dua_request_text ?? ''));
+                }
+                if ($text === '') {
+                    return null;
+                }
+
+                return [
+                    'text' => $text,
+                    'anonymous' => !empty($row->dua_request_anonymous),
+                ];
+            })
             ->filter()
             ->values()
             ->all();
