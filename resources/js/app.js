@@ -1043,6 +1043,47 @@ const initWalkthrough = () => {
     });
 };
 
+const initContactModals = () => {
+    const openButtons = document.querySelectorAll('[data-open-modal]');
+    const closeButtons = document.querySelectorAll('[data-modal-close]');
+
+    openButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-open-modal');
+            if (!id) return;
+            const modal = document.querySelector(`[data-modal="${id}"]`);
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+
+    const closeModal = (modal) => {
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+    };
+
+    closeButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const modal = btn.closest('[data-modal]');
+            closeModal(modal);
+        });
+    });
+
+    document.querySelectorAll('[data-modal]').forEach((modal) => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal(modal);
+            }
+        });
+    });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     initHomeNav();
     initFAQ();
@@ -1053,4 +1094,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initShowcaseRailAutoplay();
     initOliveTree();
     initWalkthrough();
+    initContactModals();
 });

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DonationsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InviteController;
@@ -54,3 +55,6 @@ Route::put('/dashboard/showcase-media', [DashboardController::class, 'updateDash
 
 Route::get('/invite/{token}', [InviteController::class, 'show'])->name('invite.show');
 Route::post('/invite/{token}', [InviteController::class, 'accept'])->name('invite.accept');
+
+Route::post('/contact/sponsoring', [ContactController::class, 'submitSponsoring'])->name('contact.sponsoring');
+Route::post('/contact/actie-fotos', [ContactController::class, 'submitActionPhotos'])->name('contact.action-photos');

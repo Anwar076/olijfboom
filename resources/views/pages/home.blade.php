@@ -4,7 +4,15 @@
 <div class="min-h-screen bg-slate-50">
     @include('partials.header')
 
-    <section class="pt-28 pb-16 md:pt-32 md:pb-20 px-4" aria-label="Hero">
+    @if (session('status'))
+        <div class="container mx-auto max-w-4xl px-4 pt-24 md:pt-28 pb-2">
+            <p class="rounded-xl bg-green-100 text-green-800 border border-green-200 px-4 py-3 text-sm md:text-base text-center">
+                {{ session('status') }}
+            </p>
+        </div>
+    @endif
+
+    <section class="pt-28 pb-16 md:pt-32 md:pb-20 px-4 {{ session('status') ? 'pt-8' : '' }}" aria-label="Hero">
         <div class="container mx-auto max-w-4xl flex flex-col items-center">
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 title-gradient text-center max-w-4xl leading-tight">
                 Nour ala Nour: Draag bij aan het Licht voor Moskee Barendrecht
@@ -498,7 +506,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                     <h2 id="deel-actie-heading" class="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 title-gradient">Deel je actie — stuur je foto&rsquo;s in!</h2>
                     <p class="text-slate-600 text-lg mb-4">Organiseer je eigen fundraising-actie en deel het met de gemeenschap.</p>
                     <p class="text-slate-600 leading-relaxed mb-4 text-sm md:text-base">
-                        Naast directe giften moedigen we creatieve acties aan: sponsorloop, koekenbakactie, garage sale, charity-iftar, wasstraat-actie met de jeugd — alles is welkom. Stuur je foto&rsquo;s en beschrijving naar <a href="mailto:info@icbarendrecht.nl" class="text-gold font-semibold hover:underline">info@icbarendrecht.nl</a>; wij plaatsen de leukste acties op de site en social media.
+                        Naast directe giften moedigen we creatieve acties aan: sponsorloop, koekenbakactie, garage sale, charity-iftar, wasstraat-actie met de jeugd — alles is welkom. Via het formulier kun je veilig je foto&rsquo;s en beschrijving insturen; wij plaatsen de leukste acties op de site en social media.
                     </p>
                     <div class="bg-slate-50 rounded-xl p-4 mb-4 border border-slate-200">
                         <h3 class="text-sm font-bold text-slate-800 mb-3">Wat stuur je in?</h3>
@@ -509,9 +517,13 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                             <li>Toestemming voor plaatsing op website en social media</li>
                         </ul>
                     </div>
-                    <p class="text-slate-600 text-sm">
-                        <strong>Mail:</strong> <a href="mailto:info@icbarendrecht.nl" class="text-gold font-semibold hover:underline">info@icbarendrecht.nl</a> — onderwerp: <em>Olijfboom van Licht — [naam actie]</em>
-                    </p>
+                    <button
+                        type="button"
+                        class="inline-flex items-center px-4 py-2 rounded-lg bg-gold text-slate-900 font-semibold text-sm md:text-base border border-gold hover:bg-gold-dark transition-colors"
+                        data-open-modal="actie-fotos"
+                    >
+                        Stuur je actie &amp; foto&#39;s in
+                    </button>
                 </div>
             </div>
         </div>
@@ -547,9 +559,13 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                     <p class="text-slate-600 leading-relaxed text-sm md:text-base mb-4">
                         Sponsoring verbindt uw merk aan een positief, landelijk zichtbaar initiatief.
                     </p>
-                    <p class="text-slate-600 leading-relaxed text-sm md:text-base">
-                        <strong>Contact:</strong> <a href="mailto:info@icbarendrecht.nl" class="text-gold font-semibold hover:underline">info@icbarendrecht.nl</a> — onderwerp: Sponsoring Olijfboom van Licht.
-                    </p>
+                    <button
+                        type="button"
+                        class="inline-flex items-center px-4 py-2 rounded-lg bg-gold text-slate-900 font-semibold text-sm md:text-base border border-gold hover:bg-gold-dark transition-colors"
+                        data-open-modal="sponsoring"
+                    >
+                        Neem contact op over sponsoring
+                    </button>
                     </div>
                 </div>
             </div>
@@ -833,11 +849,11 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                         ['question' => 'Waarom is dit geld nodig?', 'answer' => 'Het pand van ICB aan het Bijdorpplein 41 is volledig overgenomen voor €2.300.000. Een deel hiervan (€1.500.000) is gefinancierd door donaties tijdens het benefiet in Ramadan 2025. Het resterende bedrag is gefinancierd met renteloze leningen van gemeenschapsleden. Het terugbetalen van deze leningen is een amanah (vertrouwensplicht) die ICB zeer serieus neemt.'],
                         ['question' => 'Wat betekent elk lichtje op de olijfboom?', 'answer' => 'Elk brandend lichtje op de digitale olijfboom vertegenwoordigt €10.000 aan donaties. De boom heeft 100 lichtjes. Wanneer alle lichtjes branden, is het doelbedrag van €1.000.000 bereikt.'],
                         ['question' => 'Hoe werken de teams?', 'answer' => 'Je kunt een team vormen met familie, vrienden, collega\'s of andere gemeenschapsleden. Elk team kiest een incentive-niveau (€5.000, €10.000, €25.000 of €50.000) en werkt samen om dat doel te bereiken. Alle donaties via de teamlink tellen mee.'],
-                        ['question' => 'Hoe worden de incentives gefinancierd?', 'answer' => 'ICB investeert maximaal 20% van het doelbedrag in incentives, aangevuld door sponsorpartners. Zo worden de Umrah-tickets door Al Amana tegen kostprijs aangeboden. De incentives zijn een beloning voor de inzet van teams, niet een doel op zich.'],
+                        ['question' => 'Hoe worden de incentives gefinancierd?', 'answer' => 'Dankzij onze partnernetwerk kunnen we teams extra motiveren. Incentives worden mogelijk gemaakt door sponsoren. Al Amana bijvoorbeeld levert Umrah-tickets tegen kostprijs aan. Belangrijk: dit is een stimulans voor teaminzet, geen doel op zichzelf.'],
                         ['question' => 'Kan ik ook doneren zonder een team?', 'answer' => 'Ja, individuele donaties zijn uiteraard welkom. Je kunt ook aansluiten bij een bestaand team. Wij moedigen teamvorming aan omdat het de betrokkenheid en het plezier vergroot, maar elke bijdrage telt.'],
                         ['question' => 'Wat is het minimale donatiebedrag?', 'answer' => 'Er is geen minimumbedrag — je kunt al vanaf €10 een vonkje ontsteken. Elke bijdrage, groot of klein, brengt ons dichter bij een schuldenvrije moskee. Je hoeft geen team te hebben om te doneren. De Profeet &#65018; zei: "De beste daad is die welke voortdurend wordt verricht, ook al is het weinig."'],
                         ['question' => 'Hoe weet ik dat mijn donatie goed terechtkomt?', 'answer' => 'ICB is een stichting met een transparant bestuur. Alle donaties worden uitsluitend gebruikt voor het terugbetalen van de renteloze leningen. Na afloop van de campagne publiceert ICB een volledig financieel overzicht.'],
-                        ['question' => 'Is mijn donatie aftrekbaar?', 'answer' => 'ICB is bezig met het verkrijgen van de ANBI-status. Zodra deze status is verleend, zijn donaties fiscaal aftrekbaar. Raadpleeg de website van ICB (icbarendrecht.nl) voor de meest actuele informatie hierover.'],
+                        ['question' => 'Is mijn donatie aftrekbaar?', 'answer' => 'ICB is in bezit van de ANBI-status. Donaties, — zijn dus fiscaal aftrekbaar.'],
                         ['question' => 'Kan ik een bedrijf of onderneming inschrijven als team?', 'answer' => 'Absoluut. Bedrijven en ondernemers zijn van harte welkom om een team te vormen. Dit is een mooie manier om maatschappelijke betrokkenheid te tonen en tegelijkertijd je team te versterken.'],
                         ['question' => 'Hoe lang loopt de campagne?', 'answer' => 'De campagnewebsite gaat live op maandag 23 februari 2026. Vanaf dat moment kun je teams vormen en doneren. De campagne loopt door tot en met het einde van Ramadan 2026 of tot wij ons doelbedrag hebben bereikt.'],
                         ['question' => 'Kan ik mijn donatie spreiden?', 'answer' => 'Ja, je kunt in meerdere termijnen doneren gedurende de campagne. Alle bedragen worden opgeteld bij je teamtotaal.'],
@@ -897,6 +913,99 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
             </div>
         </div>
     </section>
+
+    {{-- Modals voor sponsoring en actie-foto's --}}
+    <div
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-6 hidden"
+        data-modal="sponsoring"
+        aria-hidden="true"
+    >
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+                <h2 class="text-xl font-bold text-slate-900">Sponsoring door bedrijven</h2>
+                <button type="button" class="text-slate-500 hover:text-slate-800 text-2xl leading-none" data-modal-close aria-label="Sluiten">&times;</button>
+            </div>
+            <form method="POST" action="{{ route('contact.sponsoring') }}" class="px-6 py-5 space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="sponsoring_name">Naam</label>
+                    <input type="text" id="sponsoring_name" name="name" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:border-gold" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="sponsoring_email">E-mailadres</label>
+                    <input type="email" id="sponsoring_email" name="email" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:border-gold" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="sponsoring_phone">Telefoonnummer</label>
+                    <input type="tel" id="sponsoring_phone" name="phone" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:border-gold" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="sponsoring_message">Korte toelichting (optioneel)</label>
+                    <textarea id="sponsoring_message" name="message" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:border-gold" placeholder="Bijv. type sponsoring, bedrijf, bereikbaarheid..."></textarea>
+                </div>
+                <div class="flex items-center justify-between pt-2 pb-4">
+                    <button type="button" class="text-sm text-slate-500 hover:text-slate-700" data-modal-close>Annuleren</button>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 rounded-lg bg-gold text-slate-900 font-semibold text-sm border border-gold hover:bg-gold-dark transition-colors">
+                        Verstuur verzoek
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-6 hidden"
+        data-modal="actie-fotos"
+        aria-hidden="true"
+    >
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+                <h2 class="text-xl font-bold text-slate-900">Stuur je actie &amp; foto&#39;s in</h2>
+                <button type="button" class="text-slate-500 hover:text-slate-800 text-2xl leading-none" data-modal-close aria-label="Sluiten">&times;</button>
+            </div>
+            <form method="POST" action="{{ route('contact.action-photos') }}" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="actie_name">Naam</label>
+                    <input type="text" id="actie_name" name="name" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:border-gold" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="actie_email">E-mailadres</label>
+                    <input type="email" id="actie_email" name="email" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:border-gold" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="actie_phone">Telefoonnummer</label>
+                    <input type="tel" id="actie_phone" name="phone" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:border-gold" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="actie_team">Naam team / actie</label>
+                    <input type="text" id="actie_team" name="team_name" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:border-gold" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="actie_photos">Foto&#39;s uploaden (max. 10)</label>
+                    <input
+                        type="file"
+                        id="actie_photos"
+                        name="photos[]"
+                        accept="image/*"
+                        multiple
+                        class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20"
+                    >
+                    <p class="mt-1 text-xs text-slate-500">Upload bij voorkeur liggende foto&#39;s. Maximaal 10 bestanden.</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" for="actie_message">Korte beschrijving (optioneel)</label>
+                    <textarea id="actie_message" name="message" rows="3" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:border-gold" placeholder="Bijv. wat was de actie, wie deden mee, hoeveel is opgehaald?"></textarea>
+                </div>
+                <div class="flex items-center justify-between pt-2 pb-4">
+                    <button type="button" class="text-sm text-slate-500 hover:text-slate-700" data-modal-close>Annuleren</button>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 rounded-lg bg-gold text-slate-900 font-semibold text-sm border border-gold hover:bg-gold-dark transition-colors">
+                        Verstuur actie
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     @include('partials.footer')
 </div>
