@@ -17,7 +17,7 @@ class ContactController extends Controller
         ]);
 
         Mail::send('emails.sponsoring', ['data' => $data], function ($message) use ($data) {
-            $message->to('anwar@brancom.nl')
+            $message->to('campagne@icbarendrecht.nl')
                 ->subject('Nieuw sponsoraanvraag Olijfboom van Licht')
                 ->replyTo($data['email'], $data['name']);
         });
@@ -40,7 +40,7 @@ class ContactController extends Controller
         $photos = $request->file('photos', []);
 
         Mail::send('emails.action_photos', ['data' => $data, 'photoCount' => count($photos)], function ($message) use ($data, $photos) {
-            $message->to('anwar@brancom.nl')
+            $message->to('campagne@icbarendrecht.nl')
                 ->subject('Nieuwe actie-inzending Olijfboom van Licht')
                 ->replyTo($data['email'], $data['name']);
 
