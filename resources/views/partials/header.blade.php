@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <section class="px-4 pb-8">
+    <section class="px-4 pt-6 sm:pt-8 pb-8">
         <div class="showcase-rail" data-showcase-rail>
             <div class="showcase-rail__track">
                 @for ($loopIndex = 0; $loopIndex < 2; $loopIndex++)
