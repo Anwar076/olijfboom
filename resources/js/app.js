@@ -238,6 +238,25 @@ const initInviteCopy = () => {
     });
 };
 
+const initTeamLinkCopy = () => {
+    const button = document.querySelector('[data-copy-team-link]');
+    const input = document.querySelector('[data-team-link-url]');
+    if (!button || !input) return;
+
+    button.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(input.value);
+            const originalText = button.textContent;
+            button.textContent = 'Gekopieerd!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        } catch (error) {
+            alert('Kopieren mislukt.');
+        }
+    });
+};
+
 const initIncentivesModal = () => {
     const cards = Array.from(document.querySelectorAll('[data-incentive-card]'));
     if (!cards.length) return;
@@ -263,6 +282,8 @@ const initIncentivesModal = () => {
         if (modalImage) {
             modalImage.src = image;
             modalImage.alt = title;
+            const position = card.getAttribute('data-incentive-image-position') || 'center';
+            modalImage.style.objectPosition = position;
         }
 
         modal.classList.remove('hidden');
@@ -1090,6 +1111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTeamsLoadMore();
     initDonateForm();
     initInviteCopy();
+    initTeamLinkCopy();
     initIncentivesModal();
     initShowcaseRailAutoplay();
     initOliveTree();

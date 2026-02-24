@@ -32,7 +32,7 @@ class DonationPaymentService
 
         $description = $team
             ? "Donatie voor {$team->name}"
-            : 'Donatie Olijfboom van Licht';
+            : 'Olijfboom van Licht';
 
         $metadata = [
             'donation_id' => $donation->id,

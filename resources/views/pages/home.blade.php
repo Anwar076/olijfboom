@@ -247,7 +247,7 @@ Bereik met je team een donatiebedrag van €50.000 en win een Fiat Topolino Verd
 — de iconische Italiaanse stadsauto in een frisse, groene uitvoering. Compact, elektrisch en
 stijlvol: een symbool van vooruitgang, net als onze gemeenschap. Er zijn slechts vijf
 Topolino&#39;s beschikbaar. Eerste team, eerste keus."
-                    data-incentive-image="{{ asset('images/hart-handen.png') }}"
+                    data-incentive-image="{{ asset('images/fiat-topolino.png') }}"
                 >
                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-700 to-amber-500"></div>
                     <div class="relative z-10">
@@ -269,7 +269,7 @@ Topolino&#39;s beschikbaar. Eerste team, eerste keus."
                     data-incentive-title="De Olijven"
                     data-incentive-amount="&euro;25.000 per team &bull; 5 beschikbaar"
                     data-incentive-description="Samen op reis, samen beloond. Bereik met je team &euro;25.000 en win een familievakantie naar Andalusië: inclusief vervoer, verblijf in een viersterrenhotel en een unieke islamitische culturele ervaring. Ontdek het rijke islamitische erfgoed van Al-Andalus met je gezin — van de Alhambra tot de Mezquita. Vijf vakanties beschikbaar voor de snelste teams."
-                    data-incentive-image="{{ asset('images/olijf-tak.png') }}"
+                    data-incentive-image="{{ asset('images/alhambra-andalusie.png') }}"
                 >
                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-600 to-amber-400"></div>
                     <div class="relative z-10">
@@ -295,7 +295,8 @@ Bereik met je team €10.000 en ga op Umrah met Al Amana in de herfstvakantie, b
 door imam Azzedine Karrat. Al Amana biedt deze Umrah-reis aan tegen kostprijs, als
 sponsorbijdrage aan de campagne. Een spirituele reis met je gemeenschap en— dichter bij
 Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaar."
-                    data-incentive-image="{{ asset('images/medina-moskee.png') }}"
+                    data-incentive-image="{{ asset('images/mecca-umrah.png') }}"
+                    data-incentive-image-position="left top"
                 >
                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-700 to-green-500"></div>
                     <div class="relative z-10">
@@ -317,7 +318,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                     data-incentive-title="Het Kleine Blad"
                     data-incentive-amount="&euro;5.000 per team &bull; 40 beschikbaar"
                     data-incentive-description="Klein team, groot plezier. Bereik met je team &euro;5.000 en ontvang een gezinsuitje naar de Islam Experience in combinatie met een family dinner ter waarde van &euro;250. Een leerzame en inspirerende dag voor het hele gezin, afgesloten met een heerlijk diner samen. Meer informatie: islamexperience.nl. Veertig gezinsuitjes beschikbaar."
-                    data-incentive-image="{{ asset('images/tasbih-gebed.png') }}"
+                    data-incentive-image="{{ asset('images/islam-experience.png') }}"
                 >
                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-600 to-green-400"></div>
                     <div class="relative z-10">
@@ -398,7 +399,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                 <div class="py-6 border-b border-slate-100">
                     <h3 class="text-base font-bold text-slate-800 mb-2 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-gold/20 text-gold text-xs flex items-center justify-center font-bold">1</span> Wat is een team?</h3>
                     <p class="text-slate-700 leading-relaxed text-sm md:text-base ml-8">
-                        Een groep donateurs (familie, vrienden, buren, collega&rsquo;s, sportmaatjes of moskeegangers) die samen een donatiedoel nastreeft. Minimaal 2, maximaal 50 leden.
+                        Een groep donateurs (familie, vrienden, buren, collega&rsquo;s, sportmaatjes of moskeegangers) die samen een donatiedoel nastreeft. Minimaal 1, maximaal 50 leden.
                     </p>
                 </div>
                 <div class="py-6 border-b border-slate-100">
@@ -432,12 +433,12 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                         <li>Vier tussentijdse mijlpalen en daag andere teams uit</li>
                     </ul>
                 </div>
-                <div class="pt-6 bg-gold/10 border border-gold/30 rounded-xl p-4 mt-6">
+                <!-- <div class="pt-6 bg-gold/10 border border-gold/30 rounded-xl p-4 mt-6">
                     <h3 class="text-base font-bold text-slate-800 mb-2">Referral-bonus: nodig 3 vrienden uit!</h3>
                     <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-0">
                         Nodig minimaal 3 vrienden uit om via jouw teamlink te doneren en ontvang een persoonlijk dua-certificaat van de imam. Kost niets, waarde onbetaalbaar.
                     </p>
-                </div>
+                </div> -->
                 </div>
             </div>
             <div class="text-center mb-10">
