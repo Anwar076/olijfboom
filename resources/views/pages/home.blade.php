@@ -693,7 +693,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                                         maxlength="255"
                                         data-donation-name
                                         class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
-                                        placeholder="Bijv. Jan"
+                                        placeholder="Bijv. Mohammed"
                                     >
                                 </div>
                             </div>
