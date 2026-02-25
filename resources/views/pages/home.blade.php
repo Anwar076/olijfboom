@@ -129,14 +129,14 @@
                     </p>
                 </div>
                 <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-md aspect-[4/3] min-h-[220px] md:min-h-[280px] order-1 md:order-2 min-w-0 w-full">
-                    <img src="{{ asset('images/olijf-tak.png') }}" alt="Olijfboom van Licht" class="w-full h-full object-cover max-w-full">
+                    <img src="{{ asset('images/hero-olijfboom-3.png') }}" alt="Olijfboom van Licht" class="w-full h-full object-cover max-w-full">
                 </div>
             </div>
 
             {{-- Rij 2: Afbeelding | Tekst --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch min-h-0">
                 <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-md aspect-[4/3] min-h-[220px] md:min-h-[280px] order-1 min-w-0 w-full">
-                    <img src="{{ asset('images/gemeenschap-vrouwen.png') }}" alt="Gemeenschap Barendrecht" class="w-full h-full object-cover max-w-full">
+                    <img src="{{ asset('images/hero-olijfboom-1.png') }}" alt="Gemeenschap Barendrecht" class="w-full h-full object-cover max-w-full">
                 </div>
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-6 md:p-8 flex flex-col justify-center order-2 min-w-0">
                     <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-3">De campagne</h3>
@@ -390,7 +390,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-10 max-w-6xl mx-auto items-stretch">
                 <div class="lg:col-span-4 rounded-2xl overflow-hidden border border-slate-200/80 shadow-lg bg-white shrink-0">
-                    <img src="{{ asset('images/gemeenschap-vrouwen.png') }}" alt="Samen sterker — teamvorming" class="w-full h-48 md:h-64 lg:h-full min-h-[200px] object-cover">
+                    <img src="{{ asset('images/hero-olijfboom-2.png') }}" alt="Samen sterker — teamvorming" class="w-full h-48 md:h-64 lg:h-full min-h-[200px] object-cover">
                 </div>
                 <div class="lg:col-span-8 bg-white rounded-2xl p-6 md:p-10 border border-slate-200/80 shadow-lg border-t-4 border-t-gold space-y-0">
                 <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-6 pb-6 border-b border-slate-200">
@@ -608,7 +608,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
     <section id="doneer" class="py-16 md:py-20 px-4 bg-slate-100/50" aria-labelledby="doneer-heading">
         <div class="container mx-auto max-w-2xl">
             <div class="rounded-2xl overflow-hidden border border-slate-200/80 shadow-md mb-8 h-28 md:h-36">
-                <img src="{{ asset('images/olijf-tak.png') }}" alt="" class="w-full h-full object-cover object-center" role="presentation">
+                <img src="{{ asset('images/dua-handen.png') }}" alt="" class="w-full h-full object-cover object-center" role="presentation">
             </div>
             <div class="text-center mb-10">
                 <h2 id="doneer-heading" class="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 title-gradient">Doneer</h2>
