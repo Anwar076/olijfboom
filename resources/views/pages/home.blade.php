@@ -227,7 +227,7 @@
                 <h2 id="incentives-heading" class="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 title-gradient">Wat levert jouw inzet op?</h2>
                 <div class="w-16 h-1 bg-gradient-to-r from-transparent via-gold to-transparent rounded-full mx-auto mt-4 mb-6"></div>
                 <p class="text-slate-700 text-lg mb-3 max-w-3xl mx-auto leading-relaxed">
-                    ICB en haar sponsorpartners investeren maximaal 20% van het doelbedrag in incentives om teams te belonen voor hun inzet. Zo wordt doneren niet alleen een daad van sadaqah, maar ook een kans om er als team iets bijzonders aan over te houden.
+                De incentives worden volledig mogelijk gemaakt door onze sponsorpartners. Zij stellen deze bijzondere beloningen beschikbaar als waardering voor de inzet en betrokkenheid van de teams. Doneren blijft in de kern een daad van sadaqah.
                 </p>
                 <p class="text-slate-600 max-w-2xl mx-auto text-sm md:text-base">
                     Bereik het bedrag en ontvang de beloning. Geen loterij — op volgorde van behalen.
@@ -317,7 +317,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                     data-incentive-card
                     data-incentive-title="Het Kleine Blad"
                     data-incentive-amount="&euro;5.000 per team &bull; 40 beschikbaar"
-                    data-incentive-description="Klein team, groot plezier. Bereik met je team &euro;5.000 en ontvang een gezinsuitje naar de Islam Experience in combinatie met een family dinner ter waarde van &euro;250. Een leerzame en inspirerende dag voor het hele gezin, afgesloten met een heerlijk diner samen. Meer informatie: islamexperience.nl. Veertig gezinsuitjes beschikbaar."
+                    data-incentive-description="Klein team, groot plezier. Bereik met je team &euro;5.000 en ontvang een compleet verzorgd gezinsuitje naar de Islam Experience in combinatie met een familie dinner. Een leerzame en inspirerende dag voor het hele gezin, afgesloten met een heerlijk diner samen. Meer informatie: islamexperience.nl. Veertig gezinsuitjes beschikbaar."
                     data-incentive-image="{{ asset('images/islam-experience.png') }}"
                 >
                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-600 to-green-400"></div>
@@ -329,9 +329,9 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                         <div class="text-3xl font-bold text-slate-900 mb-4">&euro;5.000</div>
                         <div class="mb-3 p-3 bg-gradient-to-r from-gold/10 to-gold/5 rounded-lg border border-gold/20">
                             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Beloning</div>
-                            <div class="text-lg font-bold text-slate-900">Islam Experience + family dinner</div>
+                            <div class="text-lg font-bold text-slate-900">Islam Experience + Familie dinner</div>
                         </div>
-                        <p class="text-slate-600 text-sm leading-relaxed">Leerzame dag + diner ter waarde van &euro;250</p>
+                        <p class="text-slate-600 text-sm leading-relaxed">Leerzame dag + Heerlijk familie diner</p>
                     </div>
                 </div>
             </div>
@@ -798,7 +798,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto items-start">
-                <div class="lg:col-span-4 rounded-2xl overflow-hidden border border-slate-200/80 shadow-lg sticky top-24">
+                <div class="lg:col-span-4 rounded-2xl overflow-hidden border border-slate-200/80 shadow-lg lg:sticky lg:top-24">
                     <img src="{{ asset('images/medina-moskee.png') }}" alt="Ons verhaal — van droom naar werkelijkheid" class="w-full h-48 object-cover">
                     <div class="p-4 bg-slate-50 border-t border-slate-200">
                         <p class="text-slate-600 text-sm font-medium">Van droom naar werkelijkheid</p>
@@ -884,7 +884,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
     </section>
 
     <section id="kernwaarden" class="py-16 md:py-20 px-4" aria-labelledby="kernwaarden-heading">
-        <div class="container mx-auto max-w-4xl">
+        <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-10 md:mb-12">
                 <h2 id="kernwaarden-heading" class="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 title-gradient">Onze kernwaarden</h2>
                 <div class="w-16 h-1 bg-gradient-to-r from-transparent via-gold to-transparent rounded-full mx-auto mt-4"></div>
