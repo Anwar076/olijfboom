@@ -60,15 +60,15 @@ const initHomeNav = () => {
         });
     });
 
-    const doneerButton = document.querySelector('[data-scroll-doneer]');
-    if (doneerButton) {
-        doneerButton.addEventListener('click', () => {
+    const doneerButtons = document.querySelectorAll('[data-scroll-doneer]');
+    doneerButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
             const target = document.getElementById('doneer');
             if (target) {
                 target.scrollIntoView({ behavior: 'smooth' });
             }
         });
-    }
+    });
 };
 
 const initFAQ = () => {
