@@ -422,6 +422,65 @@ class DashboardController extends Controller
         return redirect()->route('dashboard');
     }
 
+    public function updateTeamDescription(Request $request)
+    {
+        $user = $request->user();
+        $teamId = TeamMember::where('user_id', $user->id)->value('team_id');
+
+        if (!$teamId) {
+            return redirect()->route('dashboard')->withErrors(['team' => 'Team niet gevonden.']);
+        }
+
+        $team = Team::findOrFail($teamId);
+
+        if ($team->created_by_user_id !== $user->id && !$user->isSiteManager()) {
+            abort(403, 'Not authorized for this team.');
+        }
+
+        $data = $request->validate([
+            'description' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $description = trim((string) ($data['description'] ?? ''));
+
+        $team->update([
+            'description' => $description !== '' ? $description : null,
+        ]);
+
+        return redirect()->route('dashboard')->with('status', 'Teambeschrijving bijgewerkt.');
+    }
+
+    public function destroyTeam(Request $request)
+    {
+        $user = $request->user();
+        $teamId = TeamMember::where('user_id', $user->id)->value('team_id');
+
+        if (!$teamId) {
+            return redirect()->route('dashboard')->withErrors(['team' => 'Team niet gevonden.']);
+        }
+
+        $team = Team::findOrFail($teamId);
+
+        if ($team->created_by_user_id !== $user->id && !$user->isSiteManager()) {
+            abort(403, 'Not authorized for this team.');
+        }
+
+        $hasPaidDonations = DB::table('donations')
+            ->where('team_id', $team->id)
+            ->where('status', 'paid')
+            ->exists();
+
+        if ($hasPaidDonations) {
+            return redirect()->route('dashboard')->withErrors([
+                'team' => 'Je kunt geen team verwijderen waar al donaties aan gekoppeld zijn. Neem contact op met de sitebeheerder als dit toch nodig is.',
+            ]);
+        }
+
+        $team->delete();
+
+        return redirect()->route('dashboard')->with('status', 'Team is verwijderd.');
+    }
+
     public function updateGoal(Request $request)
     {
         $user = $request->user();

@@ -34,6 +34,12 @@ Route::post('/dashboard/members', [DashboardController::class, 'addMember'])
 Route::delete('/dashboard/members/{member}', [DashboardController::class, 'removeMember'])
     ->middleware(['auth', 'admin'])
     ->name('dashboard.members.remove');
+Route::put('/dashboard/team/description', [DashboardController::class, 'updateTeamDescription'])
+    ->middleware(['auth', 'admin'])
+    ->name('dashboard.team.description');
+Route::delete('/dashboard/team', [DashboardController::class, 'destroyTeam'])
+    ->middleware(['auth', 'admin'])
+    ->name('dashboard.team.destroy');
 Route::put('/dashboard/team/goal', [DashboardController::class, 'updateGoal'])
     ->middleware(['auth', 'admin'])
     ->name('dashboard.team.goal');

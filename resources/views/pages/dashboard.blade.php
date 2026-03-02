@@ -219,11 +219,31 @@
                     $goalReached = $lampStatus;
                 @endphp
                 <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm" data-tour-step="dashboard-team-card">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
+                    <div class="flex items-start justify-between mb-4 gap-4">
+                        <div class="flex-1">
                             <h2 class="text-2xl font-bold mb-2 title-gradient">{{ $team->name }}</h2>
                             @if ($team->description)
-                                <p class="text-slate-600">{{ $team->description }}</p>
+                                <p class="text-slate-600 mb-2">{{ $team->description }}</p>
+                            @endif
+                            @if (auth()->check() && (auth()->user()->id === $team->created_by_user_id || auth()->user()->isSiteManager()))
+                                <form method="POST" action="{{ route('dashboard.team.description') }}" class="space-y-2 mt-2">
+                                    @csrf
+                                    @method('PUT')
+                                    <label class="block text-sm font-medium text-slate-700">
+                                        Beschrijving aanpassen
+                                    </label>
+                                    <textarea
+                                        name="description"
+                                        rows="3"
+                                        class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:border-gold focus:outline-none"
+                                        placeholder="Schrijf hier een korte beschrijving van je team..."
+                                    >{{ old('description', $team->description) }}</textarea>
+                                    <div class="flex justify-end">
+                                        <button type="submit" class="btn btn-secondary btn-sm">
+                                            Beschrijving opslaan
+                                        </button>
+                                    </div>
+                                </form>
                             @endif
                         </div>
                         <div class="w-8 h-8 rounded-full {{ $lampStatus ? 'bg-gold' : 'bg-slate-400' }} flex items-center justify-center">
@@ -354,6 +374,22 @@
                         @endforeach
                     </div>
                 </div>
+
+                @if (auth()->check() && (auth()->user()->id === $team->created_by_user_id || auth()->user()->isSiteManager()))
+                    <div class="bg-white/80 rounded-2xl p-6 border border-slate-200 backdrop-blur-sm mt-6">
+                        <h3 class="text-xl font-bold mb-2 title-gradient">Team verwijderen</h3>
+                        <p class="text-sm text-slate-600 mb-4">
+                            Gebruik deze optie alleen als dit team per ongeluk is aangemaakt en er nog geen donaties aan gekoppeld zijn.
+                        </p>
+                        <form method="POST" action="{{ route('dashboard.team.destroy') }}" onsubmit="return confirm('Weet je zeker dat je dit team wilt verwijderen? Dit kan niet ongedaan gemaakt worden.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600 hover:text-red-700 font-semibold">
+                                Verwijder dit team
+                            </button>
+                        </form>
+                    </div>
+                @endif
             @endif
         </div>
     </div>
