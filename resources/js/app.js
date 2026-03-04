@@ -409,6 +409,40 @@ const initShowcaseLightbox = () => {
     });
 };
 
+const initDashboardMediaForm = () => {
+    const container = document.querySelector('[data-dashboard-media-urls]');
+    const addButton = document.querySelector('[data-dashboard-media-add]');
+    const templateEl = document.querySelector('[data-dashboard-media-row-template]');
+    if (!container || !addButton || !templateEl) return;
+
+    const attachRemoveHandler = (row) => {
+        const removeBtn = row.querySelector('[data-media-remove]');
+        const input = row.querySelector('input[name="media_urls[]"]');
+        if (!removeBtn || !input) return;
+        removeBtn.addEventListener('click', () => {
+            input.value = '';
+            row.classList.add('hidden');
+        });
+    };
+
+    Array.from(container.querySelectorAll('[data-media-row]')).forEach((row) => {
+        attachRemoveHandler(row);
+    });
+
+    const addRow = () => {
+        const markup = templateEl.textContent || '';
+        if (!markup.trim()) return;
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = markup.trim();
+        const row = wrapper.firstElementChild;
+        if (!row) return;
+        container.appendChild(row);
+        attachRemoveHandler(row);
+    };
+
+    addButton.addEventListener('click', addRow);
+};
+
 const LIGHT_SHAPES = [
 
   { d: "M 1230.44 902.279 C 1208.37 889.87 1217.2 864.211 1243.63 871.28 C 1243.96 876.312 1251.91 885.001 1249.01 893.217 C 1246.35 900.769 1236.92 902.281 1230.44 902.279 z", transform: "translate(0,0)" },
@@ -1241,6 +1275,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initIncentivesModal();
     initShowcaseRailAutoplay();
     initShowcaseLightbox();
+    initDashboardMediaForm();
     initOliveTree();
     initWalkthrough();
     initContactModals();

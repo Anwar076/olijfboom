@@ -16,9 +16,10 @@
     @if (!empty($homeShowcaseMedia ?? []))
         @php
             $showcaseCount = count($homeShowcaseMedia);
-            // Zorg dat de rail visueel "vol" is, ook bij weinig items.
-            $minVisualItems = 10;
-            $showcaseRepeat = $showcaseCount > 0 ? max(2, (int) ceil($minVisualItems / $showcaseCount)) : 2;
+            // Zorg dat de rail visueel "vol" is, ook op grote schermen:
+            // herhaal altijd genoeg keren zodat er grofweg 20+ tegels zijn.
+            $minVisualItems = 20;
+            $showcaseRepeat = $showcaseCount > 0 ? max(3, (int) ceil($minVisualItems / $showcaseCount)) : 3;
         @endphp
         <section class="pt-4 sm:pt-6 pb-6">
             <div class="showcase-rail" data-showcase-rail>

@@ -164,7 +164,6 @@
                     @endif
                 </div>
 
-                 Media rij beheren (afbeeldingen + video's) tijdelijk uitgeschakeld
                 <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
                     <h3 class="text-xl font-bold mb-4 title-gradient">Media rij beheren (afbeeldingen + video's)</h3>
                     @php
@@ -172,23 +171,78 @@
                         if (!is_array($editableUrls)) {
                             $editableUrls = collect($dashboardShowcaseMedia)->pluck('url')->all();
                         }
-                        $editableUrls = array_values(array_pad($editableUrls, 5, ''));
+                        $editableUrls = array_values($editableUrls);
                     @endphp
                     <form method="POST" action="{{ route('dashboard.showcase-media') }}" enctype="multipart/form-data" class="space-y-4">
                         @csrf
                         @method('PUT')
-                        @foreach ($editableUrls as $mediaUrl)
-                            <div>
-                                <label class="block text-slate-700 mb-2 font-medium">Media URL (image of video)</label>
-                                <input
-                                    type="url"
-                                    name="media_urls[]"
-                                    value="{{ $mediaUrl }}"
-                                    placeholder="https://..."
-                                    class="w-full bg-white border border-slate-300 rounded-lg px-4 py-2 text-slate-900 focus:border-gold focus:outline-none"
-                                >
+                        <div>
+                            <label class="block text-slate-700 mb-2 font-medium">Bestaande media (klik op verwijderen om uit de rij te halen)</label>
+                            <div data-dashboard-media-urls>
+                                @forelse ($editableUrls as $mediaUrl)
+                                    <div class="flex items-center gap-2 mb-2" data-media-row>
+                                        <input
+                                            type="url"
+                                            name="media_urls[]"
+                                            value="{{ $mediaUrl }}"
+                                            placeholder="https://..."
+                                            class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-gold focus:outline-none text-sm"
+                                        >
+                                        <button
+                                            type="button"
+                                            class="text-xs text-red-600 hover:text-red-700 font-medium"
+                                            data-media-remove
+                                        >
+                                            Verwijder
+                                        </button>
+                                    </div>
+                                @empty
+                                    <div class="flex items-center gap-2 mb-2" data-media-row>
+                                        <input
+                                            type="url"
+                                            name="media_urls[]"
+                                            value=""
+                                            placeholder="https://... (image of video)"
+                                            class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-gold focus:outline-none text-sm"
+                                        >
+                                        <button
+                                            type="button"
+                                            class="text-xs text-red-600 hover:text-red-700 font-medium"
+                                            data-media-remove
+                                        >
+                                            Verwijder
+                                        </button>
+                                    </div>
+                                @endforelse
                             </div>
-                        @endforeach
+                            <button
+                                type="button"
+                                class="mt-2 inline-flex items-center px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:border-gold hover:text-gold transition-colors"
+                                data-dashboard-media-add
+                            >
+                                + Media-URL toevoegen
+                            </button>
+
+                            {{-- Template voor nieuwe media-rij, wordt door JS gebruikt --}}
+                            <script type="text/template" data-dashboard-media-row-template>
+                                <div class="flex items-center gap-2 mb-2" data-media-row>
+                                    <input
+                                        type="url"
+                                        name="media_urls[]"
+                                        value=""
+                                        placeholder="https://... (image of video)"
+                                        class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-gold focus:outline-none text-sm"
+                                    >
+                                    <button
+                                        type="button"
+                                        class="text-xs text-red-600 hover:text-red-700 font-medium"
+                                        data-media-remove
+                                    >
+                                        Verwijder
+                                    </button>
+                                </div>
+                            </script>
+                        </div>
                         <div>
                             <label class="block text-slate-700 mb-2 font-medium">Upload bestanden</label>
                             <input
