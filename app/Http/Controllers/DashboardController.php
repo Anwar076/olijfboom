@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -176,10 +177,20 @@ class DashboardController extends Controller
                 continue;
             }
 
-            $path = $file->store('showcase-media', 'public');
+            // Sla showcase-media direct op in de public map, zodat er geen storage-symlink nodig is.
+            $extension = $file->getClientOriginalExtension() ?: 'bin';
+            $filename = Str::random(40) . '.' . $extension;
+            $targetDir = public_path('showcase-media');
+
+            if (!File::exists($targetDir)) {
+                File::makeDirectory($targetDir, 0755, true);
+            }
+
+            $file->move($targetDir, $filename);
+
             $media->push([
                 'type' => str_starts_with((string) $file->getMimeType(), 'video/') ? 'video' : 'image',
-                'url' => Storage::disk('public')->url($path),
+                'url' => asset('showcase-media/' . $filename),
             ]);
         }
 
