@@ -179,6 +179,7 @@ class DashboardController extends Controller
 
             // Sla showcase-media direct op in de public map, zodat er geen storage-symlink nodig is.
             $extension = $file->getClientOriginalExtension() ?: 'bin';
+            $mimeType = (string) $file->getMimeType();
             $filename = Str::random(40) . '.' . $extension;
             $targetDir = public_path('showcase-media');
 
@@ -189,7 +190,7 @@ class DashboardController extends Controller
             $file->move($targetDir, $filename);
 
             $media->push([
-                'type' => str_starts_with((string) $file->getMimeType(), 'video/') ? 'video' : 'image',
+                'type' => str_starts_with($mimeType, 'video/') ? 'video' : 'image',
                 'url' => asset('showcase-media/' . $filename),
             ]);
         }
