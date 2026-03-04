@@ -14,10 +14,16 @@
 
     {{-- Showcase-rail met beelden/video's van het dashboard --}}
     @if (!empty($homeShowcaseMedia ?? []))
+        @php
+            $showcaseCount = count($homeShowcaseMedia);
+            // Zorg dat de rail visueel "vol" is, ook bij weinig items.
+            $minVisualItems = 10;
+            $showcaseRepeat = $showcaseCount > 0 ? max(2, (int) ceil($minVisualItems / $showcaseCount)) : 2;
+        @endphp
         <section class="pt-4 sm:pt-6 pb-6">
             <div class="showcase-rail" data-showcase-rail>
                 <div class="showcase-rail__track">
-                    @for ($loopIndex = 0; $loopIndex < 2; $loopIndex++)
+                    @for ($loopIndex = 0; $loopIndex < $showcaseRepeat; $loopIndex++)
                         @foreach ($homeShowcaseMedia as $index => $mediaItem)
                             <div class="showcase-rail__item" {{ $loopIndex === 1 ? 'aria-hidden=true' : '' }}>
                                 @if (($mediaItem['type'] ?? 'image') === 'video')
