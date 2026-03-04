@@ -124,7 +124,7 @@
     align-items: center;
     gap: 0.75rem;
     width: max-content;
-    animation: showcase-rail-scroll 40s linear infinite;
+    animation: showcase-rail-scroll 90s linear infinite;
 }
 
 .showcase-rail__item {

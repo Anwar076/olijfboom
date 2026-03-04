@@ -128,7 +128,8 @@ const initDonateForm = () => {
     const amountInput = form.querySelector('[data-donation-amount]');
     const teamSelect = form.querySelector('[data-donation-team]');
     const noTeamBlock = form.querySelector('[data-donation-no-team]');
-    const anonymousCheckbox = form.querySelector('[data-donation-anonymous]');
+    const anonymousHidden = form.querySelector('[data-donation-anonymous-hidden]');
+    const onNameCheckbox = form.querySelector('[data-donation-on-name]');
     const donorNameInput = form.querySelector('[data-donation-name]');
     const buttons = Array.from(form.querySelectorAll('[data-donation-suggested]'));
     const summary = document.querySelector('[data-donation-summary]');
@@ -151,8 +152,13 @@ const initDonateForm = () => {
         const isNoTeam = !teamSelect.value || teamSelect.value === '';
         noTeamBlock.classList.toggle('hidden', !isNoTeam);
         if (donorNameInput) {
-            const anon = anonymousCheckbox && anonymousCheckbox.checked;
-            donorNameInput.required = isNoTeam && !anon;
+            const wantsName = !!onNameCheckbox && onNameCheckbox.checked;
+            donorNameInput.required = isNoTeam && wantsName;
+        }
+        if (anonymousHidden) {
+            const wantsName = !!onNameCheckbox && onNameCheckbox.checked;
+            // 1 = anoniem, 0 = op naam
+            anonymousHidden.value = isNoTeam && wantsName ? '0' : '1';
         }
     };
 
@@ -161,8 +167,14 @@ const initDonateForm = () => {
         if (teamSelect.value && teamSelect.value !== '') {
             return teamSelect.options[teamSelect.selectedIndex]?.text || '';
         }
-        if (anonymousCheckbox && anonymousCheckbox.checked) return 'Zonder team (anoniem)';
-        if (donorNameInput && donorNameInput.value.trim()) return 'Zonder team — ' + donorNameInput.value.trim();
+        const wantsName = !!onNameCheckbox && onNameCheckbox.checked;
+        if (wantsName && donorNameInput && donorNameInput.value.trim()) {
+            return 'Zonder team — ' + donorNameInput.value.trim();
+        }
+        if (donorNameInput && donorNameInput.value.trim() && !wantsName) {
+            // Veiligheid: als iemand toch een naam intypt zonder vinkje.
+            return 'Zonder team — ' + donorNameInput.value.trim();
+        }
         return 'Zonder team';
     };
 
@@ -170,7 +182,15 @@ const initDonateForm = () => {
         if (!summary || !amountInput || !teamSelect) return;
         const amount = parseFloat(amountInput.value || '0');
         const hasTeam = teamSelect.value && teamSelect.value !== '';
-        const hasNoTeamData = !hasTeam && (anonymousCheckbox?.checked || (donorNameInput?.value?.trim() || '').length > 0);
+        const wantsName = !!onNameCheckbox && onNameCheckbox.checked;
+        const hasNoTeamData =
+            !hasTeam &&
+            (
+                // op naam: naam verplicht
+                (wantsName && (donorNameInput?.value?.trim() || '').length > 0) ||
+                // anoniem: geen extra data nodig
+                !wantsName
+            );
         const hasData = amount >= 1 && (hasTeam || hasNoTeamData);
         summary.classList.toggle('hidden', !hasData);
         if (hasData) {
@@ -199,11 +219,9 @@ const initDonateForm = () => {
         updateSummary();
     });
 
-    if (anonymousCheckbox) {
-        anonymousCheckbox.addEventListener('change', () => {
-            if (donorNameInput) {
-                donorNameInput.required = noTeamBlock && !noTeamBlock.classList.contains('hidden') && !anonymousCheckbox.checked;
-            }
+    if (onNameCheckbox) {
+        onNameCheckbox.addEventListener('change', () => {
+            updateNoTeamVisibility();
             updateSummary();
         });
     }
@@ -335,6 +353,59 @@ const initShowcaseRailAutoplay = () => {
         video.muted = true;
         video.playsInline = true;
         observer.observe(video);
+    });
+};
+
+const initShowcaseLightbox = () => {
+    const modal = document.querySelector('[data-showcase-modal]');
+    const mediaContainer = modal?.querySelector('[data-showcase-modal-media]');
+    if (!modal || !mediaContainer) return;
+
+    const close = () => {
+        modal.classList.add('hidden');
+        mediaContainer.innerHTML = '';
+        document.body.style.overflow = '';
+    };
+
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            close();
+        }
+    });
+
+    const closeBtn = modal.querySelector('[data-showcase-modal-close]');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => close());
+    }
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+            close();
+        }
+    });
+
+    const items = Array.from(document.querySelectorAll('.showcase-rail__media'));
+    if (!items.length) return;
+
+    items.forEach((el) => {
+        el.addEventListener('click', () => {
+            const isVideo = el.tagName.toLowerCase() === 'video';
+            const src = el.getAttribute('src');
+            if (!src) return;
+
+            if (isVideo) {
+                mediaContainer.innerHTML = `
+<video src="${src}" class="w-full max-w-4xl max-h-[80vh] rounded-2xl shadow-2xl" controls autoplay playsinline></video>
+`;
+            } else {
+                mediaContainer.innerHTML = `
+<img src="${src}" class="w-full max-w-4xl max-h-[80vh] object-contain rounded-2xl shadow-2xl" alt="Sfeerbeeld">
+`;
+            }
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
     });
 };
 
@@ -659,7 +730,9 @@ const initOliveTree = () => {
 
     if (!lightsLayer) return;
 
-    const maxLights = Math.min(totalLights, LIGHT_SHAPES.length);
+    // We plaatsen lichten per blad: gebruik de leaf-paths als ankerpunten.
+    const leafAnchorPaths = leafPaths;
+    const maxLights = Math.min(totalLights, leafAnchorPaths.length);
     const cache = {};
     const pending = new Set();
 
@@ -810,14 +883,67 @@ const initOliveTree = () => {
         return { x: 0, y: 0 };
     };
 
+    // Verspreid de lichten beter over de boom en voorkom dat ze precies op elkaar vallen.
+    const nonOverlappingAnchors = [];
+    const getAdjustedAnchor = (baseAnchor, index) => {
+        let x = baseAnchor.x;
+        let y = baseAnchor.y;
+
+        // Globale bias: vul lege zones van de illustratie beter.
+        const TREE_CENTER_X = 1100;
+        const TREE_TOP_Y = 500;
+        const TREE_BOTTOM_Y = 1500;
+
+        // Rechtsboven wat voller maken.
+        if (y < TREE_TOP_Y + 150 && x < TREE_CENTER_X) {
+            x += 80;
+        }
+
+        // Linksonder wat voller maken.
+        if (y > TREE_BOTTOM_Y - 200 && x > TREE_CENTER_X - 100) {
+            x -= 90;
+            y += 20;
+        }
+
+        // Basisspreiding: kleine horizontale/verticale verschuiving per index,
+        // zodat lampen langs dezelfde tak niet exact op elkaar liggen.
+        x += index % 2 === 0 ? -14 : 14;
+        y += index % 4 < 2 ? -10 : 6;
+
+        const minDistance = 32; // minimale afstand tussen lampen in SVG-units
+        let attempts = 0;
+
+        const hasCollision = () =>
+            nonOverlappingAnchors.some((p) => {
+                const dx = p.x - x;
+                const dy = p.y - y;
+                return Math.sqrt(dx * dx + dy * dy) < minDistance;
+            });
+
+        // Probeer een paar kleine verschuivingen totdat er geen overlap meer is.
+        while (attempts < 16 && hasCollision()) {
+            const angle = index * 0.85 + attempts * 1.05;
+            const radius = 6 + attempts * 5;
+            x = baseAnchor.x + Math.cos(angle) * radius;
+            y = baseAnchor.y + Math.sin(angle) * radius;
+            attempts += 1;
+        }
+
+        const adjusted = { x, y };
+        nonOverlappingAnchors.push(adjusted);
+        return adjusted;
+    };
+
     // Lamp-symbol uit olive-tree.blade.php: viewBox 0 0 512 512, top-center ≈ (256, 0)
     const LAMP_VIEWBOX_CX = 256;
     const LAMP_SCALE = 0.24;
 
+
     for (let index = 0; index < maxLights; index += 1) {
-        const shape = LIGHT_SHAPES[index];
+        const leafPath = leafAnchorPaths[index];
         const isActive = index < activeLights;
-        const anchor = getPathAnchor(shape.d);
+        const rawAnchor = getPathAnchor(leafPath?.getAttribute('d') || '');
+        const anchor = getAdjustedAnchor(rawAnchor, index);
 
         const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         group.setAttribute('data-light-index', index.toString());
@@ -1114,6 +1240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTeamLinkCopy();
     initIncentivesModal();
     initShowcaseRailAutoplay();
+    initShowcaseLightbox();
     initOliveTree();
     initWalkthrough();
     initContactModals();

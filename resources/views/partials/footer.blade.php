@@ -16,11 +16,16 @@
                 <p class="text-slate-600 text-sm mb-2"><a href="mailto:info@icbarendrecht.nl" class="text-gold hover:underline">info@icbarendrecht.nl</a></p>
                 <p class="text-slate-600 text-sm">Bijdorpplein 41, Barendrecht</p>
             </div>
-            <div>
+            <div class="flex flex-col items-start md:items-end">
                 <h4 class="font-semibold text-slate-700 mb-4">Olijfboom van Licht</h4>
                 <p class="text-slate-600 text-sm">
                     Campagne om Moskee Barendrecht schuldenvrij te maken. Doneer, vorm een team of doe een dua-verzoek.
                 </p>
+                <img
+                    src="{{ asset('images/ANBI.png') }}"
+                    alt="ANBI-status"
+                    class="mt-4 h-12 w-auto"
+                >
             </div>
         </div>
         <div class="pt-8 border-t border-slate-200 text-center text-sm text-slate-500">

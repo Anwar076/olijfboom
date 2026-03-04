@@ -12,6 +12,56 @@
         </div>
     @endif
 
+    {{-- Showcase-rail met beelden/video's van het dashboard --}}
+    @if (!empty($homeShowcaseMedia ?? []))
+        <section class="pt-4 sm:pt-6 pb-6">
+            <div class="showcase-rail" data-showcase-rail>
+                <div class="showcase-rail__track">
+                    @for ($loopIndex = 0; $loopIndex < 2; $loopIndex++)
+                        @foreach ($homeShowcaseMedia as $index => $mediaItem)
+                            <div class="showcase-rail__item" {{ $loopIndex === 1 ? 'aria-hidden=true' : '' }}>
+                                @if (($mediaItem['type'] ?? 'image') === 'video')
+                                    <video
+                                        src="{{ $mediaItem['url'] }}"
+                                        class="showcase-rail__media"
+                                        muted
+                                        loop
+                                        playsinline
+                                        preload="metadata"
+                                        data-autoplay-on-view
+                                    ></video>
+                                @else
+                                    <img
+                                        src="{{ $mediaItem['url'] }}"
+                                        alt="{{ $loopIndex === 0 ? 'Sfeerbeeld ' . ($index + 1) : '' }}"
+                                        class="showcase-rail__media"
+                                    >
+                                @endif
+                            </div>
+                        @endforeach
+                    @endfor
+                </div>
+            </div>
+        </section>
+
+        {{-- Lightbox-modal voor showcase-media --}}
+        <div
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6 hidden"
+            data-showcase-modal
+            aria-modal="true"
+            role="dialog"
+        >
+            <div class="relative max-w-5xl w-full flex justify-center items-center">
+                <button
+                    type="button"
+                    class="absolute top-2 right-2 text-white/80 hover:text-white text-3xl leading-none"
+                    aria-label="Sluiten"
+                    data-showcase-modal-close
+                >&times;</button>
+                <div class="w-full flex justify-center" data-showcase-modal-media></div>
+            </div>
+        </div>
+    @endif
     <section class="pt-28 pb-16 md:pt-32 md:pb-20 px-4 {{ session('status') ? 'pt-8' : '' }}" aria-label="Hero">
         <div class="container mx-auto max-w-4xl flex flex-col items-center">
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 title-gradient text-center max-w-4xl leading-tight">
@@ -102,70 +152,74 @@
     @endphp
     @include('pages.partials.olive-tree')
 
-    <section id="doel" class="py-16 md:py-20 px-4 bg-slate-100/50" aria-labelledby="doel-heading">
+    {{-- Teams direct onder de boom, in een nette container --}}
+    <section class="py-16 md:py-20 px-4 bg-slate-100/50">
         <div class="container mx-auto max-w-6xl">
-            <div class="text-center mb-10 md:mb-12">
-                <h2 id="doel-heading" class="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 title-gradient">Olijfboom van Licht</h2>
-                <p class="text-slate-600 text-lg md:text-xl">Over de campagne</p>
-                <div class="w-16 h-1 bg-gradient-to-r from-transparent via-gold to-transparent rounded-full mx-auto mt-4"></div>
+            <div class="text-center mb-10">
+                <a href="{{ route('teams.create') }}" class="btn btn-primary">Vorm je team</a>
             </div>
 
-            {{-- Rij 1: Tekst | Afbeelding --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch min-h-0 mb-6 md:mb-8">
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-6 md:p-8 flex flex-col justify-center order-2 md:order-1 min-w-0">
-                    <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-3">De ayah</h3>
-                    <blockquote class="border-l-4 border-gold pl-4 md:pl-5 py-1 bg-slate-50 rounded-r-lg">
-                        <p class="text-slate-700 leading-relaxed italic text-sm md:text-base">
-                            &ldquo;Allah is het licht van de hemelen en de aarde. De gelijkenis van Zijn licht (in het hart van de gelovige) is zoals een nis waarin licht is. Het licht bevindt zich in glas, het (licht in dit) glas is zoals dat van een parelachtige ster die werd aangestoken (met olie) van een gezegende olijfboom, noch uit het oosten, noch uit het westen. Zijn olie lijkt uit zichzelf te willen ontvlammen, hoewel geen vuur het heeft aangeraakt. Licht boven licht! Allah leidt naar Zijn licht wie Hij wil.&rdquo;
-                        </p>
-                        <cite class="text-sm text-slate-500 not-italic mt-2 block">Surah An-Nur, aya 35.</cite>
-                    </blockquote>
-                    <p class="text-slate-700 leading-relaxed mt-4 text-sm md:text-base mb-4">
-                        Wij halen onze inspiratie uit deze aya en noemen deze campagne Nour ala Nour, niet omdat wij het licht zijn, maar omdat wij als gemeenschap, samen de dragers zijn van iets wat groter is dan onszelf. Elke bijdrage voegt een licht toe. Elke donatie brengt het volledig verlichten van de boom dichterbij.
-                    </p>
-                    <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-2 mt-4">Ons verhaal</h3>
-                    <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-0">
-                        Wat begon als een droom, werd werkelijkheid door de kracht van onze gemeenschap. In Ramadan 2025 nam de Barendrechtse moslimgemeenschap het initiatief voor een eigen islamitisch centrum. Wat volgde was buitengewoon: in slechts vier dagen doneerde de gemeenschap &euro;1.500.000 tijdens een historische benefiet. Dankzij de moed en het vertrouwen van enkele gemeenschapsleden die renteloze leningen verstrekten, kon het pand aan het Bijdorpplein in december 2025 volledig worden overgenomen. Vanwege deze vrijgevigheid en moed werd een extra kostenpost van &euro;250.000 aan overdrachtsbelasting voorkomen, omdat ICB binnen 6 maanden volledig eigenaar van het pand werd.
-                    </p>
+            @if ($teams->isEmpty())
+                <div class="text-center text-slate-600">
+                    <p>Teams worden hier weergegeven zodra ze zijn aangemaakt.</p>
+                    <p class="mt-2">Vorm een team om te beginnen!</p>
                 </div>
-                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-md aspect-[4/3] min-h-[220px] md:min-h-[280px] order-1 md:order-2 min-w-0 w-full">
-                    <img src="{{ asset('images/hero-olijfboom-3.png') }}" alt="Olijfboom van Licht" class="w-full h-full object-cover max-w-full">
+            @else
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+                    data-teams-container
+                    data-initial-count="9"
+                >
+                    @foreach ($teams as $team)
+                        @php
+                            $percentage = round($team['progressRatio']);
+                        @endphp
+                        <a
+                            href="{{ route('teams.show', ['team' => $team['id']]) }}"
+                            data-team-card
+                            class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-md cursor-pointer hover:shadow-lg hover:border-gold/50 transition-all duration-200"
+                        >
+                            <div class="flex items-start justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gold">{{ $team['name'] }}</h3>
+                                <div class="w-6 h-6 rounded-full {{ $team['lampStatus'] ? 'bg-gold' : 'bg-slate-400' }} flex items-center justify-center">
+                                    @if ($team['lampStatus'])
+                                        <svg class="w-4 h-4 text-slate-900" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 10 2 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z" />
+                                        </svg>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-slate-600">Opgehaald</span>
+                                    <span class="text-gold font-semibold">&euro;{{ number_format($team['teamTotal'], 0, ',', '.') }}</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                    <div
+                                        class="bg-gradient-to-r from-gold to-gold-dark h-2 rounded-full transition-all duration-500"
+                                        style="width: {{ min($percentage, 100) }}%"
+                                    ></div>
+                                </div>
+                                <div class="text-xs text-slate-500 mt-1">
+                                    Doel: &euro;{{ number_format($team['targetAmount'], 0, ',', '.') }} ({{ $percentage }}%)
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
                 </div>
-            </div>
-
-            {{-- Rij 2: Afbeelding | Tekst --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch min-h-0">
-                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-md aspect-[4/3] min-h-[220px] md:min-h-[280px] order-1 min-w-0 w-full">
-                    <img src="{{ asset('images/hero-olijfboom-1.png') }}" alt="Gemeenschap Barendrecht" class="w-full h-full object-cover max-w-full">
-                </div>
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-6 md:p-8 flex flex-col justify-center order-2 min-w-0">
-                    <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-3">De campagne</h3>
-                    <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-6">
-                        Nu is het moment om deze amanah aan deze helden in te lossen. Tijdens Ramadan 2026 lanceren wij de campagne Olijfboom van Licht: samen halen we &euro;1.000.000 op om de renteloze leningen volledig terug te betalen aan de mensen die ICB medemogelijk hebben gemaakt.
-                    </p>
-                    <div class="bg-amber-50/70 rounded-xl p-5">
-                        <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-2">Sadaqah jariyah</h3>
-                        <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-0">
-                            Onze olijfboom heeft 100 lichtjes. Elk lichtje vertegenwoordigt &euro;10.000. Wanneer alle lichtjes branden, is Moskee Barendrecht volledig schuldenvrij en in handen van de gemeenschap — voor nu en voor de generaties na ons. Dit is meer dan een donatie. Dit is sadaqah jariyah: een doorlopende liefdadigheid. Bij elk gebed dat in deze moskee wordt verricht, bij elke les die wordt gegeven, bij elk kind dat hier opgroeit in zijn geloof, ontvang jij als donateur ajar (beloning) van Allah swt. Tot de Dag des Oordeels. Dat is de werkelijke waarde van jouw bijdrage.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Campagnedoel --}}
-            <div class="mt-8 bg-white rounded-2xl border border-slate-200 shadow-md p-6 md:p-8 flex flex-wrap items-center justify-center gap-8 md:gap-12">
                 <div class="text-center">
-                    <p class="text-2xl md:text-3xl font-bold text-gold">&euro;1.000.000</p>
-                    <p class="text-slate-600 text-sm mt-0.5">Campagnedoel</p>
+                    <button
+                        type="button"
+                        data-teams-load-more
+                        class="btn btn-secondary {{ $teams->count() > 9 ? '' : 'hidden' }}"
+                    >
+                        Bekijk meer teams
+                    </button>
                 </div>
-                <div class="text-slate-300 hidden md:block">|</div>
-                <div class="text-center">
-                    <p class="text-xl md:text-2xl font-bold text-gold">100 lichtjes</p>
-                    <p class="text-slate-600 text-sm mt-0.5">Elk licht = &euro;10.000</p>
-                </div>
-            </div>
+            @endif
         </div>
     </section>
+
 
     <section id="hoe-het-werkt" class="py-16 md:py-20 px-4" aria-labelledby="hoe-heading">
         <div class="container mx-auto max-w-6xl">
@@ -377,7 +431,70 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
             </div>
         </div>
     </section>
+    <section id="doel" class="py-16 md:py-20 px-4 bg-slate-100/50" aria-labelledby="doel-heading">
+        <div class="container mx-auto max-w-6xl">
+            <div class="text-center mb-10 md:mb-12">
+                <h2 id="doel-heading" class="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 title-gradient">Olijfboom van Licht</h2>
+                <p class="text-slate-600 text-lg md:text-xl">Over de campagne</p>
+                <div class="w-16 h-1 bg-gradient-to-r from-transparent via-gold to-transparent rounded-full mx-auto mt-4"></div>
+            </div>
 
+            {{-- Rij 1: Tekst | Afbeelding --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch min-h-0 mb-6 md:mb-8">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-6 md:p-8 flex flex-col justify-center order-2 md:order-1 min-w-0">
+                    <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-3">De ayah</h3>
+                    <blockquote class="border-l-4 border-gold pl-4 md:pl-5 py-1 bg-slate-50 rounded-r-lg">
+                        <p class="text-slate-700 leading-relaxed italic text-sm md:text-base">
+                            &ldquo;Allah is het licht van de hemelen en de aarde. De gelijkenis van Zijn licht (in het hart van de gelovige) is zoals een nis waarin licht is. Het licht bevindt zich in glas, het (licht in dit) glas is zoals dat van een parelachtige ster die werd aangestoken (met olie) van een gezegende olijfboom, noch uit het oosten, noch uit het westen. Zijn olie lijkt uit zichzelf te willen ontvlammen, hoewel geen vuur het heeft aangeraakt. Licht boven licht! Allah leidt naar Zijn licht wie Hij wil.&rdquo;
+                        </p>
+                        <cite class="text-sm text-slate-500 not-italic mt-2 block">Surah An-Nur, aya 35.</cite>
+                    </blockquote>
+                    <p class="text-slate-700 leading-relaxed mt-4 text-sm md:text-base mb-4">
+                        Wij halen onze inspiratie uit deze aya en noemen deze campagne Nour ala Nour, niet omdat wij het licht zijn, maar omdat wij als gemeenschap, samen de dragers zijn van iets wat groter is dan onszelf. Elke bijdrage voegt een licht toe. Elke donatie brengt het volledig verlichten van de boom dichterbij.
+                    </p>
+                    <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-2 mt-4">Ons verhaal</h3>
+                    <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-0">
+                        Wat begon als een droom, werd werkelijkheid door de kracht van onze gemeenschap. In Ramadan 2025 nam de Barendrechtse moslimgemeenschap het initiatief voor een eigen islamitisch centrum. Wat volgde was buitengewoon: in slechts vier dagen doneerde de gemeenschap &euro;1.500.000 tijdens een historische benefiet. Dankzij de moed en het vertrouwen van enkele gemeenschapsleden die renteloze leningen verstrekten, kon het pand aan het Bijdorpplein in december 2025 volledig worden overgenomen. Vanwege deze vrijgevigheid en moed werd een extra kostenpost van &euro;250.000 aan overdrachtsbelasting voorkomen, omdat ICB binnen 6 maanden volledig eigenaar van het pand werd.
+                    </p>
+                </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-md aspect-[4/3] min-h-[220px] md:min-h-[280px] order-1 md:order-2 min-w-0 w-full">
+                    <img src="{{ asset('images/hero-olijfboom-3.png') }}" alt="Olijfboom van Licht" class="w-full h-full object-cover max-w-full">
+                </div>
+            </div>
+
+            {{-- Rij 2: Afbeelding | Tekst --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch min-h-0">
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-md aspect-[4/3] min-h-[220px] md:min-h-[280px] order-1 min-w-0 w-full">
+                    <img src="{{ asset('images/hero-olijfboom-1.png') }}" alt="Gemeenschap Barendrecht" class="w-full h-full object-cover max-w-full">
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-6 md:p-8 flex flex-col justify-center order-2 min-w-0">
+                    <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-3">De campagne</h3>
+                    <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-6">
+                        Nu is het moment om deze amanah aan deze helden in te lossen. Tijdens Ramadan 2026 lanceren wij de campagne Olijfboom van Licht: samen halen we &euro;1.000.000 op om de renteloze leningen volledig terug te betalen aan de mensen die ICB medemogelijk hebben gemaakt.
+                    </p>
+                    <div class="bg-amber-50/70 rounded-xl p-5">
+                        <h3 class="text-xs font-bold text-gold uppercase tracking-wide mb-2">Sadaqah jariyah</h3>
+                        <p class="text-slate-700 leading-relaxed text-sm md:text-base mb-0">
+                            Onze olijfboom heeft 100 lichtjes. Elk lichtje vertegenwoordigt &euro;10.000. Wanneer alle lichtjes branden, is Moskee Barendrecht volledig schuldenvrij en in handen van de gemeenschap — voor nu en voor de generaties na ons. Dit is meer dan een donatie. Dit is sadaqah jariyah: een doorlopende liefdadigheid. Bij elk gebed dat in deze moskee wordt verricht, bij elke les die wordt gegeven, bij elk kind dat hier opgroeit in zijn geloof, ontvang jij als donateur ajar (beloning) van Allah swt. Tot de Dag des Oordeels. Dat is de werkelijke waarde van jouw bijdrage.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Campagnedoel --}}
+            <div class="mt-8 bg-white rounded-2xl border border-slate-200 shadow-md p-6 md:p-8 flex flex-wrap items-center justify-center gap-8 md:gap-12">
+                <div class="text-center">
+                    <p class="text-2xl md:text-3xl font-bold text-gold">&euro;1.000.000</p>
+                    <p class="text-slate-600 text-sm mt-0.5">Campagnedoel</p>
+                </div>
+                <div class="text-slate-300 hidden md:block">|</div>
+                <div class="text-center">
+                    <p class="text-xl md:text-2xl font-bold text-gold">100 lichtjes</p>
+                    <p class="text-slate-600 text-sm mt-0.5">Elk licht = &euro;10.000</p>
+                </div>
+            </div>
+        </div>
+    </section>
     <section id="teams" class="py-16 md:py-20 px-4 bg-slate-100/50" aria-labelledby="teams-heading">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-10 md:mb-12">
@@ -441,54 +558,6 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                 </div> -->
                 </div>
             </div>
-            <div class="text-center mb-10">
-                <a href="{{ route('teams.create') }}" class="btn btn-primary">Vorm je team</a>
-            </div>
-
-            @if ($teams->isEmpty())
-                <div class="text-center text-slate-600">
-                    <p>Teams worden hier weergegeven zodra ze zijn aangemaakt.</p>
-                    <p class="mt-2">Vorm een team om te beginnen!</p>
-                </div>
-            @else
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" data-teams-container data-initial-count="6">
-                    @foreach ($teams as $team)
-                        @php
-                            $percentage = round($team['progressRatio']);
-                        @endphp
-                        <a href="{{ route('teams.show', ['team' => $team['id']]) }}" data-team-card class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-md cursor-pointer hover:shadow-lg hover:border-gold/50 transition-all duration-200">
-                            <div class="flex items-start justify-between mb-4">
-                                <h3 class="text-xl font-bold text-gold">{{ $team['name'] }}</h3>
-                                <div class="w-6 h-6 rounded-full {{ $team['lampStatus'] ? 'bg-gold' : 'bg-slate-400' }} flex items-center justify-center">
-                                    @if ($team['lampStatus'])
-                                        <svg class="w-4 h-4 text-slate-900" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 10 2 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z" />
-                                        </svg>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                                <div class="flex justify-between text-sm mb-2">
-                                    <span class="text-slate-600">Opgehaald</span>
-                                    <span class="text-gold font-semibold">&euro;{{ number_format($team['teamTotal'], 0, ',', '.') }}</span>
-                                </div>
-                                <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                                    <div class="bg-gradient-to-r from-gold to-gold-dark h-2 rounded-full transition-all duration-500" style="width: {{ min($percentage, 100) }}%"></div>
-                                </div>
-                                <div class="text-xs text-slate-500 mt-1">
-                                    Doel: &euro;{{ number_format($team['targetAmount'], 0, ',', '.') }} ({{ $percentage }}%)
-                                </div>
-                            </div>
-                        </a>
-                    @endforeach
-                </div>
-                <div class="text-center">
-                    <button type="button" data-teams-load-more class="btn btn-secondary {{ $teams->count() > 6 ? '' : 'hidden' }}">
-                        Bekijk meer teams
-                    </button>
-                </div>
-            @endif
-        </div>
     </section>
 
     <section id="deel-je-actie" class="py-16 md:py-20 px-4 bg-white" aria-labelledby="deel-actie-heading">
@@ -629,6 +698,14 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                     </div>
                 @endif
 
+                @php
+                    // Tijdelijke toggle om twee varianten te tonen aan de klant.
+                    // 1 = compacte versie (knop direct onder bedrag), 2 = uitgebreide versie (huidige).
+                    $donationFormVersion = 1;
+                @endphp
+
+                @if ($donationFormVersion === 1)
+                {{-- Versie 1: compacte lay-out, knop direct onder bedrag --}}
                 <form method="POST" action="{{ route('donations.store') }}" data-donation-form>
                     @csrf
                     {{-- Stap 1: team of zonder team --}}
@@ -657,7 +734,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                         </p>
                     </div>
 
-                    {{-- Donatie zonder team: anoniem of met naam --}}
+                    {{-- Donatie zonder team: standaard zonder naam, met optie "op naam" --}}
                     <div data-donation-no-team class="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-xl hidden">
                         <div class="flex items-start gap-3">
                             <div class="mt-1">
@@ -668,23 +745,171 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                             <div class="flex-1">
                                 <p class="text-slate-800 font-semibold mb-1">Donatie zonder team</p>
                                 <p class="text-xs text-slate-500 mb-3">
-                                    Kies of je volledig anoniem wilt doneren, of dat je je naam wilt invullen zodat we weten van wie de donatie komt.
+                                    Standaard doneer je zonder naam. Wil je dat je naam bij de donatie staat, vink dan hieronder "Op naam doneren" aan.
                                 </p>
+                                <input
+                                    type="hidden"
+                                    name="donation_anonymous"
+                                    value="1"
+                                    data-donation-anonymous-hidden
+                                >
                                 <label class="inline-flex items-center gap-2 text-slate-700 mb-3 cursor-pointer">
                                     <input
                                         type="checkbox"
-                                        name="donation_anonymous"
-                                        value="1"
-                                        data-donation-anonymous
+                                        data-donation-on-name
                                         class="rounded border-slate-300 text-gold focus:ring-gold"
-                                        {{ old('donation_anonymous') ? 'checked' : '' }}
+                                        {{ old('donation_anonymous') === '0' ? 'checked' : '' }}
                                     >
-                                    <span>Anoniem doneren</span>
+                                    <span>Op naam doneren (toon mijn naam bij de donatie)</span>
                                 </label>
                                 <div data-donation-name-row class="mt-2">
                                     <label class="block text-slate-700 mb-2 font-medium">
                                         Jouw naam
-                                        <span class="text-slate-500 font-normal">(verplicht als je niet anoniem doneert)</span>
+                                        <span class="text-slate-500 font-normal">(verplicht als je op naam doneert)</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="donor_name"
+                                        value="{{ old('donor_name') }}"
+                                        maxlength="255"
+                                        data-donation-name
+                                        class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
+                                        placeholder="Bijv. Mohammed"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Stap 2: bedrag (compact) --}}
+                    <div class="mb-6">
+                        <label class="block text-slate-700 mb-3 font-medium">Voer bedrag in *</label>
+
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                            @foreach ([10, 25, 50, 100, 250] as $amount)
+                                <button type="button" data-donation-suggested="{{ $amount }}" class="py-2.5 px-3 rounded-lg font-semibold transition-colors bg-white border border-slate-300 text-slate-700 hover:border-gold text-sm">
+                                    &euro;{{ $amount }}
+                                </button>
+                            @endforeach
+                        </div>
+
+                        <label class="block text-slate-700 mb-2 font-medium">Of kies een ander bedrag</label>
+                        <input
+                            type="number"
+                            name="amount"
+                            min="1"
+                            step="0.01"
+                            data-donation-amount
+                            class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none mb-4"
+                            placeholder="&euro;0,00"
+                            required
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-secondary w-full text-lg bg-gold text-slate-900 border border-gold hover:bg-gold-dark"
+                        >
+                            Doneer via iDEAL (Mollie)
+                        </button>
+                        <p class="mt-2 text-center text-xs text-slate-500">
+                            Veilig betalen &bull; Direct bevestigd
+                        </p>
+                    </div>
+
+                    {{-- Optioneel dua-verzoek (compact) --}}
+                    <div class="mt-6 border-t border-slate-200 pt-4">
+                        <h3 class="text-sm font-semibold mb-2 text-slate-800">Optioneel: verzoek om du&#257;</h3>
+                        <div class="space-y-3">
+                            <label class="inline-flex items-center gap-2 text-slate-700">
+                                <input
+                                    type="checkbox"
+                                    name="dua_request_enabled"
+                                    value="1"
+                                    class="rounded border-slate-300 text-gold focus:ring-gold"
+                                >
+                                <span class="text-sm">Ik wil een du&#257;-verzoek toevoegen aan de nieuwsstrook</span>
+                            </label>
+                            <textarea
+                                name="dua_request_text"
+                                rows="2"
+                                maxlength="255"
+                                class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none text-sm"
+                                placeholder="Bijvoorbeeld: Maak du&#257; voor mijn familie, gezondheid, studie..."
+                            >{{ old('dua_request_text') }}</textarea>
+                            <label class="inline-flex items-center gap-2 text-slate-700">
+                                <input
+                                    type="checkbox"
+                                    name="dua_request_anonymous"
+                                    value="1"
+                                    class="rounded border-slate-300 text-gold focus:ring-gold"
+                                >
+                                <span class="text-sm">Anoniem du&#257;-verzoek</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+                @else
+                {{-- Versie 2: bestaande uitgebreide lay-out --}}
+                <form method="POST" action="{{ route('donations.store') }}" data-donation-form>
+                    @csrf
+                    {{-- Stap 1: team of zonder team --}}
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+                                Stap 1
+                            </span>
+                            <span class="text-xs text-slate-500">Verplicht</span>
+                        </div>
+                        <label class="block text-slate-700 mb-2 font-medium">Kies je team of doneer zonder team</label>
+                        <select
+                            name="team_id"
+                            data-donation-team
+                            class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
+                        >
+                            <option value="">— Doneer zonder team —</option>
+                            @foreach ($teams as $team)
+                                <option value="{{ $team['id'] }}" {{ old('team_id') == $team['id'] ? 'selected' : '' }}>
+                                    {{ $team['name'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="mt-2 text-xs text-slate-500">
+                            Laat de selectie leeg als je wilt doneren zonder team. Je kunt dan kiezen om anoniem te blijven of je naam achter te laten.
+                        </p>
+                    </div>
+
+                    {{-- Donatie zonder team: standaard zonder naam, met optie "op naam" --}}
+                    <div data-donation-no-team class="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-xl hidden">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-1">
+                                <div class="w-8 h-8 rounded-xl bg-gold/10 flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-slate-800 font-semibold mb-1">Donatie zonder team</p>
+                                <p class="text-xs text-slate-500 mb-3">
+                                    Standaard doneer je zonder naam. Wil je dat je naam bij de donatie staat, vink dan hieronder "Op naam doneren" aan.
+                                </p>
+                                <input
+                                    type="hidden"
+                                    name="donation_anonymous"
+                                    value="1"
+                                    data-donation-anonymous-hidden
+                                >
+                                <label class="inline-flex items-center gap-2 text-slate-700 mb-3 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        data-donation-on-name
+                                        class="rounded border-slate-300 text-gold focus:ring-gold"
+                                        {{ old('donation_anonymous') === '0' ? 'checked' : '' }}
+                                    >
+                                    <span>Op naam doneren (toon mijn naam bij de donatie)</span>
+                                </label>
+                                <div data-donation-name-row class="mt-2">
+                                    <label class="block text-slate-700 mb-2 font-medium">
+                                        Jouw naam
+                                        <span class="text-slate-500 font-normal">(verplicht als je op naam doneert)</span>
                                     </label>
                                     <input
                                         type="text"
@@ -785,6 +1010,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                         Veilig betalen &bull; Direct bevestigd
                     </p>
                 </form>
+                @endif
             </div>
         </div>
     </section>
@@ -854,7 +1080,9 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                         ['question' => 'Kan ik ook doneren zonder een team?', 'answer' => 'Ja, individuele donaties zijn uiteraard welkom. Je kunt ook aansluiten bij een bestaand team. Wij moedigen teamvorming aan omdat het de betrokkenheid en het plezier vergroot, maar elke bijdrage telt.'],
                         ['question' => 'Wat is het minimale donatiebedrag?', 'answer' => 'Er is geen minimumbedrag — je kunt al vanaf €10 een vonkje ontsteken. Elke bijdrage, groot of klein, brengt ons dichter bij een schuldenvrije moskee. Je hoeft geen team te hebben om te doneren. De Profeet &#65018; zei: "De beste daad is die welke voortdurend wordt verricht, ook al is het weinig."'],
                         ['question' => 'Hoe weet ik dat mijn donatie goed terechtkomt?', 'answer' => 'ICB is een stichting met een transparant bestuur. Alle donaties worden uitsluitend gebruikt voor het terugbetalen van de renteloze leningen. Na afloop van de campagne publiceert ICB een volledig financieel overzicht.'],
-                        ['question' => 'Is mijn donatie aftrekbaar?', 'answer' => 'ICB is in bezit van de ANBI-status. Donaties, — zijn dus fiscaal aftrekbaar.'],
+                        ['question' => 'Is mijn donatie aftrekbaar?', 'answer' => 'ICB is in bezit van de ANBI-status. Donaties — onder voorwaarden — zijn dus fiscaal aftrekbaar.'],
+                        ['question' => 'Is ICB een ANBI-stichting?', 'answer' => 'Ja, Stichting Islamitisch Centrum Barendrecht is officieel erkend als ANBI (Algemeen Nut Beogende Instelling) door de Nederlandse Belastingdienst. Dat betekent dat onze stichting zich inzet voor het algemeen belang en voldoet aan speciale transparantie- en bestedingsregels.'],
+                        ['question' => 'Zijn mijn donaties fiscaal aftrekbaar?', 'answer' => 'Donaties aan onze ANBI-stichting mag je onder voorwaarden aftrekken van je belastingaangifte (inkomstenbelasting). Hierdoor betaal je over een lager inkomen belasting, wat je netto gift goedkoper maakt.'],
                         ['question' => 'Kan ik een bedrijf of onderneming inschrijven als team?', 'answer' => 'Absoluut. Bedrijven en ondernemers zijn van harte welkom om een team te vormen. Dit is een mooie manier om maatschappelijke betrokkenheid te tonen en tegelijkertijd je team te versterken.'],
                         ['question' => 'Hoe lang loopt de campagne?', 'answer' => 'De campagnewebsite gaat live op maandag 23 februari 2026. Vanaf dat moment kun je teams vormen en doneren. De campagne loopt door tot en met het einde van Ramadan 2026 of tot wij ons doelbedrag hebben bereikt.'],
                         ['question' => 'Kan ik mijn donatie spreiden?', 'answer' => 'Ja, je kunt in meerdere termijnen doneren gedurende de campagne. Alle bedragen worden opgeteld bij je teamtotaal.'],

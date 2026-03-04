@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from '../logo.png';
+import anbiLogo from '../../../assets/c__Users_anwar_AppData_Roaming_Cursor_User_workspaceStorage_68c0af3d79a251be3b96ddf4f7db9924_images_ANBI-c631436d-7e8b-4dc3-acdd-70367ddb1a21.png';
 
 const Footer: React.FC = () => {
   return (
@@ -22,7 +23,7 @@ const Footer: React.FC = () => {
             <p className="text-slate-600 text-sm mb-2">Tel: 0644224077</p>
             <p className="text-slate-600 text-sm">Adres: Bijdorpplein 41, Barendrecht</p>
           </div>
-          <div>
+          <div className="flex flex-col items-start md:items-end">
             <h4 className="font-semibold text-slate-700 mb-4">Informatie</h4>
             <p className="text-slate-600 text-sm">
               Alle donaties gaan rechtstreeks naar het centrum en worden gebruikt voor de doelen zoals beschreven.
