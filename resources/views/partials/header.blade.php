@@ -13,8 +13,8 @@
                 <div class="hidden sm:block flex-1 shrink-0 min-w-0" aria-hidden="true"></div>
                 <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-6 shrink-0 order-2 sm:order-none">
                     <button type="button" data-section-id="boom" class="text-sm sm:text-base font-semibold transition-opacity text-white opacity-90 hover:opacity-100 py-1.5 px-2 sm:py-0 sm:px-0">Boom</button>
-                    <button type="button" data-section-id="doel" class="text-sm sm:text-base font-semibold transition-opacity text-white opacity-90 hover:opacity-100 py-1.5 px-2 sm:py-0 sm:px-0">Doel</button>
                     <button type="button" data-section-id="teams" class="text-sm sm:text-base font-semibold transition-opacity text-white opacity-90 hover:opacity-100 py-1.5 px-2 sm:py-0 sm:px-0">Teams</button>
+                    <button type="button" data-section-id="doel" class="text-sm sm:text-base font-semibold transition-opacity text-white opacity-90 hover:opacity-100 py-1.5 px-2 sm:py-0 sm:px-0">Doel</button>
                     <button type="button" data-section-id="doneer" class="text-sm sm:text-base font-semibold transition-opacity text-white opacity-90 hover:opacity-100 py-1.5 px-2 sm:py-0 sm:px-0">Doneer</button>
                     <button type="button" data-section-id="faq" class="text-sm sm:text-base font-semibold transition-opacity text-white opacity-90 hover:opacity-100 py-1.5 px-2 sm:py-0 sm:px-0">FAQ</button>
                 </div>

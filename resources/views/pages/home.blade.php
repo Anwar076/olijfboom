@@ -160,7 +160,7 @@
     @include('pages.partials.olive-tree')
 
     {{-- Teams direct onder de boom, in een nette container --}}
-    <section class="py-16 md:py-20 px-4 bg-slate-100/50">
+    <section id="teams" class="py-16 md:py-20 px-4 bg-slate-100/50">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-10">
                 <a href="{{ route('teams.create') }}" class="btn btn-primary">Vorm je team</a>
@@ -502,7 +502,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
             </div>
         </div>
     </section>
-    <section id="teams" class="py-16 md:py-20 px-4 bg-slate-100/50" aria-labelledby="teams-heading">
+    <section id="teams-uitleg" class="py-16 md:py-20 px-4 bg-slate-100/50" aria-labelledby="teams-heading">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-10 md:mb-12">
                 <div class="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center mx-auto mb-3">
