@@ -49,6 +49,8 @@ class TeamController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ], [
+            'email.unique' => 'Dit e-mailadres is al in gebruik. Heb je al een team? Log dan in met dit e-mailadres om je dashboard te openen. Wil je een nieuw team met een andere beheerder? Gebruik dan een ander e-mailadres.',
         ]);
 
         return DB::transaction(function () use ($data) {

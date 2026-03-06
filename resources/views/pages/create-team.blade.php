@@ -156,14 +156,15 @@
                             </div>
 
                             <div>
-                                <label class="block text-slate-700 mb-2 font-medium">Email *</label>
+                                <label class="block text-slate-700 mb-2 font-medium">E-mail *</label>
                                 <input
                                     type="email"
                                     name="email"
                                     required
                                     value="{{ old('email') }}"
-                                    class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none"
+                                    class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none {{ $errors->has('email') ? 'border-red-500' : '' }}"
                                 />
+                                <p class="mt-1 text-xs text-slate-500">Dit e-mailadres wordt je inlog voor het dashboard. Als je al een team hebt, log dan in; anders gebruik een adres dat nog niet is geregistreerd.</p>
                             </div>
 
                             <div>
