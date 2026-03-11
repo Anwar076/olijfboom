@@ -712,16 +712,57 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                 @endphp
 
                 @if ($donationFormVersion === 1)
-                {{-- Versie 1: compacte lay-out, knop direct onder bedrag --}}
+                {{-- Versie 1: compacte lay-out, bedrag bovenaan --}}
                 <form method="POST" action="{{ route('donations.store') }}" data-donation-form>
                     @csrf
-                    {{-- Stap 1: team of zonder team --}}
+                    {{-- Stap 1: bedrag (compact) --}}
                     <div class="mb-8">
                         <div class="flex items-center justify-between mb-1">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
                                 Stap 1
                             </span>
                             <span class="text-xs text-slate-500">Verplicht</span>
+                        </div>
+                        <label class="block text-slate-700 mb-3 font-medium">Voer bedrag in *</label>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                            @foreach ([10000, 5000, 2500, 1000, 500, 250, 100, 50] as $amount)
+                                <button type="button" data-donation-suggested="{{ $amount }}" class="py-2.5 px-3 rounded-lg font-semibold transition-colors bg-white border border-slate-300 text-slate-700 hover:border-gold text-sm">
+                                    &euro;{{ number_format($amount, 0, ',', '.') }}
+                                </button>
+                            @endforeach
+                        </div>
+
+                        <label class="block text-slate-700 mb-2 font-medium">Of kies een ander bedrag</label>
+                        <input
+                            type="number"
+                            name="amount"
+                            min="1"
+                            step="0.01"
+                            data-donation-amount
+                            class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none mb-4"
+                            placeholder="&euro;0,00"
+                            required
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-secondary w-full text-lg bg-gold text-slate-900 border border-gold hover:bg-gold-dark"
+                        >
+                            Doneer via iDEAL (Mollie)
+                        </button>
+                        <p class="mt-2 text-center text-xs text-slate-500">
+                            Veilig betalen &bull; Direct bevestigd
+                        </p>
+                    </div>
+
+                    {{-- Stap 2: team of zonder team --}}
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+                                Stap 2
+                            </span>
+                            <span class="text-xs text-slate-500">Optioneel</span>
                         </div>
                         <label class="block text-slate-700 mb-2 font-medium">Kies je team of doneer zonder team</label>
                         <select
@@ -786,41 +827,6 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    {{-- Stap 2: bedrag (compact) --}}
-                    <div class="mb-6">
-                        <label class="block text-slate-700 mb-3 font-medium">Voer bedrag in *</label>
-
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-                            @foreach ([10, 25, 50, 100, 250] as $amount)
-                                <button type="button" data-donation-suggested="{{ $amount }}" class="py-2.5 px-3 rounded-lg font-semibold transition-colors bg-white border border-slate-300 text-slate-700 hover:border-gold text-sm">
-                                    &euro;{{ $amount }}
-                                </button>
-                            @endforeach
-                        </div>
-
-                        <label class="block text-slate-700 mb-2 font-medium">Of kies een ander bedrag</label>
-                        <input
-                            type="number"
-                            name="amount"
-                            min="1"
-                            step="0.01"
-                            data-donation-amount
-                            class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-slate-900 focus:border-gold focus:outline-none mb-4"
-                            placeholder="&euro;0,00"
-                            required
-                        >
-
-                        <button
-                            type="submit"
-                            class="btn btn-secondary w-full text-lg bg-gold text-slate-900 border border-gold hover:bg-gold-dark"
-                        >
-                            Doneer via iDEAL (Mollie)
-                        </button>
-                        <p class="mt-2 text-center text-xs text-slate-500">
-                            Veilig betalen &bull; Direct bevestigd
-                        </p>
                     </div>
 
                     {{-- Optioneel dua-verzoek (compact) --}}
@@ -942,10 +948,10 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                         </div>
                         <label class="block text-slate-700 mb-3 font-medium">Voer bedrag in *</label>
 
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
-                            @foreach ([10, 25, 50, 100, 250] as $amount)
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            @foreach ([10000, 5000, 2500, 1000, 500, 250, 100, 50] as $amount)
                                 <button type="button" data-donation-suggested="{{ $amount }}" class="py-3 px-4 rounded-lg font-semibold transition-colors bg-white border border-slate-300 text-slate-700 hover:border-gold">
-                                    &euro;{{ $amount }}
+                                    &euro;{{ number_format($amount, 0, ',', '.') }}
                                 </button>
                             @endforeach
                         </div>
