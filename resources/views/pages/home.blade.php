@@ -860,6 +860,26 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                             </label>
                         </div>
                     </div>
+                    <div class="mt-6">
+                        <div class="rounded-2xl bg-slate-50 border border-slate-200 px-4 py-4 sm:px-5 sm:py-5 text-sm text-slate-700 space-y-3">
+                            <div>
+                                <p class="font-semibold text-slate-900">Liever handmatig overmaken?</p>
+                                <p class="text-xs sm:text-sm text-slate-600">
+                                    Je kunt je donatie ook rechtstreeks overmaken via je eigen bankomgeving.
+                                </p>
+                            </div>
+                            <div class="space-y-1.5">
+                                <div class="flex flex-col sm:flex-row sm:items-baseline sm:gap-3">
+                                    <span class="text-[11px] sm:text-xs font-medium text-slate-500 uppercase tracking-wide sm:w-20">Naam</span>
+                                    <span class="text-slate-900 text-sm break-words">Stichting Islamitisch Centrum Barendrecht</span>
+                                </div>
+                                <div class="flex flex-col sm:flex-row sm:items-baseline sm:gap-3">
+                                    <span class="text-[11px] sm:text-xs font-medium text-slate-500 uppercase tracking-wide sm:w-20">IBAN</span>
+                                    <span class="text-slate-900 text-sm font-mono tracking-widest break-words">NL47&nbsp;INGB&nbsp;0111&nbsp;7146&nbsp;56</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
                 @else
                 {{-- Versie 2: bestaande uitgebreide lay-out --}}
