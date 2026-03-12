@@ -462,6 +462,36 @@ class DashboardController extends Controller
         return redirect()->route('dashboard')->with('status', 'Teambeschrijving bijgewerkt.');
     }
 
+    public function updateTeamName(Request $request)
+    {
+        $user = $request->user();
+        $teamId = TeamMember::where('user_id', $user->id)->value('team_id');
+
+        if (!$teamId) {
+            return redirect()->route('dashboard')->withErrors(['team' => 'Team niet gevonden.']);
+        }
+
+        $team = Team::findOrFail($teamId);
+
+        if ($team->created_by_user_id !== $user->id && !$user->isSiteManager()) {
+            abort(403, 'Not authorized for this team.');
+        }
+
+        $raw = (string) $request->input('name', '');
+        $name = trim(strip_tags($raw, '<em><strong><i><b>'));
+        $request->merge(['name' => $name]);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255', Rule::unique('teams', 'name')->ignore($team->id)],
+        ]);
+
+        $team->update([
+            'name' => $data['name'],
+        ]);
+
+        return redirect()->route('dashboard')->with('status', 'Teamnaam bijgewerkt.');
+    }
+
     public function destroyTeam(Request $request)
     {
         $user = $request->user();

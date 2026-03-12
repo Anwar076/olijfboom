@@ -21,7 +21,7 @@
                 <div class="p-8 md:p-10 lg:p-12">
                     {{-- Teamnaam + status --}}
                     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-                        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold title-gradient leading-tight">{{ $team->name }}</h1>
+                        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold title-gradient leading-tight">@teamName($team->name)</h1>
                         <div class="flex items-center gap-2 shrink-0">
                             @if ($lampStatus)
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold bg-gold/15 text-amber-800 border border-gold/30">

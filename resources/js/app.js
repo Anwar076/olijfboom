@@ -443,6 +443,27 @@ const initDashboardMediaForm = () => {
     addButton.addEventListener('click', addRow);
 };
 
+const initTeamNameEditor = () => {
+    const form = document.querySelector('[data-team-name-form]');
+    const editor = document.querySelector('[data-team-name-editor]');
+    const hidden = document.querySelector('[data-team-name-hidden]');
+    if (!form || !editor || !hidden) return;
+
+    form.querySelectorAll('[data-team-name-format]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            editor.focus();
+            const cmd = btn.getAttribute('data-team-name-format');
+            if (cmd === 'bold') document.execCommand('bold', false, null);
+            if (cmd === 'italic') document.execCommand('italic', false, null);
+        });
+    });
+
+    form.addEventListener('submit', () => {
+        hidden.value = editor.innerHTML || '';
+    });
+};
+
 const LIGHT_SHAPES = [
 
   { d: "M 1230.44 902.279 C 1208.37 889.87 1217.2 864.211 1243.63 871.28 C 1243.96 876.312 1251.91 885.001 1249.01 893.217 C 1246.35 900.769 1236.92 902.281 1230.44 902.279 z", transform: "translate(0,0)" },
@@ -1276,6 +1297,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initShowcaseRailAutoplay();
     initShowcaseLightbox();
     initDashboardMediaForm();
+    initTeamNameEditor();
     initOliveTree();
     initWalkthrough();
     initContactModals();

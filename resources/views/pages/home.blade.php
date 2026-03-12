@@ -187,7 +187,7 @@
                             class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-md cursor-pointer hover:shadow-lg hover:border-gold/50 transition-all duration-200"
                         >
                             <div class="flex items-start justify-between mb-4">
-                                <h3 class="text-xl font-bold text-gold">{{ $team['name'] }}</h3>
+                                <h3 class="text-xl font-bold text-gold">@teamName($team['name'])</h3>
                                 <div class="w-6 h-6 rounded-full {{ $team['lampStatus'] ? 'bg-gold' : 'bg-slate-400' }} flex items-center justify-center">
                                     @if ($team['lampStatus'])
                                         <svg class="w-4 h-4 text-slate-900" fill="currentColor" viewBox="0 0 20 20">
@@ -773,7 +773,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                             <option value="">— Doneer zonder team —</option>
                             @foreach ($teams as $team)
                                 <option value="{{ $team['id'] }}" {{ old('team_id') == $team['id'] ? 'selected' : '' }}>
-                                    {{ $team['name'] }}
+                                    {{ strip_tags($team['name']) }}
                                 </option>
                             @endforeach
                         </select>
@@ -882,7 +882,7 @@ Allah swt. Meer informatie over Al Amana: almaqam.nl. Dertig plaatsen beschikbaa
                             <option value="">— Doneer zonder team —</option>
                             @foreach ($teams as $team)
                                 <option value="{{ $team['id'] }}" {{ old('team_id') == $team['id'] ? 'selected' : '' }}>
-                                    {{ $team['name'] }}
+                                    {{ strip_tags($team['name']) }}
                                 </option>
                             @endforeach
                         </select>

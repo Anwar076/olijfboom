@@ -275,7 +275,40 @@
                 <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm" data-tour-step="dashboard-team-card">
                     <div class="flex items-start justify-between mb-4 gap-4">
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold mb-2 title-gradient">{{ $team->name }}</h2>
+                            @if (auth()->check() && (auth()->user()->id === $team->created_by_user_id || auth()->user()->isSiteManager()))
+                                <form method="POST" action="{{ route('dashboard.team.name') }}" class="space-y-2 mb-2" data-team-name-form>
+                                    @csrf
+                                    @method('PUT')
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Teamnaam</label>
+                                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                                        <span class="text-xs text-slate-500">Selecteer een woord en kies opmaak:</span>
+                                        <div class="flex rounded-lg border border-slate-300 overflow-hidden bg-slate-50">
+                                            <button type="button" class="px-3 py-1.5 text-sm font-bold text-slate-700 hover:bg-slate-200 border-r border-slate-300" data-team-name-format="bold" title="Vetgedrukt maken">Vet</button>
+                                            <button type="button" class="px-3 py-1.5 text-sm italic text-slate-700 hover:bg-slate-200" data-team-name-format="italic" title="Schuingedrukt maken">Schuin</button>
+                                        </div>
+                                    </div>
+                                    @php
+                                        $teamNameForEditor = old('name', $team->name ?? '');
+                                        $teamNameSafe = is_string($teamNameForEditor) ? strip_tags($teamNameForEditor, '<em><strong><i><b>') : '';
+                                    @endphp
+                                    <div
+                                        data-team-name-editor
+                                        contenteditable="true"
+                                        class="w-full min-h-[2.5rem] bg-white border border-slate-300 rounded-lg px-3 py-2 text-lg font-bold text-slate-900 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30"
+                                        role="textbox"
+                                        aria-label="Teamnaam"
+                                    >{!! $teamNameSafe !!}</div>
+                                    <input type="hidden" name="name" data-team-name-hidden value="">
+                                    @error('name')
+                                        <p class="text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                    <div class="flex justify-end">
+                                        <button type="submit" class="btn btn-secondary btn-sm">Teamnaam opslaan</button>
+                                    </div>
+                                </form>
+                            @else
+                                <h2 class="text-2xl font-bold mb-2 title-gradient">@teamName($team->name)</h2>
+                            @endif
                             @if ($team->description)
                                 <p class="text-slate-600 mb-2">{{ $team->description }}</p>
                             @endif

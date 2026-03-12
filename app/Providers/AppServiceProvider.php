@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Teamnamen mogen beperkte HTML bevatten (bijv. <em>, <strong>) voor schuingedrukt/vet.
+        Blade::directive('teamName', function (string $expression): string {
+            return "<?php echo strip_tags($expression ?? '', '<em><strong><i><b>'); ?>";
+        });
     }
 }
