@@ -126,7 +126,7 @@
     @php
         $tickerText = $homeNewsTickerText ?? 'Dit is dummy nieuwscontent: sponsorloop start om 10:00 uur, inschrijvingen zijn nog open en deel deze actie met je netwerk.';
     @endphp
-    <div class="home-news-ticker">
+    <!-- <div class="home-news-ticker">
         <div class="container mx-auto px-4">
             <div class="home-news-ticker__viewport" aria-label="Laatste nieuws">
                 <div class="home-news-ticker__track">
@@ -152,7 +152,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     @php
         $progressPercentageRounded = round($progressPercentage);
