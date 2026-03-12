@@ -298,7 +298,7 @@
                                         role="textbox"
                                         aria-label="Teamnaam"
                                     >{!! $teamNameSafe !!}</div>
-                                    <input type="hidden" name="name" data-team-name-hidden value="">
+                                    <input type="hidden" name="name" data-team-name-hidden value="{{ old('name', $team->name ?? '') }}">
                                     @error('name')
                                         <p class="text-sm text-red-600">{{ $message }}</p>
                                     @enderror
