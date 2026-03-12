@@ -104,6 +104,22 @@ class HomeController extends Controller
                 ];
             });
 
+        // Team "Ontwikkelaars van de olijfboom" (met of zonder emoji) elke keer op een andere plek bovenaan tonen
+        $teams = $teams->values();
+        $devTeamKey = $teams->search(function ($t) {
+            $name = is_string($t['name'] ?? '') ? strip_tags($t['name']) : '';
+            return stripos($name, 'ontwikkelaars') !== false && stripos($name, 'olijfboom') !== false;
+        });
+        if ($devTeamKey !== false) {
+            $devTeam = $teams->pull($devTeamKey);
+            $others = $teams->values();
+            $maxPos = min(8, $others->count());
+            $insertAt = $maxPos >= 0 ? random_int(0, $maxPos) : 0;
+            $teams = $others->take($insertAt)
+                ->concat(collect([$devTeam]))
+                ->concat($others->skip($insertAt));
+        }
+
         return view('pages.home', [
             'homeNewsTickerText' => $homeNewsTickerText,
             'duaTickerItems' => $duaTickerItems,
