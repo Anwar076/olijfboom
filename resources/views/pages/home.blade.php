@@ -154,6 +154,78 @@
         </div>
     </div> -->
 
+    @if (!empty($homeSponsors))
+        <section class="py-10 md:py-14 bg-gradient-to-b from-slate-50 to-white">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="text-center mb-6 md:mb-8">
+                    <p class="text-[11px] md:text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">
+                        Partners van de Olijfboom van Licht
+                    </p>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-2">
+                        Met dank aan onze sponsors
+                    </h2>
+                </div>
+            </div>
+
+            <div class="relative overflow-hidden">
+                <div
+                    class="flex items-stretch gap-10 md:gap-16 py-6 md:py-8 will-change-transform"
+                    data-sponsors-track
+                >
+                    @php
+                        $sponsorCount = count($homeSponsors);
+                        // Zorg dat de rij visueel gevuld is, ook bij weinig sponsors
+                        $loops = $sponsorCount > 0 ? max(3, (int) ceil(8 / $sponsorCount)) : 0;
+                    @endphp
+                    @for ($i = 0; $i < $loops; $i++)
+                        @foreach ($homeSponsors as $sponsor)
+                            @php
+                                $name = $sponsor['name'] ?? '';
+                                $logo = $sponsor['logo'] ?? '';
+                                $url = $sponsor['url'] ?? '';
+                            @endphp
+                            @if ($logo || $name)
+                                <div class="flex-shrink-0 px-4">
+                                    @if ($url)
+                                        <a href="{{ $url }}" target="_blank" rel="noopener" class="flex flex-col items-center gap-3 group">
+                                            @if ($logo)
+                                                <img
+                                                    src="{{ $logo }}"
+                                                    alt="{{ $name ?: 'Sponsor' }}"
+                                                    class="h-14 md:h-20 w-auto max-w-[220px] object-contain opacity-85 group-hover:opacity-100 transition"
+                                                >
+                                            @endif
+                                            @if ($name)
+                                                <span class="mt-1 text-xs md:text-sm text-slate-700 group-hover:text-slate-900 font-medium text-center whitespace-nowrap">
+                                                    {{ $name }}
+                                                </span>
+                                            @endif
+                                        </a>
+                                    @else
+                                        <div class="flex flex-col items-center gap-3">
+                                            @if ($logo)
+                                                <img
+                                                    src="{{ $logo }}"
+                                                    alt="{{ $name ?: 'Sponsor' }}"
+                                                    class="h-14 md:h-20 w-auto max-w-[220px] object-contain opacity-85"
+                                                >
+                                            @endif
+                                            @if ($name)
+                                                <span class="mt-1 text-xs md:text-sm text-slate-700 font-medium text-center whitespace-nowrap">
+                                                    {{ $name }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                        @endforeach
+                    @endfor
+                </div>
+            </div>
+        </section>
+    @endif
+
     @php
         $progressPercentageRounded = round($progressPercentage);
     @endphp

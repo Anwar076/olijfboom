@@ -58,7 +58,26 @@
             @endif
 
             @if (auth()->user()->isSiteManager())
-                <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                {{-- Klein admin-navigatiemenu voor sitebeheerder --}}
+                <div class="mb-6 bg-white/80 border border-slate-200 rounded-2xl px-4 py-3 flex flex-wrap items-center gap-3 text-sm">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Admin-secties</span>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="#admin-ticker" class="px-3 py-1 rounded-full border border-slate-200 text-slate-700 hover:border-gold hover:text-gold transition-colors">
+                            Nieuwsticker
+                        </a>
+                        <a href="#admin-sponsors" class="px-3 py-1 rounded-full border border-slate-200 text-slate-700 hover:border-gold hover:text-gold transition-colors">
+                            Sponsors
+                        </a>
+                        <a href="#admin-dua" class="px-3 py-1 rounded-full border border-slate-200 text-slate-700 hover:border-gold hover:text-gold transition-colors">
+                            Dua-verzoeken
+                        </a>
+                        <a href="#admin-media" class="px-3 py-1 rounded-full border border-slate-200 text-slate-700 hover:border-gold hover:text-gold transition-colors">
+                            Media-rij
+                        </a>
+                    </div>
+                </div>
+
+                <div id="admin-ticker" class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
                     <h3 class="text-xl font-bold mb-4 title-gradient">Nieuwsticker op home</h3>
                     <form method="POST" action="{{ route('dashboard.home-news-ticker') }}" class="space-y-4">
                         @csrf
@@ -78,12 +97,160 @@
                     </form>
                 </div>
 
-                <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
-                    <h3 class="text-xl font-bold mb-4 title-gradient">Dua-verzoeken</h3>
-                    <p class="text-slate-600 text-sm mb-4">
-                        Nieuwe dua-verzoeken komen hier binnen. Je kunt zelf de tekst voor de nieuwsticker intypen of herschrijven;
-                        de originele dua van de donateur blijft hieronder zichtbaar.
-                    </p>
+                @if (auth()->user()->isSiteManager())
+                    <div id="admin-sponsors" class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                        <h3 class="text-xl font-bold mb-4 title-gradient">Sponsors boven de olijfboom</h3>
+                        @php
+                            $editableSponsors = old('sponsor_names');
+                            if (!is_array($editableSponsors)) {
+                                $editableSponsors = collect($homeSponsors ?? [])->pluck('name')->all();
+                            }
+                            $editableSponsors = array_values($editableSponsors);
+
+                            $editableLogos = old('sponsor_logos');
+                            if (!is_array($editableLogos)) {
+                                $editableLogos = collect($homeSponsors ?? [])->pluck('logo')->all();
+                            }
+                            $editableLogos = array_values($editableLogos);
+
+                            $editableLinks = old('sponsor_links');
+                            if (!is_array($editableLinks)) {
+                                $editableLinks = collect($homeSponsors ?? [])->pluck('url')->all();
+                            }
+                            $editableLinks = array_values($editableLinks);
+
+                            $maxCount = max(count($editableSponsors), count($editableLogos), count($editableLinks));
+                            if ($maxCount === 0) {
+                                $maxCount = 1;
+                            }
+                        @endphp
+                        <form method="POST" action="{{ route('dashboard.home-sponsors') }}" class="space-y-4" data-dashboard-sponsors-form enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            <div>
+                                <label class="block text-slate-700 mb-2 font-medium">Sponsors (naam, logo, link)</label>
+                                <div data-dashboard-sponsors-rows>
+                                    @for ($i = 0; $i < $maxCount; $i++)
+                                        @php
+                                            $name = $editableSponsors[$i] ?? '';
+                                            $logo = $editableLogos[$i] ?? '';
+                                            $link = $editableLinks[$i] ?? '';
+                                        @endphp
+                                        <div class="grid grid-cols-1 md:grid-cols-[1.1fr,1.3fr,1.1fr,auto] gap-2 mb-2 items-center" data-sponsor-row>
+                                            <input
+                                                type="text"
+                                                name="sponsor_names[]"
+                                                value="{{ $name }}"
+                                                placeholder="Sponsornaam"
+                                                class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-gold focus:outline-none text-sm"
+                                            >
+                                            <div class="space-y-1">
+                                                @if ($logo)
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-[11px] text-slate-500">Huidig logo:</span>
+                                                        <img src="{{ $logo }}" alt="" class="h-8 w-auto max-w-[80px] object-contain border border-slate-200 rounded bg-white">
+                                                    </div>
+                                                @endif
+                                                <input
+                                                    type="hidden"
+                                                    name="sponsor_logos[]"
+                                                    value="{{ $logo }}"
+                                                >
+                                                <input
+                                                    type="file"
+                                                    name="sponsor_logo_files[]"
+                                                    accept="image/jpeg,image/png,image/webp,image/gif"
+                                                    class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-slate-900 focus:border-gold focus:outline-none text-xs"
+                                                >
+                                            </div>
+                                            <input
+                                                type="url"
+                                                name="sponsor_links[]"
+                                                value="{{ $link }}"
+                                                placeholder="Website- of actie-link (optioneel)"
+                                                class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-gold focus:outline-none text-sm"
+                                            >
+                                            <button
+                                                type="button"
+                                                class="text-xs text-red-600 hover:text-red-700 font-medium md:ml-2"
+                                                data-sponsor-remove
+                                            >
+                                                Verwijder
+                                            </button>
+                                        </div>
+                                    @endfor
+                                </div>
+                                <button
+                                    type="button"
+                                    class="mt-2 inline-flex items-center px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 hover:border-gold hover:text-gold transition-colors"
+                                    data-sponsor-add
+                                >
+                                    + Sponsor toevoegen
+                                </button>
+
+                                <script type="text/template" data-dashboard-sponsor-row-template>
+                                    <div class="grid grid-cols-1 md:grid-cols-[1.1fr,1.3fr,1.1fr,auto] gap-2 mb-2 items-center" data-sponsor-row>
+                                        <input
+                                            type="text"
+                                            name="sponsor_names[]"
+                                            value=""
+                                            placeholder="Sponsornaam"
+                                            class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-gold focus:outline-none text-sm"
+                                        >
+                                        <div class="space-y-1">
+                                            <input
+                                                type="hidden"
+                                                name="sponsor_logos[]"
+                                                value=""
+                                            >
+                                            <input
+                                                type="file"
+                                                name="sponsor_logo_files[]"
+                                                accept="image/jpeg,image/png,image/webp,image/gif"
+                                                class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-slate-900 focus:border-gold focus:outline-none text-xs"
+                                            >
+                                        </div>
+                                        <input
+                                            type="url"
+                                            name="sponsor_links[]"
+                                            value=""
+                                            placeholder="Website- of actie-link (optioneel)"
+                                            class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 focus:border-gold focus:outline-none text-sm"
+                                        >
+                                        <button
+                                            type="button"
+                                            class="text-xs text-red-600 hover:text-red-700 font-medium md:ml-2"
+                                            data-sponsor-remove
+                                        >
+                                            Verwijder
+                                        </button>
+                                    </div>
+                                </script>
+                            </div>
+                            <p class="text-xs text-slate-500">
+                                Deze sponsors worden boven de olijfboom getoond. Gebruik bij voorkeur liggende logo's in PNG of SVG en korte namen.
+                            </p>
+                            <button type="submit" class="btn btn-primary">Sponsors opslaan</button>
+                        </form>
+                    </div>
+                @endif
+
+                <div id="admin-dua" class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                    <div class="flex flex-col md:flex-row md:items-baseline md:justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold title-gradient">Dua-verzoeken</h3>
+                            <p class="text-slate-600 text-sm">
+                                Nieuwe dua-verzoeken komen hier binnen. Je kunt zelf de tekst voor de nieuwsticker intypen of herschrijven;
+                                de originele dua van de donateur blijft hieronder zichtbaar.
+                            </p>
+                        </div>
+                        @php
+                            $totalDua = method_exists($pendingDuaRequests, 'total') ? $pendingDuaRequests->total() : $pendingDuaRequests->count();
+                        @endphp
+                        <div class="text-xs text-slate-500">
+                            Totaal openstaande verzoeken: <span class="font-semibold text-slate-700">{{ $totalDua }}</span>
+                        </div>
+                    </div>
                     @if ($pendingDuaRequests->isEmpty())
                         <p class="text-slate-600 text-sm">Er zijn momenteel geen openstaande dua-verzoeken uit donaties.</p>
                     @else
@@ -161,10 +328,15 @@
                                 </div>
                             @endforeach
                         </div>
+                        @if (method_exists($pendingDuaRequests, 'links'))
+                            <div class="mt-4 border-t border-slate-200 pt-3">
+                                {{ $pendingDuaRequests->links() }}
+                            </div>
+                        @endif
                     @endif
                 </div>
 
-                <div class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
+                <div id="admin-media" class="bg-white/80 rounded-2xl p-6 mb-6 border border-slate-200 backdrop-blur-sm">
                     <h3 class="text-xl font-bold mb-4 title-gradient">Media rij beheren (afbeeldingen + video's)</h3>
                     @php
                         $editableUrls = old('media_urls');

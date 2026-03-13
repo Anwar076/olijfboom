@@ -34,6 +34,7 @@ class DashboardController extends Controller
             SiteSetting::getValue('dashboard_showcase_media') ?? SiteSetting::getValue('dashboard_showcase_images'),
             $defaultShowcaseMedia
         );
+        $homeSponsors = $this->normalizeHomeSponsors(SiteSetting::getValue('home_sponsors') ?? '[]');
         $targetOptions = config('teams.targets', []);
         $user = $request->user();
 
@@ -55,8 +56,7 @@ class DashboardController extends Controller
                 'donations.dua_show_on_ticker',
                 'teams.name as team_name',
             ])
-            ->limit(25)
-            ->get();
+            ->paginate(10, ['*'], 'dua_page');
 
         $duaTickerPreviewTexts = DB::table('donations')
             ->where('status', 'paid')
@@ -95,6 +95,7 @@ class DashboardController extends Controller
                 'targetOptions' => $targetOptions,
                 'homeNewsTickerText' => $homeNewsTickerText,
                 'dashboardShowcaseMedia' => $dashboardShowcaseMedia,
+                'homeSponsors' => $homeSponsors,
                 'pendingDuaRequests' => $pendingDuaRequests,
                 'duaTickerPreviewTexts' => $duaTickerPreviewTexts,
             ]);
@@ -127,6 +128,7 @@ class DashboardController extends Controller
             'targetOptions' => $targetOptions,
             'homeNewsTickerText' => $homeNewsTickerText,
             'dashboardShowcaseMedia' => $dashboardShowcaseMedia,
+            'homeSponsors' => $homeSponsors,
             'pendingDuaRequests' => $pendingDuaRequests,
             'duaTickerPreviewTexts' => $duaTickerPreviewTexts,
         ]);
@@ -578,5 +580,92 @@ class DashboardController extends Controller
         ]);
 
         return redirect()->route('dashboard');
+    }
+
+    public function updateHomeSponsors(Request $request)
+    {
+        if (! $request->user()?->isSiteManager()) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'sponsor_names' => ['nullable', 'array', 'max:20'],
+            'sponsor_names.*' => ['nullable', 'string', 'max:255'],
+            'sponsor_logos' => ['nullable', 'array', 'max:20'],
+            'sponsor_logos.*' => ['nullable', 'string', 'max:2048'],
+            'sponsor_links' => ['nullable', 'array', 'max:20'],
+            'sponsor_links.*' => ['nullable', 'url', 'max:2048'],
+            'sponsor_logo_files' => ['nullable', 'array', 'max:20'],
+            'sponsor_logo_files.*' => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/webp,image/gif', 'max:5120'],
+        ]);
+
+        $names = $data['sponsor_names'] ?? [];
+        $logos = $data['sponsor_logos'] ?? [];
+        $links = $data['sponsor_links'] ?? [];
+        $logoFiles = $request->file('sponsor_logo_files', []);
+
+        $entries = [];
+        foreach ($names as $index => $name) {
+            $name = trim((string) $name);
+            $logo = trim((string) ($logos[$index] ?? ''));
+            $url = trim((string) ($links[$index] ?? ''));
+
+            $file = $logoFiles[$index] ?? null;
+            if ($file) {
+                $extension = $file->getClientOriginalExtension() ?: 'png';
+                $filename = Str::random(40) . '.' . $extension;
+                $targetDir = public_path('sponsor-logos');
+
+                if (!File::exists($targetDir)) {
+                    File::makeDirectory($targetDir, 0755, true);
+                }
+
+                $file->move($targetDir, $filename);
+                $logo = asset('sponsor-logos/' . $filename);
+            }
+
+            if ($name === '' && $logo === '' && $url === '') {
+                continue;
+            }
+
+            $entries[] = [
+                'name' => $name,
+                'logo' => $logo,
+                'url' => $url,
+            ];
+        }
+
+        SiteSetting::setValue('home_sponsors', json_encode($entries, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+
+        return redirect()
+            ->route('dashboard')
+            ->with('status', 'Sponsors voor de homepage bijgewerkt.');
+    }
+
+    private function normalizeHomeSponsors(?string $raw): array
+    {
+        if (! $raw) {
+            return [];
+        }
+
+        $decoded = json_decode($raw, true);
+        if (! is_array($decoded)) {
+            return [];
+        }
+
+        return collect($decoded)
+            ->filter(fn ($item) => is_array($item))
+            ->map(function (array $item): array {
+                return [
+                    'name' => trim((string) ($item['name'] ?? '')),
+                    'logo' => trim((string) ($item['logo'] ?? '')),
+                    'url' => trim((string) ($item['url'] ?? '')),
+                ];
+            })
+            ->filter(function (array $item): bool {
+                return $item['name'] !== '' || $item['logo'] !== '' || $item['url'] !== '';
+            })
+            ->values()
+            ->all();
     }
 }

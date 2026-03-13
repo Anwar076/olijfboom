@@ -443,6 +443,82 @@ const initDashboardMediaForm = () => {
     addButton.addEventListener('click', addRow);
 };
 
+const initDashboardSponsorsForm = () => {
+    const container = document.querySelector('[data-dashboard-sponsors-rows]');
+    const addButton = document.querySelector('[data-sponsor-add]');
+    const templateEl = document.querySelector('[data-dashboard-sponsor-row-template]');
+    if (!container || !addButton || !templateEl) return;
+
+    const attachRemoveHandler = (row) => {
+        const removeBtn = row.querySelector('[data-sponsor-remove]');
+        if (!removeBtn) return;
+        removeBtn.addEventListener('click', () => {
+            const inputs = row.querySelectorAll('input');
+            inputs.forEach((input) => {
+                input.value = '';
+            });
+            row.classList.add('hidden');
+        });
+    };
+
+    Array.from(container.querySelectorAll('[data-sponsor-row]')).forEach((row) => {
+        attachRemoveHandler(row);
+    });
+
+    const addRow = () => {
+        const markup = templateEl.textContent || '';
+        if (!markup.trim()) return;
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = markup.trim();
+        const row = wrapper.firstElementChild;
+        if (!row) return;
+        container.appendChild(row);
+        attachRemoveHandler(row);
+    };
+
+    addButton.addEventListener('click', addRow);
+};
+
+const initSponsorsCarousel = () => {
+    const track = document.querySelector('[data-sponsors-track]');
+    if (!track) return;
+
+    let offset = 0;
+    let lastWidth = track.scrollWidth;
+    let paused = false;
+
+    const speed = 0.4; // pixels per frame
+
+    const updateWidth = () => {
+        lastWidth = track.scrollWidth;
+    };
+
+    window.addEventListener('resize', () => {
+        updateWidth();
+    });
+
+    track.addEventListener('mouseenter', () => {
+        paused = true;
+    });
+    track.addEventListener('mouseleave', () => {
+        paused = false;
+    });
+
+    const step = () => {
+        if (!paused && lastWidth > 0) {
+            offset -= speed;
+            const half = lastWidth / 2;
+            if (Math.abs(offset) >= half) {
+                offset = 0;
+            }
+            track.style.transform = `translateX(${offset}px)`;
+        }
+        requestAnimationFrame(step);
+    };
+
+    updateWidth();
+    requestAnimationFrame(step);
+};
 const initTeamNameEditor = () => {
     const form = document.querySelector('[data-team-name-form]');
     const editor = document.querySelector('[data-team-name-editor]');
@@ -1297,6 +1373,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initShowcaseRailAutoplay();
     initShowcaseLightbox();
     initDashboardMediaForm();
+    initDashboardSponsorsForm();
+    initSponsorsCarousel();
     initTeamNameEditor();
     initOliveTree();
     initWalkthrough();

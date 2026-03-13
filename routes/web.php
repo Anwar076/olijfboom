@@ -61,6 +61,9 @@ Route::put('/dashboard/home-news-ticker', [DashboardController::class, 'updateHo
 Route::put('/dashboard/showcase-media', [DashboardController::class, 'updateDashboardShowcaseMedia'])
     ->middleware(['auth', 'admin'])
     ->name('dashboard.showcase-media');
+Route::put('/dashboard/home-sponsors', [DashboardController::class, 'updateHomeSponsors'])
+    ->middleware(['auth', 'admin'])
+    ->name('dashboard.home-sponsors');
 
 Route::get('/invite/{token}', [InviteController::class, 'show'])->name('invite.show');
 Route::post('/invite/{token}', [InviteController::class, 'accept'])->name('invite.accept');

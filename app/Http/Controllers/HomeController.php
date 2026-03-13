@@ -59,6 +59,8 @@ class HomeController extends Controller
         $totalLights = 100;
         $progressPercentage = $totalLights > 0 ? ($lightsActivated / $totalLights) * 100 : 0;
 
+        $homeSponsors = $this->normalizeHomeSponsors(SiteSetting::getValue('home_sponsors') ?? '[]');
+
         $teams = Team::query()
             ->leftJoin('donations', function ($join) {
                 $join->on('teams.id', '=', 'donations.team_id')
@@ -128,8 +130,36 @@ class HomeController extends Controller
             'lightsActivated' => $lightsActivated,
             'totalLights' => $totalLights,
             'progressPercentage' => $progressPercentage,
+            'homeSponsors' => $homeSponsors,
             'teams' => $teams,
         ]);
+    }
+
+    private function normalizeHomeSponsors(?string $raw): array
+    {
+        if (! $raw) {
+            return [];
+        }
+
+        $decoded = json_decode($raw, true);
+        if (! is_array($decoded)) {
+            return [];
+        }
+
+        return collect($decoded)
+            ->filter(fn ($item) => is_array($item))
+            ->map(function (array $item): array {
+                return [
+                    'name' => trim((string) ($item['name'] ?? '')),
+                    'logo' => trim((string) ($item['logo'] ?? '')),
+                    'url' => trim((string) ($item['url'] ?? '')),
+                ];
+            })
+            ->filter(function (array $item): bool {
+                return $item['name'] !== '' || $item['logo'] !== '' || $item['url'] !== '';
+            })
+            ->values()
+            ->all();
     }
 
     private function normalizeShowcaseMedia(?string $raw, array $fallback): array
