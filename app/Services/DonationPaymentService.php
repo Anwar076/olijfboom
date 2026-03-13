@@ -30,9 +30,8 @@ class DonationPaymentService
             }
         }
 
-        $description = $team
-            ? "Donatie voor {$team->name}"
-            : 'Donatie ICB - Olijfboom van Licht ';
+        // Omschrijving bij Mollie-betaling altijd gelijk houden, ook bij teamdonaties
+        $description = 'Donatie ICB - Olijfboom van Licht';
 
         $metadata = [
             'donation_id' => $donation->id,
